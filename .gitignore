@@ -11,6 +11,7 @@
 # Generated files
 bin/
 gen/
+target/
 
 # Gradle files
 .gradle/
@@ -24,3 +25,6 @@ proguard/
 
 # Log Files
 *.log
+
+# IntelliJ
+*.iml
