@@ -1,4 +1,4 @@
 imageprogressbar
 ================
 
-An Image ProgressBar
+An ProgressBar with image representation.
