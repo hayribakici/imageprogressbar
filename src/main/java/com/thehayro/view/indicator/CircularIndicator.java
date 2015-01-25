@@ -37,8 +37,8 @@ public class CircularIndicator extends ProgressIndicator {
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
         canvas.drawBitmap(mPreBitmap, 0, 0, new Paint());
-        RectF arc = new RectF(0, 0, source.getWidth(), source.getHeight());
-//        paint.setShader(mShader);
+        final RectF arc = new RectF(source.getWidth() * -0.5f, source.getHeight() * -0.5f, source.getWidth() * 1.5f, source.getHeight() * 1.5f);
+        paint.setShader(mShader);
         canvas.drawArc(arc, 270, angle, true, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
         canvas.drawBitmap(source, 0, 0, paint);
