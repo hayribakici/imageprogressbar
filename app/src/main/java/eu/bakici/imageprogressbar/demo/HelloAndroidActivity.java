@@ -13,6 +13,7 @@ import eu.bakici.imageprogressbar.indicator.BlockIndicator;
 import eu.bakici.imageprogressbar.indicator.BlurIndicator;
 import eu.bakici.imageprogressbar.indicator.CircularIndicator;
 import eu.bakici.imageprogressbar.indicator.ColorFillIndicator;
+import eu.bakici.imageprogressbar.indicator.PathIndicator;
 import eu.bakici.imageprogressbar.indicator.PixelizeIndicator;
 import eu.bakici.imageprogressbar.indicator.ProgressIndicator;
 import eu.bakici.imageprogressbar.indicator.RandomBlockIndicator;
@@ -72,7 +73,7 @@ public class HelloAndroidActivity extends Activity {
         final int itemId = item.getItemId();
         switch (itemId) {
             case R.id.action_indicator_blur:
-                mProgressImageView.setProgressIndicator(new BlurIndicator(this));
+                mProgressImageView.setProgressIndicator(new PathIndicator(null));//new BlurIndicator(this));
                 break;
             case R.id.action_indicator_colorfill:
                 mProgressImageView.setProgressIndicator(new ColorFillIndicator(ColorFillIndicator.PROGRESS_DIRECTION_VERTICAL_TOP_DOWN));

@@ -49,7 +49,7 @@ public abstract class BlockIndicator extends HybridIndicator {
         final int blockSumSize = mPixels;
 
         mBlockSum = numberOfCols * numberOfRows;
-        mBlocks = new ArrayList<Rect>(mBlockSum);
+        mBlocks = new ArrayList<>(mBlockSum);
 
         for (int i = 0; i < mBlockSum; i++) {
             final int col = i % numberOfCols;
