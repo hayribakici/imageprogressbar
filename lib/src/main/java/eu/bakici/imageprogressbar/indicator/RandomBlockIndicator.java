@@ -95,6 +95,7 @@ public class RandomBlockIndicator extends BlockIndicator {
     }
     @Override
     public void cleanUp() {
+        super.cleanUp();
         if (mHandlerThread.isAlive()) {
             mHandlerThread.quit();
         }

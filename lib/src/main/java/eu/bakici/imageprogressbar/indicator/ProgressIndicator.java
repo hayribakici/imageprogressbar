@@ -1,9 +1,9 @@
 package eu.bakici.imageprogressbar.indicator;
 
 import android.graphics.Bitmap;
+import android.support.annotation.CallSuper;
 import android.support.annotation.IntDef;
 import android.support.annotation.IntRange;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.lang.annotation.Retention;
@@ -107,6 +107,7 @@ public abstract class ProgressIndicator {
     /**
      * Should be called when the indication is done.
      */
+    @CallSuper
     public void cleanUp() {
         mCurrentBitmap = null;
     }

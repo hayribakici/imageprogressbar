@@ -19,7 +19,6 @@ import eu.bakici.imageprogressbar.indicator.CircularIndicator;
 import eu.bakici.imageprogressbar.indicator.ColorFillIndicator;
 import eu.bakici.imageprogressbar.indicator.PathIndicator;
 import eu.bakici.imageprogressbar.indicator.PixelizeIndicator;
-import eu.bakici.imageprogressbar.indicator.ProgressIndicator;
 import eu.bakici.imageprogressbar.indicator.RandomBlockIndicator;
 import eu.bakici.imageprogressbar.indicator.SpiralBlockIndicator;
 
@@ -31,20 +30,20 @@ public class HelloAndroidActivity extends Activity {
     private ProgressImageView mProgressImageView;
 
     private SeekBar mSeeker;
-    private ProgressBar mProgressBar;
 
     /**
      * Called when the activity is first created.
-     * @param savedInstanceState If the activity is being re-initialized after 
-     * previously being shut down then this Bundle contains the data it most 
-     * recently supplied in onSaveInstanceState(Bundle). <b>Note: Otherwise it is null.</b>
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                           previously being shut down then this Bundle contains the data it most
+     *                           recently supplied in onSaveInstanceState(Bundle). <b>Note: Otherwise it is null.</b>
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mProgressImageView  = (ProgressImageView) findViewById(R.id.image);
+        mProgressImageView = (ProgressImageView) findViewById(R.id.image);
         mSeeker = (SeekBar) findViewById(R.id.progress_bar);
         mSeeker.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -66,9 +65,9 @@ public class HelloAndroidActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-	// Inflate the menu; this adds items to the action bar if it is present.
-	getMenuInflater().inflate(R.menu.main, menu);
-	return true;
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
     }
 
     @Override
@@ -77,31 +76,75 @@ public class HelloAndroidActivity extends Activity {
         final int itemId = item.getItemId();
         switch (itemId) {
             case R.id.action_indicator_blur:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                } else {
+                    item.setChecked(true);
+                }
                 mProgressImageView.setProgressIndicator(new BlurIndicator(this));
                 break;
             case R.id.action_indicator_colorfill:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                } else {
+                    item.setChecked(true);
+                }
                 mProgressImageView.setProgressIndicator(new ColorFillIndicator(ColorFillIndicator.PROGRESS_DIRECTION_VERTICAL_TOP_DOWN));
                 break;
             case R.id.action_indicator_random_block:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                } else {
+                    item.setChecked(true);
+                }
                 mProgressImageView.setProgressIndicator(new RandomBlockIndicator(BlockIndicator.BLOCK_SIZE_SMALL));
                 break;
             case R.id.action_indicator_spiral:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                } else {
+                    item.setChecked(true);
+                }
                 mProgressImageView.setProgressIndicator(new SpiralBlockIndicator());
                 break;
             case R.id.action_indicator_pixelize:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                } else {
+                    item.setChecked(true);
+                }
                 mProgressImageView.setProgressIndicator(new PixelizeIndicator(this));
                 break;
             case R.id.action_indicator_ciculator:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                } else {
+                    item.setChecked(true);
+                }
                 mProgressImageView.setProgressIndicator(new CircularIndicator());
                 break;
             case R.id.action_indicator_path:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                } else {
+                    item.setChecked(true);
+                }
                 mProgressImageView.setProgressIndicator(new PathIndicator(new LinkedList<Point>()));
                 break;
             case R.id.action_indicator_alpha:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                } else {
+                    item.setChecked(true);
+                }
                 mProgressImageView.setProgressIndicator(new AlphaIndicator());
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
+
 
     private void reset() {
         mProgressImageView.destroy();

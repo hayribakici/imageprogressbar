@@ -1,51 +1,51 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/action_indicator_blur"
+            android:orderInCategory="100"
+            android:showAsAction="never"
+            android:title="@string/action_blur"/>
 
-    <item
-        android:id="@+id/action_indicator_blur"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_blur"/>
+        <item
+            android:id="@+id/action_indicator_random_block"
+            android:orderInCategory="100"
+            android:showAsAction="never"
+            android:title="@string/action_random_block"/>
 
+        <item
+            android:id="@+id/action_indicator_colorfill"
+            android:orderInCategory="100"
+            android:showAsAction="never"
+            android:title="@string/action_color_fill"/>
 
-    <item
-        android:id="@+id/action_indicator_random_block"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_random_block"/>
+        <item
+            android:id="@+id/action_indicator_spiral"
+            android:orderInCategory="100"
+            android:showAsAction="never"
+            android:title="@string/action_spiral"/>
 
-    <item
-        android:id="@+id/action_indicator_colorfill"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_color_fill"/>
+        <item
+            android:id="@+id/action_indicator_pixelize"
+            android:orderInCategory="100"
+            android:showAsAction="never"
+            android:title="@string/action_pixelize"/>
 
-    <item
-        android:id="@+id/action_indicator_spiral"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_spiral"/>
+        <item
+            android:id="@+id/action_indicator_ciculator"
+            android:orderInCategory="100"
+            android:showAsAction="never"
+            android:title="@string/action_circle"/>
 
-    <item
-        android:id="@+id/action_indicator_pixelize"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_pixelize"/>
+        <item
+            android:id="@+id/action_indicator_path"
+            android:orderInCategory="100"
+            android:showAsAction="never"
+            android:title="@string/action_path"/>
 
-    <item
-        android:id="@+id/action_indicator_ciculator"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_circle"/>
-
-    <item
-        android:id="@+id/action_indicator_path"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_path"/>
-
-    <item
-        android:id="@+id/action_indicator_alpha"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_alpha"/>
+        <item
+            android:id="@+id/action_indicator_alpha"
+            android:orderInCategory="100"
+            android:showAsAction="never"
+            android:title="@string/action_alpha"/>
+    </group>
 </menu>
