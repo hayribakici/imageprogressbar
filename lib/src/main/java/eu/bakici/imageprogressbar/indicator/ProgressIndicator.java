@@ -1,8 +1,10 @@
 package eu.bakici.imageprogressbar.indicator;
 
 import android.graphics.Bitmap;
-import android.support.annotation.CallSuper;
 import android.support.annotation.IntDef;
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -48,6 +50,7 @@ public abstract class ProgressIndicator {
     /**
      * The current bitmap the view is displaying.
      */
+    @Nullable
     protected Bitmap mCurrentBitmap;
 
     /**
@@ -55,6 +58,11 @@ public abstract class ProgressIndicator {
      */
     @IndicationProcessingType
     private int mIndicationProcess;
+
+    /**
+     * The bitmap when onPreProgress is called
+     */
+    protected Bitmap mPreBitmap;
 
     /**
      * Standard constructor. Initializes a ProgressIndicator instance.
@@ -82,7 +90,7 @@ public abstract class ProgressIndicator {
      * @param originalBitmap  the original bitmap
      * @param progressPercent the values in percent. Goes from 0 to 100
      */
-    public void onProgress(Bitmap originalBitmap, int progressPercent) {
+    public synchronized void onProgress(Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
         throw new UnsupportedOperationException("onProgress is not implemented");
     }
 
@@ -91,6 +99,7 @@ public abstract class ProgressIndicator {
      *
      * @return the current bitmap.
      */
+    @Nullable
     public Bitmap getCurrentBitmap() {
         return mCurrentBitmap;
     }

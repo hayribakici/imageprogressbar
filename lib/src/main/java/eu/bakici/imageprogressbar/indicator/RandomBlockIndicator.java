@@ -85,6 +85,9 @@ public class RandomBlockIndicator extends BlockIndicator {
     }
 
     private void addColorBlockToBitmap(final Bitmap originalBitmap, final Canvas canvas, final int blockPos) {
+        if (blockPos >= mBlocks.size()) {
+            return;
+        }
         final Rect randomBlock = mBlocks.get(blockPos);
         final Paint paint = new Paint();
         canvas.drawBitmap(mPreBitmap, 0, 0, paint);

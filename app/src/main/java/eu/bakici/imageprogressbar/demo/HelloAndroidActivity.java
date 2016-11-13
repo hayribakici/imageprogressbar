@@ -1,6 +1,7 @@
 package eu.bakici.imageprogressbar.demo;
 
 import android.app.Activity;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -8,7 +9,10 @@ import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 
+import java.util.LinkedList;
+
 import eu.bakici.imageprogressbar.ProgressImageView;
+import eu.bakici.imageprogressbar.indicator.AlphaIndicator;
 import eu.bakici.imageprogressbar.indicator.BlockIndicator;
 import eu.bakici.imageprogressbar.indicator.BlurIndicator;
 import eu.bakici.imageprogressbar.indicator.CircularIndicator;
@@ -73,13 +77,13 @@ public class HelloAndroidActivity extends Activity {
         final int itemId = item.getItemId();
         switch (itemId) {
             case R.id.action_indicator_blur:
-                mProgressImageView.setProgressIndicator(new PathIndicator(null));//new BlurIndicator(this));
+                mProgressImageView.setProgressIndicator(new BlurIndicator(this));
                 break;
             case R.id.action_indicator_colorfill:
                 mProgressImageView.setProgressIndicator(new ColorFillIndicator(ColorFillIndicator.PROGRESS_DIRECTION_VERTICAL_TOP_DOWN));
                 break;
             case R.id.action_indicator_random_block:
-                mProgressImageView.setProgressIndicator(new RandomBlockIndicator(BlockIndicator.BlockSize.EXTRA_SMALL));
+                mProgressImageView.setProgressIndicator(new RandomBlockIndicator(BlockIndicator.BLOCK_SIZE_SMALL));
                 break;
             case R.id.action_indicator_spiral:
                 mProgressImageView.setProgressIndicator(new SpiralBlockIndicator());
@@ -88,8 +92,13 @@ public class HelloAndroidActivity extends Activity {
                 mProgressImageView.setProgressIndicator(new PixelizeIndicator(this));
                 break;
             case R.id.action_indicator_ciculator:
-                mProgressImageView.setProgressIndicator(new CircularIndicator(ProgressIndicator.IndicationProcessingType.SYNC));
+                mProgressImageView.setProgressIndicator(new CircularIndicator());
                 break;
+            case R.id.action_indicator_path:
+                mProgressImageView.setProgressIndicator(new PathIndicator(new LinkedList<Point>()));
+                break;
+            case R.id.action_indicator_alpha:
+                mProgressImageView.setProgressIndicator(new AlphaIndicator());
         }
         return super.onOptionsItemSelected(item);
     }

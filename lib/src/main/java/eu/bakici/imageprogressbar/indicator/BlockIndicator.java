@@ -13,8 +13,6 @@ import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
 public abstract class BlockIndicator extends HybridIndicator {
 
-
-
     @IntDef(value = {
             BLOCK_SIZE_BIG,
             BLOCK_SIZE_MEDIUM,

@@ -6,6 +6,7 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.support.annotation.IntRange;
 
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
@@ -21,8 +22,6 @@ public class ColorFillIndicator extends ProgressIndicator {
 
     private int mProgressDirection;
 
-    private Bitmap mBWBitmap;
-
     public ColorFillIndicator(final int direction) {
         super(SYNC);
         mProgressDirection = direction;
@@ -31,13 +30,13 @@ public class ColorFillIndicator extends ProgressIndicator {
 
     @Override
     public void onPreProgress(final Bitmap originalBitmap) {
-        final Bitmap bw = createBWBitmap(originalBitmap, originalBitmap.getHeight(), originalBitmap.getWidth());
-        mBWBitmap = bw;
+        final Bitmap bw = IndicatorUtils.convertGrayscale(originalBitmap);
+        mPreBitmap = bw;
         mCurrentBitmap = bw;
     }
 
     @Override
-    public void onProgress(final Bitmap originalBitmap, int progressPercent) {
+    public void onProgress(final Bitmap originalBitmap, @IntRange(from = 0, to = 100)int progressPercent) {
 
         final int bitmapHeight = originalBitmap.getHeight();
         final int bitmapWidth = originalBitmap.getWidth();
@@ -75,20 +74,8 @@ public class ColorFillIndicator extends ProgressIndicator {
         final Canvas canvas = new Canvas(output);
         final Paint normalPaint = new Paint();
 
-        canvas.drawBitmap(mBWBitmap, bitmapBWRect, bitmapBWRect, normalPaint);
+        canvas.drawBitmap(mPreBitmap, bitmapBWRect, bitmapBWRect, normalPaint);
         canvas.drawBitmap(originalBitmap, bitmapSourceRect, bitmapSourceRect, normalPaint);
         mCurrentBitmap = output;
     }
-
-    private Bitmap createBWBitmap(final Bitmap source, final int height, final int width) {
-        final Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        final Canvas canvas = new Canvas(output);
-        final Paint paint = new Paint();
-        final ColorMatrix matrix = new ColorMatrix();
-        matrix.setSaturation(0f);
-        paint.setColorFilter(new ColorMatrixColorFilter(matrix));
-        canvas.drawBitmap(source, 0, 0, paint);
-        return output;
-    }
-
 }

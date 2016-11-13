@@ -1,6 +1,7 @@
 package eu.bakici.imageprogressbar.indicator;
 
 import android.graphics.Bitmap;
+import android.support.annotation.IntRange;
 
 public class HybridIndicator extends ProgressIndicator {
 
@@ -10,13 +11,13 @@ public class HybridIndicator extends ProgressIndicator {
     }
 
     @Override
-    public final void onProgress(final Bitmap originalBitmap, final int progressPercent) {
-
+    public final void onProgress(final Bitmap originalBitmap, int progressPercent) {
+        // onProgress(Bitmap, progressPercent, listener) is used
     }
 
 
 
-    public void onProgress(final Bitmap source, int progressPercent, final OnProgressIndicationUpdatedListener listener) {
+    public void onProgress(final Bitmap source, @IntRange(from = 0, to = 100) int progressPercent, final OnProgressIndicationUpdatedListener listener) {
         throw new UnsupportedOperationException("onProgress is not implemented");
     }
 }

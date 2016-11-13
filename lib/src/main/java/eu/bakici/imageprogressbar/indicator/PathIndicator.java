@@ -29,6 +29,11 @@ public class PathIndicator extends ProgressIndicator {
     }
 
     @Override
+    public void onPreProgress(Bitmap originalBitmap) {
+
+    }
+
+    @Override
     public void onProgress(Bitmap source, int progressPercent) {
         Bitmap bitmap = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);

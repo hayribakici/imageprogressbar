@@ -8,17 +8,16 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.Shader;
+import android.support.annotation.IntRange;
 
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
 public class CircularIndicator extends ProgressIndicator {
 
-    private Bitmap mPreBitmap;
-
     private BitmapShader mShader;
 
-    public CircularIndicator(final @IndicationProcessingType int indicationProcess) {
-        super(indicationProcess);
+    public CircularIndicator() {
+        super(SYNC);
     }
 
 
@@ -31,7 +30,7 @@ public class CircularIndicator extends ProgressIndicator {
     }
 
     @Override
-    public void onProgress(final Bitmap source, final int progressPercent) {
+    public void onProgress(final Bitmap source, @IntRange(from = 0, to = 100) int progressPercent) {
         int angle = IndicatorUtils.calcPercent(360, progressPercent);
         Bitmap bitmap = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
