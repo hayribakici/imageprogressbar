@@ -17,7 +17,7 @@ public class PathIndicator extends ProgressIndicator {
     private Path mPath;
 
     public PathIndicator(List<Point> points) {
-        super(IndicationProcessingType.SYNC);
+        super(SYNC);
         mPoints = points;
         mPath = new Path();
         mPaint = new Paint();

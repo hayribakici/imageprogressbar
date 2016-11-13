@@ -24,7 +24,7 @@ public class ColorFillIndicator extends ProgressIndicator {
     private Bitmap mBWBitmap;
 
     public ColorFillIndicator(final int direction) {
-        super(IndicationProcessingType.SYNC);
+        super(SYNC);
         mProgressDirection = direction;
     }
 

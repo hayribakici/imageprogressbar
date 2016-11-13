@@ -16,7 +16,7 @@ public class BlurIndicator extends ProgressIndicator {
     private final Context mContext;
 
     public BlurIndicator(final Context context) {
-        super(IndicationProcessingType.ASYNC);
+        super(ASYNC);
         mContext = context;
     }
 

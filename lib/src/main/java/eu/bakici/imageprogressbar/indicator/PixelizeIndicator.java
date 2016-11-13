@@ -21,7 +21,7 @@ public class PixelizeIndicator extends ProgressIndicator {
     private int mLastProgress;
 
     public PixelizeIndicator(final Context context) {
-        super(IndicationProcessingType.ASYNC);
+        super(ASYNC);
         mContext = context;
     }
 

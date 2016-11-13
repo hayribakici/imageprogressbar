@@ -31,11 +31,7 @@ public class RandomBlockIndicator extends BlockIndicator {
 
 
     public RandomBlockIndicator() {
-        this(BlockSize.MEDIUM);
-    }
-
-    public RandomBlockIndicator(final BlockSize size) {
-        this(toPixels(size));
+        this(BLOCK_SIZE_MEDIUM);
     }
 
     public RandomBlockIndicator(final int pixels) {
@@ -65,8 +61,8 @@ public class RandomBlockIndicator extends BlockIndicator {
             // we need to cover all block positions
             // when mBlockSum is big, we might skip some positions,
             // therefore we are catching up.
-            int d = blockPosOfPercent - mCurrBlockPosOfPercent;
-            mBlockUpdatedHandler.post(new CatchUpBlocksRunnable(d, source, output, canvas, mCurrBlockPosOfPercent, callback));
+            int diffPercent = blockPosOfPercent - mCurrBlockPosOfPercent;
+            mBlockUpdatedHandler.post(new CatchUpBlocksRunnable(diffPercent, source, output, canvas, mCurrBlockPosOfPercent, callback));
             mCurrBlockPosOfPercent = blockPosOfPercent;
             return;
         }
@@ -75,8 +71,8 @@ public class RandomBlockIndicator extends BlockIndicator {
 
         if (mCurrProgressPercent < progressPercent - 1) {
             // we have a rather large progressbar jump
-            final int diff = progressPercent - mCurrProgressPercent;
-            mUIHandler.post(new ProgressJumpRunnable(diff, source, output, canvas, mCurrProgressPercent, callback));
+            final int diffPercent = progressPercent - mCurrProgressPercent;
+            mUIHandler.post(new ProgressJumpRunnable(diffPercent, source, output, canvas, mCurrProgressPercent, callback));
             mCurrProgressPercent = progressPercent;
             return;
         }

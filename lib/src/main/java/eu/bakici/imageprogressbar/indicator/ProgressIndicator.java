@@ -1,6 +1,11 @@
 package eu.bakici.imageprogressbar.indicator;
 
 import android.graphics.Bitmap;
+import android.support.annotation.CallSuper;
+import android.support.annotation.IntDef;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * Base class for Progress indication.
@@ -9,6 +14,36 @@ public abstract class ProgressIndicator {
 
     static final String TAG = ProgressIndicator.class.getSimpleName();
 
+    /**
+     * Type of how the image will be processed.
+     */
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef(value = {
+            SYNC,
+            ASYNC,
+            HYBRID
+    })
+    public @interface IndicationProcessingType {
+    }
+
+    /**
+     * Synchronous processing, the image processing will be done
+     * on the main thread.
+     */
+    public static final int SYNC = 1;
+
+    /**
+     * Ansynchronous processing, the image processing will be done
+     * on a seperate thread (AsyncTask)
+     */
+    public static final int ASYNC = 2;
+
+    /**
+     * A mixture of synchronous and asynchronous. Which means, that
+     * there are calculations that are done in a seperate thread while these
+     * are push to the main thread.
+     */
+    public static final int HYBRID = 3;
 
     /**
      * The current bitmap the view is displaying.
@@ -18,37 +53,42 @@ public abstract class ProgressIndicator {
     /**
      * The type of processing this indicator is running on.
      */
-    private IndicationProcessingType mIndicationProcess;
+    @IndicationProcessingType
+    private int mIndicationProcess;
 
     /**
      * Standard constructor. Initializes a ProgressIndicator instance.
+     *
      * @param indicationProcess the type of processing this indicator should have.
      */
-    public ProgressIndicator(final IndicationProcessingType indicationProcess) {
+    public ProgressIndicator(@IndicationProcessingType int indicationProcess) {
         mIndicationProcess = indicationProcess;
     }
 
     /**
      * Called once at the beginning before the action progress is called. This method
      * allows for instance to do some Bitmap manipulation before the progress starts.
+     *
      * @param originalBitmap the
      */
-    public void onPreProgress(final Bitmap originalBitmap) {
+    public void onPreProgress(Bitmap originalBitmap) {
         throw new UnsupportedOperationException("onPreProgress is not implemented");
     }
 
 
     /**
      * Called when the progress bar is moving.
-     * @param originalBitmap the original bitmap
+     *
+     * @param originalBitmap  the original bitmap
      * @param progressPercent the values in percent. Goes from 0 to 100
      */
-    public void onProgress(final Bitmap originalBitmap, int progressPercent) {
+    public void onProgress(Bitmap originalBitmap, int progressPercent) {
         throw new UnsupportedOperationException("onProgress is not implemented");
     }
 
     /**
      * The current displayed bitmap.
+     *
      * @return the current bitmap.
      */
     public Bitmap getCurrentBitmap() {
@@ -63,27 +103,18 @@ public abstract class ProgressIndicator {
     }
 
     /**
-     *
      * @return The indicator processing type this indicator is running on.
      * @see IndicationProcessingType
      */
-    public IndicationProcessingType getIndicationProcessingType() {
+    @IndicationProcessingType
+    public int getIndicationProcessingType() {
         return mIndicationProcess;
-    }
-
-    /**
-     *
-     */
-    public enum IndicationProcessingType {
-        SYNC,
-        ASYNC,
-        HYBRID
     }
 
     /**
      * Callback interface when
      */
-    public static interface OnProgressIndicationUpdatedListener {
+    public interface OnProgressIndicationUpdatedListener {
         void onProgressIndicationUpdated(final Bitmap bitmap);
     }
 }

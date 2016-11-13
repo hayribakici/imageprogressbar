@@ -6,7 +6,7 @@ public class HybridIndicator extends ProgressIndicator {
 
 
     public HybridIndicator() {
-        super(IndicationProcessingType.HYBRID);
+        super(HYBRID);
     }
 
     @Override

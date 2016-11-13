@@ -149,14 +149,14 @@ public class ProgressImageView extends ImageView {
 
     private void fireOnPreProgress() {
         if (mIndicator != null) {
-            final ProgressIndicator.IndicationProcessingType process = mIndicator.getIndicationProcessingType();
+            final int process = mIndicator.getIndicationProcessingType();
             switch (process) {
-                case HYBRID:
-                case SYNC:
+                case ProgressIndicator.HYBRID:
+                case ProgressIndicator.SYNC:
                     mIndicator.onPreProgress(mOriginalBitmap);
                     setImageBitmap(mIndicator.getCurrentBitmap());
                     break;
-                case ASYNC:
+                case ProgressIndicator.ASYNC:
                     new ProgressImageAsyncTask(mIndicator, this, true).execute(mOriginalBitmap);
                     break;
             }
@@ -166,16 +166,16 @@ public class ProgressImageView extends ImageView {
 
     private void fireOnProgress() {
         if (mIndicator != null) {
-            final ProgressIndicator.IndicationProcessingType process = mIndicator.getIndicationProcessingType();
+            final int process = mIndicator.getIndicationProcessingType();
             switch (process) {
-                case SYNC:
+                case ProgressIndicator.SYNC:
                     mIndicator.onProgress(mOriginalBitmap, getProgressPercent());
                     setImageBitmap(mIndicator.getCurrentBitmap());
                     break;
-                case ASYNC:
+                case ProgressIndicator.ASYNC:
                     new ProgressImageAsyncTask(mIndicator, this, false).execute(mOriginalBitmap);
                     break;
-                case HYBRID:
+                case ProgressIndicator.HYBRID:
                     ((HybridIndicator) mIndicator).onProgress(mOriginalBitmap, getProgressPercent(),
                         new ProgressIndicator.OnProgressIndicationUpdatedListener() {
                             @Override

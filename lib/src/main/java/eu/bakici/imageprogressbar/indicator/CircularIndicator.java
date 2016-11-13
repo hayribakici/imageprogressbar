@@ -17,7 +17,7 @@ public class CircularIndicator extends ProgressIndicator {
 
     private BitmapShader mShader;
 
-    public CircularIndicator(final IndicationProcessingType indicationProcess) {
+    public CircularIndicator(final @IndicationProcessingType int indicationProcess) {
         super(indicationProcess);
     }
 
