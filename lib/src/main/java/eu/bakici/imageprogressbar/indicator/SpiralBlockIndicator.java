@@ -4,6 +4,7 @@ import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -11,72 +12,63 @@ import android.graphics.RectF;
 
 public class SpiralBlockIndicator extends BlockIndicator {
 
-
-    Rect mCenterBlock;
-
     Point center;
+
+
 
     @Override
     protected void onPostBlockInitialization() {
-        final int centerX = mWidth / 2;
-        final int centerY = mHeight / 2;
+        center = getCenterPoint();
+
+        Bitmap bitmap = Bitmap.createBitmap(mPreBitmap.getWidth(), mPreBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        final int numberOfCols = (mWidth / mPixels) + 1;
+        final int numberOfRows = (mHeight / mPixels) + 1;
+        final int numberOfCircles = numberOfCols / 2;
+        final int numberOfDivisions = numberOfRows / 2;
+
+
         for (int i = 0; i < mBlockSum; i++) {
-            Rect block = mBlocks.get(i);
-            if (block.contains(centerX, centerY)) {
-                mCenterBlock = block;
+            final int col = i % numberOfCols;
+            final int row = i / numberOfCols;
+
+            Paint paint = new Paint();
+            paint.setStyle(Paint.Style.STROKE);
+            canvas.drawCircle(center.x, center.y, row * mPixels, paint);
+
+
+
+            if (row > numberOfCircles) {
                 break;
             }
         }
-        center = new Point(centerX, centerY);
-    }
-
-    @Override
-    public void onProgress(final Bitmap source, final int progressPercent, final OnProgressIndicationUpdatedListener callback) {
-        int blockPosOfPercent = IndicatorUtils.calcPercent(mBlockSum, progressPercent);
-        Bitmap bitmap = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-
         Path path = new Path();
+        int lastTop = 0;
+        int lastLeft = 0;
+        int lastRight = center.x;
+        int lastBottom = center.y;
+        for (int i = 0; i < numberOfCols; i++) {
+            int angle = i * (360 / numberOfCols);
+            final int col = i % numberOfCols;
+            int x = (int) (center.x + (col * mPixels) * Math.cos(Math.toRadians(angle)));
+            int y = (int) (center.y + (col * mPixels) * Math.sin(Math.toRadians(angle)));
 
 
-        callback.onProgressIndicationUpdated(bitmap);
-    }
+            canvas.drawLine(center.x, center.y, x, y, new Paint());
+            RectF oval = new RectF(x, y, lastRight, lastBottom);
+            final Paint rectPaint = new Paint();
+            rectPaint.setStyle(Paint.Style.STROKE);
+            canvas.drawRect(oval, rectPaint);
 
-    /**
-     *
-     * @param xStart vector start point
-     * @param yStart
-     * @param xEnd vector end point
-     * @param yEnd
-     * @param ovalRectOUT RectF to store result
-     * @param direction left even number, right odd number.
-     * @return start angle
-     */
-    public static float getSemicircle(float xStart, float yStart, float xEnd,
-                                      float yEnd, RectF ovalRectOUT, int direction) {
 
-        float centerX = xStart + ((xEnd - xStart) / 2);
-        float centerY = yStart + ((yEnd - yStart) / 2);
-
-        double xLen = (xEnd - xStart);
-        double yLen = (yEnd - yStart);
-        float radius = (float) (Math.sqrt(xLen * xLen + yLen * yLen) / 2);
-
-        RectF oval = new RectF((float) (centerX - radius),
-            (float) (centerY - radius), (float) (centerX + radius),
-            (float) (centerY + radius));
-
-        ovalRectOUT.set(oval);
-
-        double radStartAngle = 0;
-        if (direction % 2 == 0) {
-            radStartAngle = Math.atan2(yStart - centerY, xStart - centerX);
-        } else {
-            radStartAngle = Math.atan2(yEnd - centerY, xEnd - centerX);
         }
 
-        return (float) Math.toDegrees(radStartAngle);
-
+        mPreBitmap = bitmap;
+        mCurrentBitmap = bitmap;
     }
-
+    private Point getCenterPoint() {
+        final int centerX = mWidth / 2;
+        final int centerY = mHeight / 2;
+        return new Point(centerX, centerY);
+    }
 }

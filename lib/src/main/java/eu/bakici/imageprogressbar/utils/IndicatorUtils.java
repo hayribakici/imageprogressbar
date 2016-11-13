@@ -26,4 +26,9 @@ public final class IndicatorUtils {
         canvas.drawBitmap(source, 0, 0, paint);
         return output;
     }
+
+    public static Canvas createCanvasFromBitmap(Bitmap source) {
+        Bitmap bitmap = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
+        return new Canvas(bitmap);
+    }
 }

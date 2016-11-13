@@ -2,7 +2,10 @@ package eu.bakici.imageprogressbar.indicator;
 
 import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.support.annotation.IntDef;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,32 +13,54 @@ import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
 public abstract class BlockIndicator extends HybridIndicator {
 
+    @IntDef(value = {
+            BLOCK_SIZE_BIG,
+            BLOCK_SIZE_MEDIUM,
+            BLOCK_SIZE_SMALL,
+            BLOCK_SIZE_EXTRA_SMALL
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface BlockSize {}
 
-    protected static final int BLOCK_SUM_BIG = 60;
-    protected static final int BLOCK_SUM_MEDIUM = 50;
-    protected static final int BLOCK_SUM_SMALL = 30;
-    protected static final int BLOCK_SUM_EXTRA_SMALL = 20;
+    public static final int BLOCK_SIZE_BIG = 60;
+    public static final int BLOCK_SIZE_MEDIUM = 50;
+    public static final int BLOCK_SIZE_SMALL = 30;
+    public static final int BLOCK_SIZE_EXTRA_SMALL = 20;
 
     protected Bitmap mPreBitmap;
 
+    /**
+     * The blocks in rect objects.
+     */
     protected List<Rect> mBlocks;
+    /**
+     * The number of blocks in this bitmap.
+     */
     protected int mBlockSum;
+    /**
+     * The width of the bitmap.
+     */
     protected int mWidth;
+    /**
+     * The height of the bitmap.
+     */
     protected int mHeight;
+    /**
+     * Size of one block.
+     */
     protected int mPixels;
 
 
     public BlockIndicator() {
-        this(BlockSize.MEDIUM);
+        this(BLOCK_SIZE_MEDIUM);
     }
 
-    public BlockIndicator(final BlockSize size) {
-        this(toPixels(size));
-    }
-
-    public BlockIndicator(final int pixels) {
-        super();
-        mPixels = pixels;
+    /**
+     *
+     * @param size size in pixels or predefined {@link BlockSize}
+     */
+    public BlockIndicator(final int size) {
+        mPixels = size;
     }
 
     @Override
@@ -44,22 +69,22 @@ public abstract class BlockIndicator extends HybridIndicator {
         mWidth = originalBitmap.getWidth();
         mHeight = originalBitmap.getHeight();
         // adjusting the number of rows and columns
-        final int numberOfCols = (mWidth / mPixels) + 1;
-        final int numberOfRows = (mHeight / mPixels) + 1;
-        final int blockSumSize = mPixels;
+        int numberOfCols = (mWidth / mPixels) + 1;
+        int numberOfRows = (mHeight / mPixels) + 1;
+        int blockSumSize = mPixels;
 
         mBlockSum = numberOfCols * numberOfRows;
-        mBlocks = new ArrayList<Rect>(mBlockSum);
+        mBlocks = new ArrayList<>(mBlockSum);
 
         for (int i = 0; i < mBlockSum; i++) {
-            final int col = i % numberOfCols;
-            final int row = i / numberOfCols;
+            int col = i % numberOfCols;
+            int row = i / numberOfCols;
 
-            final int left = col * blockSumSize;
-            final int top = row * blockSumSize;
-            final int right = Math.min(left + blockSumSize, mWidth);
-            final int bottom = Math.min(top + blockSumSize, mHeight);
-            final Rect block = new Rect(left, top, right, bottom);
+            int left = col * blockSumSize;
+            int top = row * blockSumSize;
+            int right = Math.min(left + blockSumSize, mWidth);
+            int bottom = Math.min(top + blockSumSize, mHeight);
+            Rect block = new Rect(left, top, right, bottom);
             mBlocks.add(block);
         }
         onPostBlockInitialization();
@@ -69,22 +94,4 @@ public abstract class BlockIndicator extends HybridIndicator {
     protected void onPostBlockInitialization() {
         // in case someone wants to do something after the blocks have been initialized.
     }
-
-    protected static int toPixels(final BlockSize blockSize) {
-        switch (blockSize) {
-            case BIG: return BLOCK_SUM_BIG;
-            case SMALL: return BLOCK_SUM_SMALL;
-            case EXTRA_SMALL: return BLOCK_SUM_EXTRA_SMALL;
-            case MEDIUM:
-            default: return BLOCK_SUM_MEDIUM;
-        }
-    }
-
-    public enum BlockSize {
-        BIG,
-        MEDIUM,
-        SMALL,
-        EXTRA_SMALL
-    }
-
 }
