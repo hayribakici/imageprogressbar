@@ -31,12 +31,6 @@
             android:title="@string/action_circle"/>
 
         <item
-            android:id="@+id/action_indicator_path"
-            android:orderInCategory="100"
-            android:showAsAction="never"
-            android:title="@string/action_path"/>
-
-        <item
             android:id="@+id/action_indicator_alpha"
             android:orderInCategory="100"
             android:showAsAction="never"

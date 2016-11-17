@@ -9,7 +9,6 @@
     <string name="action_color_fill">Colorfiller</string>
     <string name="action_pixelize">Pixelize</string>
     <string name="action_circle">Circulator</string>
-    <string name="action_path">Path</string>
     <string name="action_alpha">Alpha</string>
 
 </resources>

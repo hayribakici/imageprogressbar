@@ -1,14 +1,11 @@
 package eu.bakici.imageprogressbar.demo;
 
 import android.app.Activity;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SeekBar;
-
-import java.util.LinkedList;
 
 import eu.bakici.imageprogressbar.ProgressImageView;
 import eu.bakici.imageprogressbar.indicator.AlphaIndicator;
@@ -16,7 +13,6 @@ import eu.bakici.imageprogressbar.indicator.BlockIndicator;
 import eu.bakici.imageprogressbar.indicator.BlurIndicator;
 import eu.bakici.imageprogressbar.indicator.CircularIndicator;
 import eu.bakici.imageprogressbar.indicator.ColorFillIndicator;
-import eu.bakici.imageprogressbar.indicator.PathIndicator;
 import eu.bakici.imageprogressbar.indicator.PixelizeIndicator;
 import eu.bakici.imageprogressbar.indicator.RandomBlockIndicator;
 
@@ -112,14 +108,6 @@ public class HelloAndroidActivity extends Activity {
                     item.setChecked(true);
                 }
                 mProgressImageView.setProgressIndicator(new CircularIndicator());
-                break;
-            case R.id.action_indicator_path:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
-                mProgressImageView.setProgressIndicator(new PathIndicator(new LinkedList<Point>()));
                 break;
             case R.id.action_indicator_alpha:
                 if (item.isChecked()) {
