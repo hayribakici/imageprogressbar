@@ -2,15 +2,30 @@ package eu.bakici.imageprogressbar.indicator;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.support.annotation.IntDef;
 import android.support.annotation.IntRange;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
 public class ColorFillIndicator extends ProgressIndicator {
+
+    /**
+     * Type of how the image will be processed.
+     */
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef(value = {
+            PROGRESS_DIRECTION_HORIZONTAL_LEFT_RIGHT,
+            PROGRESS_DIRECTION_HORIZONTAL_RIGHT_LEFT,
+            PROGRESS_DIRECTION_VERTICAL_BOTTOM_UP,
+            PROGRESS_DIRECTION_VERTICAL_TOP_DOWN
+    })
+    public @interface ProgressDirection {
+    }
 
     public final static int PROGRESS_DIRECTION_HORIZONTAL_LEFT_RIGHT = 0;
 
@@ -20,9 +35,10 @@ public class ColorFillIndicator extends ProgressIndicator {
 
     public final static int PROGRESS_DIRECTION_VERTICAL_BOTTOM_UP = 3;
 
+    @ProgressDirection
     private int mProgressDirection;
 
-    public ColorFillIndicator(final int direction) {
+    public ColorFillIndicator(@ProgressDirection int direction) {
         super(SYNC);
         mProgressDirection = direction;
     }

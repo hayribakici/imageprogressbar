@@ -83,7 +83,7 @@ public class HelloAndroidActivity extends Activity {
                 } else {
                     item.setChecked(true);
                 }
-                mProgressImageView.setProgressIndicator(new ColorFillIndicator(ColorFillIndicator.PROGRESS_DIRECTION_VERTICAL_TOP_DOWN));
+                mProgressImageView.setProgressIndicator(new ColorFillIndicator(ColorFillIndicator.PROGRESS_DIRECTION_HORIZONTAL_LEFT_RIGHT));
                 break;
             case R.id.action_indicator_random_block:
                 if (item.isChecked()) {
