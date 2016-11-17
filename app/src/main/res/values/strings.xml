@@ -6,7 +6,6 @@
     <string name="action_settings">Settings</string>
     <string name="action_blur">Blur</string>
     <string name="action_random_block">Random block</string>
-    <string name="action_spiral">Spiral</string>
     <string name="action_color_fill">Colorfiller</string>
     <string name="action_pixelize">Pixelize</string>
     <string name="action_circle">Circulator</string>

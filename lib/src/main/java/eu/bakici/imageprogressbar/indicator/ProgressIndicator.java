@@ -109,6 +109,7 @@ public abstract class ProgressIndicator {
      */
     @CallSuper
     public void cleanUp() {
+        mPreBitmap = null;
         mCurrentBitmap = null;
     }
 

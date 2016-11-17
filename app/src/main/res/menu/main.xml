@@ -19,12 +19,6 @@
             android:title="@string/action_color_fill"/>
 
         <item
-            android:id="@+id/action_indicator_spiral"
-            android:orderInCategory="100"
-            android:showAsAction="never"
-            android:title="@string/action_spiral"/>
-
-        <item
             android:id="@+id/action_indicator_pixelize"
             android:orderInCategory="100"
             android:showAsAction="never"

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 
 import java.util.LinkedList;
@@ -20,7 +19,6 @@ import eu.bakici.imageprogressbar.indicator.ColorFillIndicator;
 import eu.bakici.imageprogressbar.indicator.PathIndicator;
 import eu.bakici.imageprogressbar.indicator.PixelizeIndicator;
 import eu.bakici.imageprogressbar.indicator.RandomBlockIndicator;
-import eu.bakici.imageprogressbar.indicator.SpiralBlockIndicator;
 
 
 public class HelloAndroidActivity extends Activity {
@@ -98,14 +96,6 @@ public class HelloAndroidActivity extends Activity {
                     item.setChecked(true);
                 }
                 mProgressImageView.setProgressIndicator(new RandomBlockIndicator(BlockIndicator.BLOCK_SIZE_SMALL));
-                break;
-            case R.id.action_indicator_spiral:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
-                mProgressImageView.setProgressIndicator(new SpiralBlockIndicator());
                 break;
             case R.id.action_indicator_pixelize:
                 if (item.isChecked()) {
