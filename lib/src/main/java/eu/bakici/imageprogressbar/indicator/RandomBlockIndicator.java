@@ -15,10 +15,6 @@ import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
 public class RandomBlockIndicator extends BlockIndicator {
 
-    private static final int CATCH_UP_BLOCKS = 3;
-
-    private static final int CATCH_UP_JUMPING_PERCENT = 4;
-
     private int mCurrProgressPercent = 0;
 
     private int mCurrBlockPosOfPercent = 0;
