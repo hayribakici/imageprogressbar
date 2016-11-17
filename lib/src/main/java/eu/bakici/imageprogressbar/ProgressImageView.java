@@ -177,7 +177,7 @@ public class ProgressImageView extends ImageView {
                     break;
                 case ProgressIndicator.HYBRID:
                     ((HybridIndicator) mIndicator).onProgress(mOriginalBitmap, getProgressPercent(),
-                        new ProgressIndicator.OnProgressIndicationUpdatedListener() {
+                        new HybridIndicator.OnProgressIndicationUpdatedListener() {
                             @Override
                             public void onProgressIndicationUpdated(final Bitmap bitmap) {
                                 setImageBitmap(bitmap);

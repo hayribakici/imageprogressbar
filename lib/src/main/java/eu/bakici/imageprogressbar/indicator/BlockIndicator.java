@@ -11,6 +11,9 @@ import java.util.List;
 
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
+/**
+ * Helper class that slices the image into blocks.
+ */
 public abstract class BlockIndicator extends HybridIndicator {
 
     @IntDef(value = {
@@ -26,8 +29,6 @@ public abstract class BlockIndicator extends HybridIndicator {
     public static final int BLOCK_SIZE_MEDIUM = 50;
     public static final int BLOCK_SIZE_SMALL = 30;
     public static final int BLOCK_SIZE_EXTRA_SMALL = 20;
-
-    protected Bitmap mPreBitmap;
 
     /**
      * The blocks in rect objects.

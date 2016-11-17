@@ -13,13 +13,16 @@ import java.util.Collections;
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
 
+/**
+ * Indicator that fills the image by randomly placing colored blocks of the image.
+ */
 public class RandomBlockIndicator extends BlockIndicator {
 
     private int mCurrProgressPercent = 0;
 
     private int mCurrBlockPosOfPercent = 0;
 
-    protected Handler mUIHandler;
+    private Handler mUIHandler;
 
     private HandlerThread mHandlerThread;
 
@@ -44,7 +47,7 @@ public class RandomBlockIndicator extends BlockIndicator {
     }
 
     @Override
-    public void onProgress(final Bitmap source, final int progressPercent, final OnProgressIndicationUpdatedListener callback) {
+    public void onProgress(final Bitmap originalBitmap, final int progressPercent, final OnProgressIndicationUpdatedListener callback) {
 
         final int height = mHeight;
         final int width = mWidth;
@@ -58,7 +61,7 @@ public class RandomBlockIndicator extends BlockIndicator {
             // when mBlockSum is big, we might skip some positions,
             // therefore we are catching up.
             int diffPercent = blockPosOfPercent - mCurrBlockPosOfPercent;
-            mBlockUpdatedHandler.post(new CatchUpBlocksRunnable(diffPercent, source, output, canvas, mCurrBlockPosOfPercent, callback));
+            mBlockUpdatedHandler.post(new CatchUpBlocksRunnable(diffPercent, originalBitmap, output, canvas, mCurrBlockPosOfPercent, callback));
             mCurrBlockPosOfPercent = blockPosOfPercent;
             return;
         }
@@ -68,13 +71,13 @@ public class RandomBlockIndicator extends BlockIndicator {
         if (mCurrProgressPercent < progressPercent - 1) {
             // we have a rather large progressbar jump
             final int diffPercent = progressPercent - mCurrProgressPercent;
-            mUIHandler.post(new ProgressJumpRunnable(diffPercent, source, output, canvas, mCurrProgressPercent, callback));
+            mUIHandler.post(new ProgressJumpRunnable(diffPercent, originalBitmap, output, canvas, mCurrProgressPercent, callback));
             mCurrProgressPercent = progressPercent;
             return;
         }
         mCurrProgressPercent = progressPercent;
 
-        addColorBlockToBitmap(source, canvas, blockPosOfPercent - 1);
+        addColorBlockToBitmap(originalBitmap, canvas, blockPosOfPercent - 1);
         mPreBitmap.recycle();
         mPreBitmap = output;
         callback.onProgressIndicationUpdated(output);
@@ -111,7 +114,7 @@ public class RandomBlockIndicator extends BlockIndicator {
 
         private final OnProgressIndicationUpdatedListener mListener;
 
-        public ProgressJumpRunnable(int diff, Bitmap source, Bitmap output, Canvas canvas, int curr, OnProgressIndicationUpdatedListener listener) {
+        ProgressJumpRunnable(int diff, Bitmap source, Bitmap output, Canvas canvas, int curr, OnProgressIndicationUpdatedListener listener) {
             mDiff = diff;
             mBitmap = source;
             mOutput = output;
@@ -155,7 +158,7 @@ public class RandomBlockIndicator extends BlockIndicator {
 
         private final OnProgressIndicationUpdatedListener mListener;
 
-        public CatchUpBlocksRunnable(int diff, Bitmap source, Bitmap output, Canvas canvas, int curr, OnProgressIndicationUpdatedListener listener) {
+        CatchUpBlocksRunnable(int diff, Bitmap source, Bitmap output, Canvas canvas, int curr, OnProgressIndicationUpdatedListener listener) {
             mDiff = diff;
             mBitmap = source;
             mOutput = output;

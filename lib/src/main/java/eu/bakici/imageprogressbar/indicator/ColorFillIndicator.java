@@ -27,12 +27,24 @@ public class ColorFillIndicator extends ProgressIndicator {
     public @interface ProgressDirection {
     }
 
+    /**
+     * Lets the progress indication go from left to right.
+     */
     public final static int PROGRESS_DIRECTION_HORIZONTAL_LEFT_RIGHT = 0;
 
+    /**
+     * Lets the progress indication go from right to left.
+     */
     public final static int PROGRESS_DIRECTION_HORIZONTAL_RIGHT_LEFT = 1;
 
+    /**
+     * Lets the progress indication go from top to bottom.
+     */
     public final static int PROGRESS_DIRECTION_VERTICAL_TOP_DOWN = 2;
 
+    /**
+     * Lets the progress indication go from bottom to top.
+     */
     public final static int PROGRESS_DIRECTION_VERTICAL_BOTTOM_UP = 3;
 
     @ProgressDirection

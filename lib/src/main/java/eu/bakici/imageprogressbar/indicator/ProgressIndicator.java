@@ -74,10 +74,11 @@ public abstract class ProgressIndicator {
     }
 
     /**
+     * This method is optional.
      * Called once at the beginning before the action progress is called. This method
      * allows for instance to do some Bitmap manipulation before the progress starts.
      *
-     * @param originalBitmap the
+     * @param originalBitmap the original bitmap.
      */
     public void onPreProgress(Bitmap originalBitmap) {
         throw new UnsupportedOperationException("onPreProgress is not implemented");
@@ -90,9 +91,7 @@ public abstract class ProgressIndicator {
      * @param originalBitmap  the original bitmap
      * @param progressPercent the values in percent. Goes from 0 to 100
      */
-    public synchronized void onProgress(Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
-        throw new UnsupportedOperationException("onProgress is not implemented");
-    }
+    public abstract void onProgress(Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent);
 
     /**
      * The current displayed bitmap.
@@ -119,12 +118,5 @@ public abstract class ProgressIndicator {
     @IndicationProcessingType
     public int getIndicationProcessingType() {
         return mIndicationProcess;
-    }
-
-    /**
-     * Callback interface when
-     */
-    public interface OnProgressIndicationUpdatedListener {
-        void onProgressIndicationUpdated(final Bitmap bitmap);
     }
 }
