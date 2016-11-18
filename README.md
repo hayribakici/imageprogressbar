@@ -1,7 +1,7 @@
 ImageProgressBar
 ================
 
-Android Library of a ProgressBar as an image representation. [Download the latest aar.](https://github.com/hayribakici/imageprogressbar/blob/develop/aar/imageprogressbar-1.0.aar)
+Android Library of a ProgressBar as an image representation. [Download the latest aar.](./aar/imageprogressbar-1.0.aar)
 
 This is a simple extensible android library that allows you to use an image for a loading indication. There are a couple of build-in indicators such as
  * `BlurIndicator`
@@ -21,12 +21,15 @@ This is a simple extensible android library that allows you to use an image for 
 
 A blur-progress Indicator
 
-![Blur Progress Indicator Example](https://github.com/hayribakici/imageprogressbar/blob/develop/assets/blur_1.png "Blur Progress Indicator"){:height="640px" width="360px"}
-![Blur Progress Indicator Example](https://github.com/hayribakici/imageprogressbar/blob/develop/assets/blur_2.png "Blur Progress Indicator"){:height="640px" width="360px"}
+<img src="./assets/blur_1.png" alt="Drawing" style="width: 360px;" alt="Blur Progress Indicator Example"/>
+
+<img src="./assets/blur_2.png" alt="Drawing" style="width: 360px;" alt="Blur Progress Indicator Example"/>
+
 
 A circulation progress indicator
 
-![Circulation Progress Indicator Example](https://github.com/hayribakici/imageprogressbar/blob/develop/assets/circe_1.png "Circulation Progress Indicator"){:height="640px" width="360px"}
+<img src="./assets/circle_1.png"  style="width: 360px;" alt="Circulation Progress Indicator Example"/>
+
 
 #### Bind it in your layout
 
