@@ -125,3 +125,9 @@ public interface OnProgressIndicationUpdatedListener {
     void onProgressIndicationUpdated(final Bitmap bitmap);
 }
 ```
+
+## Changelog
+1.0 initial release
+
+## Licence
+Apache Licence
