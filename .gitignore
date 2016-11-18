@@ -15,7 +15,8 @@ target/
 
 # Gradle files
 .gradle/
-build/
+build
+gradle*
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -28,3 +29,4 @@ proguard/
 
 # IntelliJ
 *.iml
+.idea/
