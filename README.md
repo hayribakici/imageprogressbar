@@ -21,12 +21,12 @@ This is a simple extensible android library that allows you to use an image for 
 
 A blur-progress Indicator
 
-![Blur Progress Indicator Example](https://github.com/hayribakici/imageprogressbar/blob/develop/assets/blur_1.png "Blur Progress Indicator")
-![Blur Progress Indicator Example](https://github.com/hayribakici/imageprogressbar/blob/develop/assets/blur_2.png "Blur Progress Indicator")
+![Blur Progress Indicator Example](https://github.com/hayribakici/imageprogressbar/blob/develop/assets/blur_1.png "Blur Progress Indicator" =250x)
+![Blur Progress Indicator Example](https://github.com/hayribakici/imageprogressbar/blob/develop/assets/blur_2.png "Blur Progress Indicator" =250x)
 
 A circulation progress indicator
 
-![Circulation Progress Indicator Example](https://github.com/hayribakici/imageprogressbar/blob/develop/assets/circe_1.png "Circulation Progress Indicator")
+![Circulation Progress Indicator Example](https://github.com/hayribakici/imageprogressbar/blob/develop/assets/circe_1.png "Circulation Progress Indicator" =250x)
 
 #### Bind it in your layout
 
