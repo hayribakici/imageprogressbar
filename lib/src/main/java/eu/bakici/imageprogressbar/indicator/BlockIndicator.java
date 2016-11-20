@@ -27,30 +27,17 @@ public abstract class BlockIndicator extends HybridIndicator {
     public static final int BLOCK_SIZE_SMALL = 30;
     public static final int BLOCK_SIZE_EXTRA_SMALL = 20;
 
-    protected Bitmap mPreBitmap;
+    protected BlockHelper mBlockHelper;
 
-    /**
-     * The blocks in rect objects.
-     */
-    protected List<Rect> mBlocks;
-    /**
-     * The number of blocks in this bitmap.
-     */
-    protected int mBlockSum;
-    /**
-     * The width of the bitmap.
-     */
-    protected int mWidth;
-    /**
-     * The height of the bitmap.
-     */
-    protected int mHeight;
     /**
      * Size of one block.
      */
     protected int mPixels;
 
 
+    /**
+     * Standard constructor with {@link #BLOCK_SIZE_MEDIUM}
+     */
     public BlockIndicator() {
         this(BLOCK_SIZE_MEDIUM);
     }
@@ -65,28 +52,8 @@ public abstract class BlockIndicator extends HybridIndicator {
 
     @Override
     public void onPreProgress(final Bitmap originalBitmap) {
+        mBlockHelper = new BlockHelper(originalBitmap, mPixels);
         mPreBitmap = IndicatorUtils.convertGrayscale(originalBitmap);
-        mWidth = originalBitmap.getWidth();
-        mHeight = originalBitmap.getHeight();
-        // adjusting the number of rows and columns
-        int numberOfCols = (mWidth / mPixels) + 1;
-        int numberOfRows = (mHeight / mPixels) + 1;
-        int blockSumSize = mPixels;
-
-        mBlockSum = numberOfCols * numberOfRows;
-        mBlocks = new ArrayList<>(mBlockSum);
-
-        for (int i = 0; i < mBlockSum; i++) {
-            int col = i % numberOfCols;
-            int row = i / numberOfCols;
-
-            int left = col * blockSumSize;
-            int top = row * blockSumSize;
-            int right = Math.min(left + blockSumSize, mWidth);
-            int bottom = Math.min(top + blockSumSize, mHeight);
-            Rect block = new Rect(left, top, right, bottom);
-            mBlocks.add(block);
-        }
         onPostBlockInitialization();
         mCurrentBitmap = mPreBitmap;
     }

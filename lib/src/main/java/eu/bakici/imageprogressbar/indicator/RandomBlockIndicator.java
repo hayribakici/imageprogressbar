@@ -9,6 +9,7 @@ import android.os.HandlerThread;
 import android.os.Looper;
 
 import java.util.Collections;
+import java.util.List;
 
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
@@ -31,7 +32,7 @@ public class RandomBlockIndicator extends BlockIndicator {
 
 
     public RandomBlockIndicator() {
-        this(BLOCK_SIZE_MEDIUM);
+        super();
     }
 
     public RandomBlockIndicator(final int pixels) {
@@ -44,18 +45,18 @@ public class RandomBlockIndicator extends BlockIndicator {
 
     @Override
     protected void onPostBlockInitialization() {
-        Collections.shuffle(mBlocks);
+        Collections.shuffle(mBlockHelper.getBlocks());
     }
 
     @Override
     public void onProgress(final Bitmap source, final int progressPercent, final OnProgressIndicationUpdatedListener callback) {
 
-        final int height = mHeight;
-        final int width = mWidth;
+        final int height = source.getHeight();
+        final int width = source.getWidth();
         final Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(output);
 
-        int blockPosOfPercent = IndicatorUtils.calcPercent(mBlockSum, progressPercent) + 1;
+        int blockPosOfPercent = IndicatorUtils.calcPercent(mBlockHelper.getBlockSum(), progressPercent) + 1;
 
         if (blockPosOfPercent - mCurrBlockPosOfPercent > 1) {
             // we need to cover all block positions
@@ -85,10 +86,11 @@ public class RandomBlockIndicator extends BlockIndicator {
     }
 
     private void addColorBlockToBitmap(final Bitmap originalBitmap, final Canvas canvas, final int blockPos) {
-        if (blockPos >= mBlocks.size()) {
+        List<Rect> blocks = mBlockHelper.getBlocks();
+        if (blockPos >= blocks.size()) {
             return;
         }
-        final Rect randomBlock = mBlocks.get(blockPos);
+        final Rect randomBlock = blocks.get(blockPos);
         final Paint paint = new Paint();
         canvas.drawBitmap(mPreBitmap, 0, 0, paint);
         canvas.drawBitmap(originalBitmap, randomBlock, randomBlock, paint);
@@ -129,7 +131,7 @@ public class RandomBlockIndicator extends BlockIndicator {
             synchronized (RandomBlockIndicator.this) {
                 for (int i = 1; i <= mDiff; i++) {
                     final int missingProgressPercent = mCurr + i;
-                    int percent = IndicatorUtils.calcPercent(mBlockSum, missingProgressPercent);
+                    int percent = IndicatorUtils.calcPercent(mBlockHelper.getBlockSum(), missingProgressPercent);
                     addColorBlockToBitmap(mBitmap, mCanvas, percent - 1);
                     mPreBitmap = mOutput;
                     mUIHandler.post(new Runnable() {
