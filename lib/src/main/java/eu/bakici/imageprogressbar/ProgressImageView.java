@@ -39,6 +39,8 @@ public class ProgressImageView extends ImageView {
 
     private final static String BUNDLE_CURRENT_BITMAP = TAG + ".bundle.bitmap";
 
+    private final static String INDICATOR = TAG + "indicator";
+
 
     private Bitmap mOriginalBitmap;
 

@@ -73,14 +73,12 @@ public class ColorFillIndicator extends ProgressIndicator {
 
 
     @Override
-    public void onPreProgress(final Bitmap originalBitmap) {
-        final Bitmap bw = IndicatorUtils.convertGrayscale(originalBitmap);
-        mPreBitmap = bw;
-        mCurrentBitmap = bw;
+    public Bitmap createPreProgressBitmap(final Bitmap originalBitmap) {
+        return IndicatorUtils.convertGrayscale(originalBitmap);
     }
 
     @Override
-    public void onProgress(final Bitmap originalBitmap, @IntRange(from = 0, to = 100)int progressPercent) {
+    public Bitmap createBitmapOnProgress(final Bitmap originalBitmap, @IntRange(from = 0, to = 100)int progressPercent) {
 
         final int bitmapHeight = originalBitmap.getHeight();
         final int bitmapWidth = originalBitmap.getWidth();
@@ -120,6 +118,6 @@ public class ColorFillIndicator extends ProgressIndicator {
 
         canvas.drawBitmap(mPreBitmap, bitmapBWRect, bitmapBWRect, normalPaint);
         canvas.drawBitmap(originalBitmap, bitmapSourceRect, bitmapSourceRect, normalPaint);
-        mCurrentBitmap = output;
+        return output;
     }
 }

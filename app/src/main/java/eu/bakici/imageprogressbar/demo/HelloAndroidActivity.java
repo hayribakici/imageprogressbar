@@ -115,7 +115,7 @@ public class HelloAndroidActivity extends Activity {
                 } else {
                     item.setChecked(true);
                 }
-                mProgressImageView.setProgressIndicator(new PixelizeIndicator(this));
+                mProgressImageView.setProgressIndicator(new PixelizeIndicator());
                 break;
             case R.id.action_indicator_ciculator:
                 if (item.isChecked()) {

@@ -17,6 +17,8 @@ package eu.bakici.imageprogressbar.indicator;
  */
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.CallSuper;
 import android.support.annotation.IntDef;
 import android.support.annotation.IntRange;
@@ -28,7 +30,7 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * Base class for Progress indication.
  */
-public abstract class ProgressIndicator {
+public class ProgressIndicator implements Parcelable {
 
     static final String TAG = ProgressIndicator.class.getSimpleName();
 
@@ -89,6 +91,27 @@ public abstract class ProgressIndicator {
         mIndicationProcess = indicationProcess;
     }
 
+
+    /**
+     * This method is optional. Called once at the beginning before the actual progress is called.
+     * This method allows for instance to do some Bitmap manipulation before the progress starts.
+     * @param originalBitmap the original bitmap.
+     * @return the manipulated bitmap that should be displayed, before the progress starts.
+     */
+    public Bitmap createPreProgressBitmap(Bitmap originalBitmap) {
+        throw new UnsupportedOperationException("onPreProgress is not implemented");
+    }
+
+    /**
+     * Called when the progress bat is moving.
+     * @param originalBitmap the original bitmap.
+     * @param progressPercent the values in percent. Goes from 0 to 100.
+     * @return the manipulated bitmap that should be displayed based on the percentage of the progress bar.
+     */
+    public Bitmap createBitmapOnProgress(Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+        return null;
+    }
+
     /**
      * This method is optional.
      * Called once at the beginning before the action progress is called. This method
@@ -97,7 +120,8 @@ public abstract class ProgressIndicator {
      * @param originalBitmap the original bitmap.
      */
     public void onPreProgress(Bitmap originalBitmap) {
-        throw new UnsupportedOperationException("onPreProgress is not implemented");
+        mPreBitmap = createPreProgressBitmap(originalBitmap);
+        mCurrentBitmap = mPreBitmap;
     }
 
 
@@ -107,7 +131,9 @@ public abstract class ProgressIndicator {
      * @param originalBitmap  the original bitmap
      * @param progressPercent the values in percent. Goes from 0 to 100
      */
-    public abstract void onProgress(Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent);
+    public void onProgress(Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+        mCurrentBitmap = createBitmapOnProgress(originalBitmap, progressPercent);
+    }
 
     /**
      * The current displayed bitmap.
@@ -135,4 +161,36 @@ public abstract class ProgressIndicator {
     public int getIndicationProcessingType() {
         return mIndicationProcess;
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.mCurrentBitmap, flags);
+        dest.writeInt(this.mIndicationProcess);
+        dest.writeParcelable(this.mPreBitmap, flags);
+    }
+
+    @SuppressWarnings("all")
+    protected ProgressIndicator(Parcel in) {
+        this.mCurrentBitmap = in.readParcelable(Bitmap.class.getClassLoader());
+        this.mIndicationProcess = in.readInt();
+        this.mPreBitmap = in.readParcelable(Bitmap.class.getClassLoader());
+    }
+
+    public static final Creator<ProgressIndicator> CREATOR = new Creator<ProgressIndicator>() {
+        @Override
+        public ProgressIndicator createFromParcel(Parcel source) {
+            return new ProgressIndicator(source);
+        }
+
+        @Override
+        public ProgressIndicator[] newArray(int size) {
+            return new ProgressIndicator[size];
+        }
+    };
 }
