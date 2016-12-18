@@ -1,7 +1,7 @@
 ImageProgressBar
 ================
 
-Android Library of a ProgressBar as an image representation. [Download the latest aar.](./aar/imageprogressbar-1.0.aar)
+Android Library of a ProgressBar as an image representation. [Download the latest aar.](./aar/imageprogressbar-1.1.aar)
 
 This is a simple extensible android library that allows you to use an image for a loading indication. There are a couple of build-in indicators such as
  * `BlurIndicator`
@@ -21,7 +21,10 @@ This is a simple extensible android library that allows you to use an image for 
 
 A blur-progress Indicator
 
-<img src="./assets/blur.gif" alt="Drawing" style="width: 360px;" alt="Blur Progress Indicator Example"/>
+<img src="./assets/blur_1.png" alt="Drawing" style="width: 360px;" alt="Blur Progress Indicator Example"/>
+
+<img src="./assets/blur_2.png" alt="Drawing" style="width: 360px;" alt="Blur Progress Indicator Example"/>
+
 
 A circulation progress indicator
 
@@ -123,17 +126,11 @@ public interface OnProgressIndicationUpdatedListener {
 }
 ```
 
-### TODO
- * refactor indicator pattern for better usability
- * restore image when device config is
- changed (e.g. device rotation).
-
-
 ## Known issues
-Blurring issues, when using glide library and BlurIndicator.
+When loading an image with the glide library, the BlurProgressIndicator loads the image in a wrong way.
 
 ## Changelog
-1.1 adds remote image loading with [picasso](https://github.com/square/picasso) or [glide](https://github.com/bumptech/glide)
+  1.1 adds remote image loading with [picasso](https://github.com/square/picasso) or [glide](https://github.com/bumptech/glide)</br>
 1.0 initial release
 
 ## Licence
