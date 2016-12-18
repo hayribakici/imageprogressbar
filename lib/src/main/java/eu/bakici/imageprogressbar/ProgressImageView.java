@@ -44,6 +44,7 @@ public class ProgressImageView extends ImageView {
     private final static String BUNDLE_CURRENT_PROGRESS = TAG + ".bundle.progress";
 
     private final static String BUNDLE_CURRENT_BITMAP = TAG + ".bundle.bitmap";
+    private final static String BUNDLE_CURRENT_INDICATOR = TAG + ".bundle.indicator";
 
 
     private Bitmap originalBitmap;
@@ -51,7 +52,7 @@ public class ProgressImageView extends ImageView {
     private int maximum = 100;
 
     private int progress;
-    private ProgressIndicator inticator;
+    private ProgressIndicator indicator;
     private boolean fromSuper = false;
 
     public ProgressImageView(final Context context) {
@@ -84,6 +85,7 @@ public class ProgressImageView extends ImageView {
     public void setImageDrawable(final Drawable drawable) {
         super.setImageDrawable(drawable);
         if (drawable == null || fromSuper) {
+            // incoming call from the super method. Meaning quit here.
             fromSuper = false;
             return;
         }
@@ -151,12 +153,13 @@ public class ProgressImageView extends ImageView {
     protected void onRestoreInstanceState(final Parcelable state) {
         if (state instanceof Bundle) {
             Bundle bundle = (Bundle) state;
-            final int progressPercent = bundle.getInt(BUNDLE_CURRENT_PROGRESS, 0);
-            setProgress(progressPercent, false);
-            final Bitmap bitmap = bundle.getParcelable(BUNDLE_CURRENT_BITMAP);
-            if (bitmap != null) {
-                superSetImageBitmap(bitmap);
-            }
+            setProgressIndicator((ProgressIndicator) bundle.getParcelable(BUNDLE_CURRENT_INDICATOR));
+            int progressPercent = bundle.getInt(BUNDLE_CURRENT_PROGRESS, 0);
+            setProgress(progressPercent, true);
+//            Bitmap bitmap = bundle.getParcelable(BUNDLE_CURRENT_BITMAP);
+//            if (bitmap != null) {
+//                superSetImageBitmap(bitmap);
+//            }
             super.onRestoreInstanceState(bundle.getParcelable("super_state"));
             return;
         }
@@ -168,9 +171,10 @@ public class ProgressImageView extends ImageView {
         final Bundle bundle = new Bundle();
         bundle.putParcelable("super_state", super.onSaveInstanceState());
         bundle.putInt(BUNDLE_CURRENT_PROGRESS, progress);
-        if (inticator != null) {
-            bundle.putParcelable(BUNDLE_CURRENT_BITMAP, inticator.getCurrentBitmap());
-        }
+        bundle.putParcelable(BUNDLE_CURRENT_INDICATOR, indicator);
+//        if (indicator != null) {
+//            bundle.putParcelable(BUNDLE_CURRENT_BITMAP, indicator.getCurrentBitmap());
+//        }
         return bundle;
     }
 
@@ -185,7 +189,7 @@ public class ProgressImageView extends ImageView {
     }
 
     private void setProgress(final int progress, final boolean silent) {
-        if (inticator == null) {
+        if (indicator == null) {
             return;
         }
         this.progress = progress;
@@ -219,22 +223,22 @@ public class ProgressImageView extends ImageView {
     }
 
     public void setProgressIndicator(final ProgressIndicator progressIndicator) {
-        inticator = progressIndicator;
+        indicator = progressIndicator;
         fireOnPreProgress();
     }
 
 
     private void fireOnPreProgress() {
-        if (inticator != null) {
-            final int process = inticator.getIndicationProcessingType();
+        if (indicator != null) {
+            final int process = indicator.getIndicationProcessingType();
             switch (process) {
                 case ProgressIndicator.HYBRID:
                 case ProgressIndicator.SYNC:
-                    inticator.onPreProgress(originalBitmap);
-                    superSetImageBitmap(inticator.getCurrentBitmap());
+                    indicator.onPreProgress(originalBitmap);
+                    superSetImageBitmap(indicator.getCurrentBitmap());
                     break;
                 case ProgressIndicator.ASYNC:
-                    new ProgressImageAsyncTask(inticator, this, true).execute(originalBitmap);
+                    new ProgressImageAsyncTask(indicator, this, true).execute(originalBitmap);
                     break;
             }
         }
@@ -242,18 +246,18 @@ public class ProgressImageView extends ImageView {
 
 
     private void fireOnProgress() {
-        if (inticator != null) {
-            final int process = inticator.getIndicationProcessingType();
+        if (indicator != null) {
+            final int process = indicator.getIndicationProcessingType();
             switch (process) {
                 case ProgressIndicator.SYNC:
-                    inticator.onProgress(originalBitmap, getProgressPercent());
-                    superSetImageBitmap(inticator.getCurrentBitmap());
+                    indicator.onProgress(originalBitmap, getProgressPercent());
+                    superSetImageBitmap(indicator.getCurrentBitmap());
                     break;
                 case ProgressIndicator.ASYNC:
-                    new ProgressImageAsyncTask(inticator, this, false).execute(originalBitmap);
+                    new ProgressImageAsyncTask(indicator, this, false).execute(originalBitmap);
                     break;
                 case ProgressIndicator.HYBRID:
-                    ((HybridIndicator) inticator).onProgress(originalBitmap, getProgressPercent(),
+                    ((HybridIndicator) indicator).onProgress(originalBitmap, getProgressPercent(),
                             new HybridIndicator.OnProgressIndicationUpdatedListener() {
                                 @Override
                                 public void onProgressIndicationUpdated(final Bitmap bitmap) {
@@ -268,8 +272,8 @@ public class ProgressImageView extends ImageView {
 
 
     public void destroy() {
-        if (inticator != null) {
-            inticator.cleanUp();
+        if (indicator != null) {
+            indicator.cleanUp();
         }
     }
 

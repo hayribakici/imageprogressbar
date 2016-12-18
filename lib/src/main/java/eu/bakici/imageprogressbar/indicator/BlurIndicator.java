@@ -38,23 +38,23 @@ public class BlurIndicator extends ProgressIndicator {
 
     @Override
     public void onPreProgress(final Bitmap originalBitmap) {
-        mCurrentBitmap = Blur.fastblur(mContext, originalBitmap, MAX_RADIUS);
+        currentBitmap = Blur.fastblur(mContext, originalBitmap, MAX_RADIUS);
     }
 
     @Override
     public synchronized void onProgress(final Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
 
         if (progressPercent == 100) {
-            mCurrentBitmap = originalBitmap;
+            currentBitmap = originalBitmap;
         }
         final int radius = MAX_RADIUS - IndicatorUtils.calcPercent(MAX_RADIUS, progressPercent);
         if (radius <= 0) {
             // insanity check
-            mCurrentBitmap = originalBitmap;
+            currentBitmap = originalBitmap;
             return;
         }
         Log.d(TAG, "snapshot = " + radius);
-        mCurrentBitmap = Blur.fastblur(mContext, originalBitmap, radius);
+        currentBitmap = Blur.fastblur(mContext, originalBitmap, radius);
     }
 
 }

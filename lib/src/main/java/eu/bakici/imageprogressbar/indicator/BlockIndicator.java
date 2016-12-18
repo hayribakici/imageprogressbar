@@ -82,7 +82,7 @@ public abstract class BlockIndicator extends HybridIndicator {
 
     @Override
     public void onPreProgress(final Bitmap originalBitmap) {
-        mPreBitmap = IndicatorUtils.convertGrayscale(originalBitmap);
+        preBitmap = IndicatorUtils.convertGrayscale(originalBitmap);
         mWidth = originalBitmap.getWidth();
         mHeight = originalBitmap.getHeight();
         // adjusting the number of rows and columns
@@ -105,7 +105,7 @@ public abstract class BlockIndicator extends HybridIndicator {
             mBlocks.add(block);
         }
         onPostBlockInitialization();
-        mCurrentBitmap = mPreBitmap;
+        currentBitmap = preBitmap;
     }
 
     protected void onPostBlockInitialization() {

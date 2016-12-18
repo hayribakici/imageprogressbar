@@ -17,19 +17,13 @@ package eu.bakici.imageprogressbar.demo;
  */
 
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
+import android.view.View;
 import android.widget.SeekBar;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import eu.bakici.imageprogressbar.ProgressImageView;
 import eu.bakici.imageprogressbar.indicator.AlphaIndicator;
@@ -39,18 +33,19 @@ import eu.bakici.imageprogressbar.indicator.CircularIndicator;
 import eu.bakici.imageprogressbar.indicator.ColorFillIndicator;
 import eu.bakici.imageprogressbar.indicator.PixelizeIndicator;
 import eu.bakici.imageprogressbar.indicator.RandomBlockIndicator;
-import eu.bakici.imageprogressbar.utils.IndicatorUtils;
-
-import static java.lang.System.load;
 
 
 public class HelloAndroidActivity extends Activity {
 
     public static final String TAG = "ImageProgress";
 
-    private ProgressImageView mProgressImageView;
+    private ProgressImageView progressImageView;
 
-    private SeekBar mSeeker;
+    private SeekBar seeker;
+
+
+    private boolean stopSmoother = false;
+    private SmoothProgressRunnable smoothProgressRunnable = new SmoothProgressRunnable(0);
 
     /**
      * Called when the activity is first created.
@@ -63,14 +58,14 @@ public class HelloAndroidActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mProgressImageView = (ProgressImageView) findViewById(R.id.image);
-        mProgressImageView.setImageResource(R.drawable.sidney);
-        mSeeker = (SeekBar) findViewById(R.id.progress_bar);
-        mSeeker.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        progressImageView = (ProgressImageView) findViewById(R.id.image);
+        progressImageView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.sidney));
+        seeker = (SeekBar) findViewById(R.id.progress_bar);
+        seeker.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
                 Log.d(TAG, "position == " + progress);
-                mProgressImageView.setProgress(progress);
+                progressImageView.setProgress(progress);
             }
 
             @Override
@@ -81,8 +76,20 @@ public class HelloAndroidActivity extends Activity {
             public void onStopTrackingTouch(final SeekBar seekBar) {
             }
         });
-
+        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!stopSmoother) {
+                    v.post(smoothProgressRunnable);
+                    stopSmoother = true;
+                } else {
+                    v.removeCallbacks(smoothProgressRunnable);
+                    stopSmoother = false;
+                }
+            }
+        });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -103,7 +110,7 @@ public class HelloAndroidActivity extends Activity {
                 } else {
                     item.setChecked(true);
                 }
-                mProgressImageView.setProgressIndicator(new BlurIndicator(this));
+                progressImageView.setProgressIndicator(new BlurIndicator(this));
                 return true;
             case R.id.action_indicator_colorfill:
                 if (item.isChecked()) {
@@ -111,7 +118,7 @@ public class HelloAndroidActivity extends Activity {
                 } else {
                     item.setChecked(true);
                 }
-                mProgressImageView.setProgressIndicator(new ColorFillIndicator(ColorFillIndicator.PROGRESS_DIRECTION_HORIZONTAL_LEFT_RIGHT));
+                progressImageView.setProgressIndicator(new ColorFillIndicator(ColorFillIndicator.PROGRESS_DIRECTION_HORIZONTAL_LEFT_RIGHT));
                 return true;
             case R.id.action_indicator_random_block:
                 if (item.isChecked()) {
@@ -119,14 +126,15 @@ public class HelloAndroidActivity extends Activity {
                 } else {
                     item.setChecked(true);
                 }
-                mProgressImageView.setProgressIndicator(new RandomBlockIndicator(BlockIndicator.BLOCK_SIZE_SMALL));
-                return true;            case R.id.action_indicator_pixelize:
+                progressImageView.setProgressIndicator(new RandomBlockIndicator(BlockIndicator.BLOCK_SIZE_SMALL));
+                return true;
+            case R.id.action_indicator_pixelize:
                 if (item.isChecked()) {
                     item.setChecked(false);
                 } else {
                     item.setChecked(true);
                 }
-                mProgressImageView.setProgressIndicator(new PixelizeIndicator(this));
+                progressImageView.setProgressIndicator(new PixelizeIndicator(this));
                 return true;
             case R.id.action_indicator_ciculator:
                 if (item.isChecked()) {
@@ -134,7 +142,7 @@ public class HelloAndroidActivity extends Activity {
                 } else {
                     item.setChecked(true);
                 }
-                mProgressImageView.setProgressIndicator(new CircularIndicator());
+                progressImageView.setProgressIndicator(new CircularIndicator());
                 return true;
             case R.id.action_indicator_alpha:
                 if (item.isChecked()) {
@@ -142,7 +150,7 @@ public class HelloAndroidActivity extends Activity {
                 } else {
                     item.setChecked(true);
                 }
-                mProgressImageView.setProgressIndicator(new AlphaIndicator());
+                progressImageView.setProgressIndicator(new AlphaIndicator());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -151,8 +159,34 @@ public class HelloAndroidActivity extends Activity {
 
 
     private void reset() {
-        mProgressImageView.destroy();
-        mSeeker.setProgress(0);
+        progressImageView.destroy();
+        seeker.setProgress(0);
+        smoothProgressRunnable.setProgress(0);
+    }
+
+    private class SmoothProgressRunnable implements Runnable {
+
+        private int progress;
+
+        public SmoothProgressRunnable(int progress) {
+            this.progress = progress;
+        }
+
+        public void setProgress(int progress) {
+            this.progress = progress;
+        }
+
+        @Override
+        public void run() {
+            if (progressImageView == null) {
+                return;
+            }
+            seeker.setProgress(++progress);
+            if (progress >= 100) {
+                return;
+            }
+            progressImageView.postDelayed(this, 200);
+        }
     }
 }
 

@@ -41,7 +41,7 @@ public class PixelizeIndicator extends ProgressIndicator {
 
     @Override
     public void onPreProgress(final Bitmap originalBitmap) {
-        mCurrentBitmap = pixelizeImage(100 / PROGRESS_TO_PIXELIZATION_FACTOR, originalBitmap).getBitmap();
+        currentBitmap = pixelizeImage(100 / PROGRESS_TO_PIXELIZATION_FACTOR, originalBitmap).getBitmap();
     }
 
     @Override
@@ -54,7 +54,7 @@ public class PixelizeIndicator extends ProgressIndicator {
         if ((System.currentTimeMillis() - mLastTime) > TIME_BETWEEN_TASKS) {
             mLastTime = System.currentTimeMillis();
             int progress = 100 - progressPercent;
-            mCurrentBitmap = pixelizeImage(progress / PROGRESS_TO_PIXELIZATION_FACTOR, originalBitmap).getBitmap();
+            currentBitmap = pixelizeImage(progress / PROGRESS_TO_PIXELIZATION_FACTOR, originalBitmap).getBitmap();
         }
 
     }

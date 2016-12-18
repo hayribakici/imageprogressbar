@@ -94,8 +94,8 @@ public class RandomBlockIndicator extends BlockIndicator {
         mCurrProgressPercent = progressPercent;
 
         addColorBlockToBitmap(originalBitmap, canvas, blockPosOfPercent - 1);
-        mPreBitmap.recycle();
-        mPreBitmap = output;
+        preBitmap.recycle();
+        preBitmap = output;
         callback.onProgressIndicationUpdated(output);
     }
 
@@ -105,7 +105,7 @@ public class RandomBlockIndicator extends BlockIndicator {
         }
         final Rect randomBlock = mBlocks.get(blockPos);
         final Paint paint = new Paint();
-        canvas.drawBitmap(mPreBitmap, 0, 0, paint);
+        canvas.drawBitmap(preBitmap, 0, 0, paint);
         canvas.drawBitmap(originalBitmap, randomBlock, randomBlock, paint);
     }
     @Override
@@ -146,7 +146,7 @@ public class RandomBlockIndicator extends BlockIndicator {
                     final int missingProgressPercent = mCurr + i;
                     int percent = IndicatorUtils.calcPercent(mBlockSum, missingProgressPercent);
                     addColorBlockToBitmap(mBitmap, mCanvas, percent - 1);
-                    mPreBitmap = mOutput;
+                    preBitmap = mOutput;
                     mUIHandler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -190,7 +190,7 @@ public class RandomBlockIndicator extends BlockIndicator {
                     final int missingProgressPercent = mCurr + i;
                     addColorBlockToBitmap(mBitmap, mCanvas, missingProgressPercent - 1);
 
-                    mPreBitmap = mOutput;
+                    preBitmap = mOutput;
                     mUIHandler.post(new Runnable() {
                         @Override
                         public void run() {

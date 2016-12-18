@@ -17,6 +17,8 @@ package eu.bakici.imageprogressbar.indicator;
  */
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.CallSuper;
 import android.support.annotation.IntDef;
 import android.support.annotation.IntRange;
@@ -28,7 +30,7 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * Base class for Progress indication.
  */
-public abstract class ProgressIndicator {
+public abstract class ProgressIndicator implements Parcelable {
 
     static final String TAG = ProgressIndicator.class.getSimpleName();
 
@@ -67,18 +69,18 @@ public abstract class ProgressIndicator {
      * The current bitmap the view is displaying.
      */
     @Nullable
-    protected Bitmap mCurrentBitmap;
+    protected Bitmap currentBitmap;
 
     /**
      * The type of processing this indicator is running on.
      */
     @IndicationProcessingType
-    private int mIndicationProcess;
+    private int type;
 
     /**
      * The bitmap when onPreProgress is called
      */
-    protected Bitmap mPreBitmap;
+    protected Bitmap preBitmap;
 
     /**
      * Standard constructor. Initializes a ProgressIndicator instance.
@@ -86,7 +88,13 @@ public abstract class ProgressIndicator {
      * @param indicationProcess the type of processing this indicator should have.
      */
     public ProgressIndicator(@IndicationProcessingType int indicationProcess) {
-        mIndicationProcess = indicationProcess;
+        type = indicationProcess;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected ProgressIndicator(Parcel in) {
+        type = in.readInt();
+        currentBitmap = in.readParcelable(getClass().getClassLoader());
     }
 
     /**
@@ -116,7 +124,7 @@ public abstract class ProgressIndicator {
      */
     @Nullable
     public Bitmap getCurrentBitmap() {
-        return mCurrentBitmap;
+        return currentBitmap;
     }
 
     /**
@@ -124,7 +132,7 @@ public abstract class ProgressIndicator {
      */
     @CallSuper
     public void cleanUp() {
-        mCurrentBitmap = null;
+        currentBitmap = null;
     }
 
     /**
@@ -133,6 +141,17 @@ public abstract class ProgressIndicator {
      */
     @IndicationProcessingType
     public int getIndicationProcessingType() {
-        return mIndicationProcess;
+        return type;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(type);
+        dest.writeParcelable(currentBitmap, 0);
     }
 }
