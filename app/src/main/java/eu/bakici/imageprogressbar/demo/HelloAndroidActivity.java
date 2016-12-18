@@ -17,11 +17,16 @@ package eu.bakici.imageprogressbar.demo;
  */
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SeekBar;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 
 import eu.bakici.imageprogressbar.ProgressImageView;
 import eu.bakici.imageprogressbar.indicator.AlphaIndicator;
@@ -31,6 +36,7 @@ import eu.bakici.imageprogressbar.indicator.CircularIndicator;
 import eu.bakici.imageprogressbar.indicator.ColorFillIndicator;
 import eu.bakici.imageprogressbar.indicator.PixelizeIndicator;
 import eu.bakici.imageprogressbar.indicator.RandomBlockIndicator;
+import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
 
 public class HelloAndroidActivity extends Activity {
@@ -52,8 +58,9 @@ public class HelloAndroidActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         mProgressImageView = (ProgressImageView) findViewById(R.id.image);
+        Glide.with(this).load(R.drawable.sidney).into(mProgressImageView);
+
         mSeeker = (SeekBar) findViewById(R.id.progress_bar);
         mSeeker.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override

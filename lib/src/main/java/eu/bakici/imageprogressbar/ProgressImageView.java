@@ -23,8 +23,12 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import eu.bakici.imageprogressbar.indicator.HybridIndicator;
 import eu.bakici.imageprogressbar.indicator.ProgressIndicator;
@@ -72,10 +76,41 @@ public class ProgressImageView extends ImageView {
     @Override
     public void setImageDrawable(final Drawable drawable) {
         super.setImageDrawable(drawable);
-        if (drawable instanceof BitmapDrawable) {
-            final Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-            initOriginalBitmap(bitmap);
+        if (drawable == null) {
+            return;
         }
+        Bitmap bitmap = extractBitmap(drawable);
+        if (bitmap != null) {
+            initOriginalBitmap(bitmap);
+        } else {
+            throw new IllegalArgumentException("Drawable does not contain bitmap");
+        }
+    }
+
+    @Nullable
+    private Bitmap extractBitmap(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        } else {
+            Class<? extends Drawable> drawableClass = drawable.getClass();
+            try {
+                Method getBitmapMethod = drawableClass.getMethod("getBitmap", null);
+                return (Bitmap) getBitmapMethod.invoke(drawable, null);
+            } catch (NoSuchMethodException e) {
+                return null;
+            } catch (InvocationTargetException e) {
+                return null;
+            } catch (IllegalAccessException e) {
+                return null;
+            }
+        }
+    }
+
+
+
+    @Override
+    public void setImageResource(int resId) {
+        super.setImageResource(resId);
     }
 
     private void initOriginalBitmap(final Bitmap bitmap) {
