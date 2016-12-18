@@ -27,6 +27,22 @@ A circulation progress indicator
 
 <img src="./assets/circle_1.png"  style="width: 360px;" alt="Circulation Progress Indicator Example"/>
 
+#### Get it
+To get it with gradle, you need to add it in your root build.gradle at the end of repositories:
+```groovy
+	allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+```
+And then the dependency
+```groovy
+dependencies {
+		compile 'com.github.hayribakici:imageprogressbar:1.1'
+	}
+```
 
 #### Bind it in your layout
 
@@ -124,7 +140,7 @@ public interface OnProgressIndicationUpdatedListener {
 ```
 
 ## Known issues
-When loading an image with the glide library, the BlurProgressIndicator loads the image in a wrong way.
+  * When loading an image with the glide library, the BlurProgressIndicator loads the image in a wrong way.
 
 ## Changelog
   1.1 adds remote image loading with [picasso](https://github.com/square/picasso) or [glide](https://github.com/bumptech/glide)</br>
