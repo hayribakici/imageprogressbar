@@ -129,7 +129,11 @@ public interface OnProgressIndicationUpdatedListener {
  changed (e.g. device rotation).
 
 
+## Known issues
+Blurring issues, when using glide library and BlurIndicator.
+
 ## Changelog
+1.1 adds remote image loading with [picasso](https://github.com/square/picasso) or [glide](https://github.com/bumptech/glide)
 1.0 initial release
 
 ## Licence
