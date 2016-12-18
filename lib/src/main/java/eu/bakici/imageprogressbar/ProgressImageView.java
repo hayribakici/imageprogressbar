@@ -26,7 +26,6 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.ImageView;
 
 import java.lang.reflect.InvocationTargetException;
@@ -126,19 +125,6 @@ public class ProgressImageView extends ImageView {
     public void setImageResource(int resId) {
         super.setImageResource(resId);
     }
-
-    @Override
-    public void invalidateDrawable(@NonNull Drawable dr) {
-        super.invalidateDrawable(dr);
-        Log.d(TAG, "invalidateDrawable");
-    }
-
-    @Override
-    public void scheduleDrawable(Drawable who, Runnable what, long when) {
-        super.scheduleDrawable(who, what, when);
-        Log.d(TAG, "scheduleDrawable");
-    }
-
 
 
     private void initOriginalBitmap(final Bitmap bitmap) {
