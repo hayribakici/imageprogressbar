@@ -21,10 +21,7 @@ This is a simple extensible android library that allows you to use an image for 
 
 A blur-progress Indicator
 
-<img src="./assets/blur_1.png" alt="Drawing" style="width: 360px;" alt="Blur Progress Indicator Example"/>
-
-<img src="./assets/blur_2.png" alt="Drawing" style="width: 360px;" alt="Blur Progress Indicator Example"/>
-
+<img src="./assets/blur.gif" alt="Drawing" style="width: 360px;" alt="Blur Progress Indicator Example"/>
 
 A circulation progress indicator
 
