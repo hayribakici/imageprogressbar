@@ -17,11 +17,19 @@ package eu.bakici.imageprogressbar.demo;
  */
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.SeekBar;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import eu.bakici.imageprogressbar.ProgressImageView;
 import eu.bakici.imageprogressbar.indicator.AlphaIndicator;
@@ -31,6 +39,9 @@ import eu.bakici.imageprogressbar.indicator.CircularIndicator;
 import eu.bakici.imageprogressbar.indicator.ColorFillIndicator;
 import eu.bakici.imageprogressbar.indicator.PixelizeIndicator;
 import eu.bakici.imageprogressbar.indicator.RandomBlockIndicator;
+import eu.bakici.imageprogressbar.utils.IndicatorUtils;
+
+import static java.lang.System.load;
 
 
 public class HelloAndroidActivity extends Activity {
@@ -52,8 +63,8 @@ public class HelloAndroidActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         mProgressImageView = (ProgressImageView) findViewById(R.id.image);
+        mProgressImageView.setImageResource(R.drawable.sidney);
         mSeeker = (SeekBar) findViewById(R.id.progress_bar);
         mSeeker.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -82,6 +93,7 @@ public class HelloAndroidActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
+        super.onOptionsItemSelected(item);
         reset();
         final int itemId = item.getItemId();
         switch (itemId) {
@@ -92,7 +104,7 @@ public class HelloAndroidActivity extends Activity {
                     item.setChecked(true);
                 }
                 mProgressImageView.setProgressIndicator(new BlurIndicator(this));
-                break;
+                return true;
             case R.id.action_indicator_colorfill:
                 if (item.isChecked()) {
                     item.setChecked(false);
@@ -100,7 +112,7 @@ public class HelloAndroidActivity extends Activity {
                     item.setChecked(true);
                 }
                 mProgressImageView.setProgressIndicator(new ColorFillIndicator(ColorFillIndicator.PROGRESS_DIRECTION_HORIZONTAL_LEFT_RIGHT));
-                break;
+                return true;
             case R.id.action_indicator_random_block:
                 if (item.isChecked()) {
                     item.setChecked(false);
@@ -108,15 +120,14 @@ public class HelloAndroidActivity extends Activity {
                     item.setChecked(true);
                 }
                 mProgressImageView.setProgressIndicator(new RandomBlockIndicator(BlockIndicator.BLOCK_SIZE_SMALL));
-                break;
-            case R.id.action_indicator_pixelize:
+                return true;            case R.id.action_indicator_pixelize:
                 if (item.isChecked()) {
                     item.setChecked(false);
                 } else {
                     item.setChecked(true);
                 }
                 mProgressImageView.setProgressIndicator(new PixelizeIndicator(this));
-                break;
+                return true;
             case R.id.action_indicator_ciculator:
                 if (item.isChecked()) {
                     item.setChecked(false);
@@ -124,7 +135,7 @@ public class HelloAndroidActivity extends Activity {
                     item.setChecked(true);
                 }
                 mProgressImageView.setProgressIndicator(new CircularIndicator());
-                break;
+                return true;
             case R.id.action_indicator_alpha:
                 if (item.isChecked()) {
                     item.setChecked(false);
@@ -132,11 +143,10 @@ public class HelloAndroidActivity extends Activity {
                     item.setChecked(true);
                 }
                 mProgressImageView.setProgressIndicator(new AlphaIndicator());
-                break;
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-        return true;
     }
 
 
