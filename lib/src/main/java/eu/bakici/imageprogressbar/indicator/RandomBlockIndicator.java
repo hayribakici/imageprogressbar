@@ -34,15 +34,15 @@ import eu.bakici.imageprogressbar.utils.IndicatorUtils;
  */
 public class RandomBlockIndicator extends BlockIndicator {
 
-    private int mCurrProgressPercent = 0;
+    private int currProgressPercent = 0;
 
-    private int mCurrBlockPosOfPercent = 0;
+    private int currBlockPosOfPercent = 0;
 
-    private Handler mUIHandler;
+    private Handler uIHandler;
 
-    private HandlerThread mHandlerThread;
+    private HandlerThread handlerThread;
 
-    private Handler mBlockUpdatedHandler;
+    private Handler blockUpdatedHandler;
 
 
     public RandomBlockIndicator() {
@@ -51,68 +51,68 @@ public class RandomBlockIndicator extends BlockIndicator {
 
     public RandomBlockIndicator(final int pixels) {
         super(pixels);
-        mUIHandler = new Handler(Looper.getMainLooper());
-        mHandlerThread = new HandlerThread("jumper", HandlerThread.MIN_PRIORITY);
-        mHandlerThread.start();
-        mBlockUpdatedHandler = new Handler(mHandlerThread.getLooper());
+        uIHandler = new Handler(Looper.getMainLooper());
+        handlerThread = new HandlerThread("jumper", HandlerThread.MIN_PRIORITY);
+        handlerThread.start();
+        blockUpdatedHandler = new Handler(handlerThread.getLooper());
     }
 
     @Override
     protected void onPostBlockInitialization() {
-        Collections.shuffle(mBlocks);
+        Collections.shuffle(blocks);
     }
 
     @Override
     public void onProgress(final Bitmap originalBitmap, final int progressPercent, final OnProgressIndicationUpdatedListener callback) {
 
-        final int height = mHeight;
-        final int width = mWidth;
+        final int height = this.height;
+        final int width = this.width;
         final Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(output);
 
-        int blockPosOfPercent = IndicatorUtils.calcPercent(mBlockSum, progressPercent) + 1;
+        int blockPosOfPercent = IndicatorUtils.calcPercent(blockSum, progressPercent) + 1;
 
-        if (blockPosOfPercent - mCurrBlockPosOfPercent > 1) {
+        if (blockPosOfPercent - currBlockPosOfPercent > 1) {
             // we need to cover all block positions
-            // when mBlockSum is big, we might skip some positions,
+            // when blockSum is big, we might skip some positions,
             // therefore we are catching up.
-            int diffPercent = blockPosOfPercent - mCurrBlockPosOfPercent;
-            mBlockUpdatedHandler.post(new CatchUpBlocksRunnable(diffPercent, originalBitmap, output, canvas, mCurrBlockPosOfPercent, callback));
-            mCurrBlockPosOfPercent = blockPosOfPercent;
+            int diffPercent = blockPosOfPercent - currBlockPosOfPercent;
+            blockUpdatedHandler.post(new CatchUpBlocksRunnable(diffPercent, originalBitmap, output, canvas, currBlockPosOfPercent, callback));
+            currBlockPosOfPercent = blockPosOfPercent;
             return;
         }
 
-        mCurrBlockPosOfPercent = blockPosOfPercent;
+        currBlockPosOfPercent = blockPosOfPercent;
 
-        if (mCurrProgressPercent < progressPercent - 1) {
+        if (currProgressPercent < progressPercent - 1) {
             // we have a rather large progressbar jump
-            final int diffPercent = progressPercent - mCurrProgressPercent;
-            mUIHandler.post(new ProgressJumpRunnable(diffPercent, originalBitmap, output, canvas, mCurrProgressPercent, callback));
-            mCurrProgressPercent = progressPercent;
+            final int diffPercent = progressPercent - currProgressPercent;
+            uIHandler.post(new ProgressJumpRunnable(diffPercent, originalBitmap, output, canvas, currProgressPercent, callback));
+            currProgressPercent = progressPercent;
             return;
         }
-        mCurrProgressPercent = progressPercent;
+        currProgressPercent = progressPercent;
 
         addColorBlockToBitmap(originalBitmap, canvas, blockPosOfPercent - 1);
-        mPreBitmap.recycle();
-        mPreBitmap = output;
+        preBitmap.recycle();
+        preBitmap = output;
         callback.onProgressIndicationUpdated(output);
     }
 
     private void addColorBlockToBitmap(final Bitmap originalBitmap, final Canvas canvas, final int blockPos) {
-        if (blockPos >= mBlocks.size()) {
+        if (blockPos >= blocks.size()) {
             return;
         }
-        final Rect randomBlock = mBlocks.get(blockPos);
+        final Rect randomBlock = blocks.get(blockPos);
         final Paint paint = new Paint();
-        canvas.drawBitmap(mPreBitmap, 0, 0, paint);
+        canvas.drawBitmap(preBitmap, 0, 0, paint);
         canvas.drawBitmap(originalBitmap, randomBlock, randomBlock, paint);
     }
     @Override
     public void cleanUp() {
         super.cleanUp();
-        if (mHandlerThread.isAlive()) {
-            mHandlerThread.quit();
+        if (handlerThread.isAlive()) {
+            handlerThread.quit();
         }
     }
 
@@ -144,10 +144,10 @@ public class RandomBlockIndicator extends BlockIndicator {
             synchronized (RandomBlockIndicator.this) {
                 for (int i = 1; i <= mDiff; i++) {
                     final int missingProgressPercent = mCurr + i;
-                    int percent = IndicatorUtils.calcPercent(mBlockSum, missingProgressPercent);
+                    int percent = IndicatorUtils.calcPercent(blockSum, missingProgressPercent);
                     addColorBlockToBitmap(mBitmap, mCanvas, percent - 1);
-                    mPreBitmap = mOutput;
-                    mUIHandler.post(new Runnable() {
+                    preBitmap = mOutput;
+                    uIHandler.post(new Runnable() {
                         @Override
                         public void run() {
                             mListener.onProgressIndicationUpdated(mOutput);
@@ -190,8 +190,8 @@ public class RandomBlockIndicator extends BlockIndicator {
                     final int missingProgressPercent = mCurr + i;
                     addColorBlockToBitmap(mBitmap, mCanvas, missingProgressPercent - 1);
 
-                    mPreBitmap = mOutput;
-                    mUIHandler.post(new Runnable() {
+                    preBitmap = mOutput;
+                    uIHandler.post(new Runnable() {
                         @Override
                         public void run() {
                             mListener.onProgressIndicationUpdated(mOutput);

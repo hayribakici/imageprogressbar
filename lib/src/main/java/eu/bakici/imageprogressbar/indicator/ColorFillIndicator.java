@@ -64,19 +64,19 @@ public class ColorFillIndicator extends ProgressIndicator {
     public final static int PROGRESS_DIRECTION_VERTICAL_BOTTOM_UP = 3;
 
     @ProgressDirection
-    private int mProgressDirection;
+    private int direction;
 
     public ColorFillIndicator(@ProgressDirection int direction) {
         super(SYNC);
-        mProgressDirection = direction;
+        this.direction = direction;
     }
 
 
     @Override
     public void onPreProgress(final Bitmap originalBitmap) {
         final Bitmap bw = IndicatorUtils.convertGrayscale(originalBitmap);
-        mPreBitmap = bw;
-        mCurrentBitmap = bw;
+        preBitmap = bw;
+        currentBitmap = bw;
     }
 
     @Override
@@ -90,7 +90,7 @@ public class ColorFillIndicator extends ProgressIndicator {
 
         Rect bitmapBWRect;
         Rect bitmapSourceRect;
-        switch (mProgressDirection) {
+        switch (direction) {
             case PROGRESS_DIRECTION_HORIZONTAL_LEFT_RIGHT:
                 bitmapSourceRect = new Rect(0, 0, widthPercent, bitmapHeight);
                 bitmapBWRect = new Rect(widthPercent, 0, bitmapWidth, bitmapHeight);
@@ -118,8 +118,8 @@ public class ColorFillIndicator extends ProgressIndicator {
         final Canvas canvas = new Canvas(output);
         final Paint normalPaint = new Paint();
 
-        canvas.drawBitmap(mPreBitmap, bitmapBWRect, bitmapBWRect, normalPaint);
+        canvas.drawBitmap(preBitmap, bitmapBWRect, bitmapBWRect, normalPaint);
         canvas.drawBitmap(originalBitmap, bitmapSourceRect, bitmapSourceRect, normalPaint);
-        mCurrentBitmap = output;
+        currentBitmap = output;
     }
 }

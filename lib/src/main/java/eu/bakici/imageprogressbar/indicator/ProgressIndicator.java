@@ -67,18 +67,18 @@ public abstract class ProgressIndicator {
      * The current bitmap the view is displaying.
      */
     @Nullable
-    protected Bitmap mCurrentBitmap;
+    protected Bitmap currentBitmap;
 
     /**
      * The type of processing this indicator is running on.
      */
     @IndicationProcessingType
-    private int mIndicationProcess;
+    private int indicationProcess;
 
     /**
      * The bitmap when onPreProgress is called
      */
-    protected Bitmap mPreBitmap;
+    protected Bitmap preBitmap;
 
     /**
      * Standard constructor. Initializes a ProgressIndicator instance.
@@ -86,7 +86,7 @@ public abstract class ProgressIndicator {
      * @param indicationProcess the type of processing this indicator should have.
      */
     public ProgressIndicator(@IndicationProcessingType int indicationProcess) {
-        mIndicationProcess = indicationProcess;
+        this.indicationProcess = indicationProcess;
     }
 
     /**
@@ -116,7 +116,7 @@ public abstract class ProgressIndicator {
      */
     @Nullable
     public Bitmap getCurrentBitmap() {
-        return mCurrentBitmap;
+        return currentBitmap;
     }
 
     /**
@@ -124,7 +124,7 @@ public abstract class ProgressIndicator {
      */
     @CallSuper
     public void cleanUp() {
-        mCurrentBitmap = null;
+        currentBitmap = null;
     }
 
     /**
@@ -133,6 +133,6 @@ public abstract class ProgressIndicator {
      */
     @IndicationProcessingType
     public int getIndicationProcessingType() {
-        return mIndicationProcess;
+        return indicationProcess;
     }
 }

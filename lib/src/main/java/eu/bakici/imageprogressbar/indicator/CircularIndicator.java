@@ -24,37 +24,71 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.Shader;
+import android.support.annotation.IntDef;
 import android.support.annotation.IntRange;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
 public class CircularIndicator extends ProgressIndicator {
 
-    private BitmapShader mShader;
+
+    public static final int CLOCKWISE = 0;
+    public static final int COUNTERCLOCKWISE = 1;
+    private static final int FULL_CIRCLE = 360;
+
+    /**
+     * Type of how the image will be processed.
+     */
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef(value = {
+            CLOCKWISE,
+            COUNTERCLOCKWISE
+    })
+    public @interface Turn {
+
+    }
+
+    private BitmapShader shader;
+    private final int turn;
 
     public CircularIndicator() {
-        super(SYNC);
+        this(CLOCKWISE);
     }
+
+    public CircularIndicator(@Turn int turn) {
+        super(SYNC);
+        this.turn = turn;
+    }
+
 
     @Override
     public void onPreProgress(final Bitmap originalBitmap) {
-        mPreBitmap = IndicatorUtils.convertGrayscale(originalBitmap);
-        mShader = new BitmapShader(originalBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-        mCurrentBitmap = mPreBitmap;
+        preBitmap = IndicatorUtils.convertGrayscale(originalBitmap);
+        shader = new BitmapShader(originalBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+        currentBitmap = preBitmap;
     }
 
     @Override
     public void onProgress(final Bitmap source, @IntRange(from = 0, to = 100) int progressPercent) {
-        int angle = IndicatorUtils.calcPercent(360, progressPercent);
+        int angle = IndicatorUtils.calcPercent(FULL_CIRCLE, progressPercent);
+        if (turn == COUNTERCLOCKWISE) {
+            angle = angle * (-1);
+        }
         Bitmap bitmap = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
-        canvas.drawBitmap(mPreBitmap, 0, 0, new Paint());
-        final RectF arc = new RectF(source.getWidth() * -0.5f, source.getHeight() * -0.5f, source.getWidth() * 1.5f, source.getHeight() * 1.5f);
-        paint.setShader(mShader);
+        canvas.drawBitmap(preBitmap, 0, 0, new Paint());
+        final RectF arc = new RectF(source.getWidth() * -0.5f,
+                source.getHeight() * -0.5f,
+                source.getWidth() * 1.5f,
+                source.getHeight() * 1.5f);
+        paint.setShader(shader);
         canvas.drawArc(arc, 270, angle, true, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
         canvas.drawBitmap(source, 0, 0, paint);
-        mCurrentBitmap = bitmap;
+        currentBitmap = bitmap;
     }
 }

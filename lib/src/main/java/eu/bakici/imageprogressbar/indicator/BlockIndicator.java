@@ -49,23 +49,23 @@ public abstract class BlockIndicator extends HybridIndicator {
     /**
      * The blocks in rect objects.
      */
-    protected List<Rect> mBlocks;
+    protected List<Rect> blocks;
     /**
      * The number of blocks in this bitmap.
      */
-    protected int mBlockSum;
+    protected int blockSum;
     /**
      * The width of the bitmap.
      */
-    protected int mWidth;
+    protected int width;
     /**
      * The height of the bitmap.
      */
-    protected int mHeight;
+    protected int height;
     /**
      * Size of one block.
      */
-    protected int mPixels;
+    protected int pixels;
 
 
     public BlockIndicator() {
@@ -77,35 +77,35 @@ public abstract class BlockIndicator extends HybridIndicator {
      * @param size size in pixels or predefined {@link BlockSize}
      */
     public BlockIndicator(final int size) {
-        mPixels = size;
+        pixels = size;
     }
 
     @Override
     public void onPreProgress(final Bitmap originalBitmap) {
-        mPreBitmap = IndicatorUtils.convertGrayscale(originalBitmap);
-        mWidth = originalBitmap.getWidth();
-        mHeight = originalBitmap.getHeight();
+        preBitmap = IndicatorUtils.convertGrayscale(originalBitmap);
+        width = originalBitmap.getWidth();
+        height = originalBitmap.getHeight();
         // adjusting the number of rows and columns
-        int numberOfCols = (mWidth / mPixels) + 1;
-        int numberOfRows = (mHeight / mPixels) + 1;
-        int blockSumSize = mPixels;
+        int numberOfCols = (width / pixels) + 1;
+        int numberOfRows = (height / pixels) + 1;
+        int blockSumSize = pixels;
 
-        mBlockSum = numberOfCols * numberOfRows;
-        mBlocks = new ArrayList<>(mBlockSum);
+        blockSum = numberOfCols * numberOfRows;
+        blocks = new ArrayList<>(blockSum);
 
-        for (int i = 0; i < mBlockSum; i++) {
+        for (int i = 0; i < blockSum; i++) {
             int col = i % numberOfCols;
             int row = i / numberOfCols;
 
             int left = col * blockSumSize;
             int top = row * blockSumSize;
-            int right = Math.min(left + blockSumSize, mWidth);
-            int bottom = Math.min(top + blockSumSize, mHeight);
+            int right = Math.min(left + blockSumSize, width);
+            int bottom = Math.min(top + blockSumSize, height);
             Rect block = new Rect(left, top, right, bottom);
-            mBlocks.add(block);
+            blocks.add(block);
         }
         onPostBlockInitialization();
-        mCurrentBitmap = mPreBitmap;
+        currentBitmap = preBitmap;
     }
 
     protected void onPostBlockInitialization() {

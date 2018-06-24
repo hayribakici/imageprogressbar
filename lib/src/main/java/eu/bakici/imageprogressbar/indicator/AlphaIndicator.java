@@ -37,8 +37,8 @@ public class AlphaIndicator extends ProgressIndicator {
 
     @Override
     public void onPreProgress(Bitmap originalBitmap) {
-        mPreBitmap = IndicatorUtils.convertGrayscale(originalBitmap);
-        mCurrentBitmap = mPreBitmap;
+        preBitmap = IndicatorUtils.convertGrayscale(originalBitmap);
+        currentBitmap = preBitmap;
     }
 
     @Override
@@ -47,8 +47,8 @@ public class AlphaIndicator extends ProgressIndicator {
         Canvas canvas = new Canvas(output);
         Paint alphaPaint = new Paint();
         alphaPaint.setAlpha(IndicatorUtils.calcPercent(MAX_ALPHA, progressPercent));
-        canvas.drawBitmap(mPreBitmap, 0, 0, new Paint());
+        canvas.drawBitmap(preBitmap, 0, 0, new Paint());
         canvas.drawBitmap(originalBitmap, 0,0, alphaPaint);
-        mCurrentBitmap = output;
+        currentBitmap = output;
     }
 }
