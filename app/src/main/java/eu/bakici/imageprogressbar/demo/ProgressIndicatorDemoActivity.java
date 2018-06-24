@@ -29,6 +29,7 @@ import com.squareup.picasso.Picasso;
 import eu.bakici.imageprogressbar.ProgressImageView;
 import eu.bakici.imageprogressbar.indicator.AlphaIndicator;
 import eu.bakici.imageprogressbar.indicator.BlockIndicator;
+import eu.bakici.imageprogressbar.indicator.BlockPathIndicator;
 import eu.bakici.imageprogressbar.indicator.BlurIndicator;
 import eu.bakici.imageprogressbar.indicator.CircularIndicator;
 import eu.bakici.imageprogressbar.indicator.ColorFillIndicator;
@@ -99,55 +100,43 @@ public class ProgressIndicatorDemoActivity extends Activity {
         final int itemId = item.getItemId();
         switch (itemId) {
             case R.id.action_indicator_blur:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
+                checkItem(item);
                 progressImageView.setProgressIndicator(new BlurIndicator(this));
                 return true;
             case R.id.action_indicator_colorfill:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
+                checkItem(item);
                 progressImageView.setProgressIndicator(new ColorFillIndicator(ColorFillIndicator.PROGRESS_DIRECTION_HORIZONTAL_LEFT_RIGHT));
                 return true;
             case R.id.action_indicator_random_block:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
+                checkItem(item);
                 progressImageView.setProgressIndicator(new RandomBlockIndicator(BlockIndicator.BLOCK_SIZE_SMALL));
                 return true;
             case R.id.action_indicator_pixelize:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
+                checkItem(item);
                 progressImageView.setProgressIndicator(new PixelizeIndicator(this));
                 return true;
             case R.id.action_indicator_ciculator:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
+                checkItem(item);
                 progressImageView.setProgressIndicator(new CircularIndicator());
                 return true;
             case R.id.action_indicator_alpha:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
+                checkItem(item);
                 progressImageView.setProgressIndicator(new AlphaIndicator());
+                return true;
+            case R.id.action_indicator_block_path:
+                checkItem(item);
+                progressImageView.setProgressIndicator(new BlockPathIndicator());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void checkItem(MenuItem item) {
+        if (item.isChecked()) {
+            item.setChecked(false);
+        } else {
+            item.setChecked(true);
         }
     }
 

@@ -17,6 +17,8 @@ package eu.bakici.imageprogressbar.indicator;
  */
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.IntDef;
 
@@ -106,9 +108,21 @@ public abstract class BlockIndicator extends HybridIndicator {
         }
         onPostBlockInitialization();
         currentBitmap = preBitmap;
+        maxValue = blockSum;
     }
 
     protected void onPostBlockInitialization() {
         // in case someone wants to do something after the blocks have been initialized.
+    }
+
+    @Override
+    protected void fillBitmap(final Bitmap originalBitmap, final Canvas canvas, final int blockPos) {
+        if (blockPos >= blocks.size()) {
+            return;
+        }
+        final Rect randomBlock = blocks.get(blockPos);
+        final Paint paint = new Paint();
+        canvas.drawBitmap(preBitmap, 0, 0, paint);
+        canvas.drawBitmap(originalBitmap, randomBlock, randomBlock, paint);
     }
 }

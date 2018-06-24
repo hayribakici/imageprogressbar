@@ -33,6 +33,7 @@ public class BlurIndicator extends ProgressIndicator {
     public BlurIndicator(final Context context) {
         super(ASYNC);
         this.context = context;
+        this.maxValue = MAX_RADIUS;
     }
 
     @Override
@@ -46,7 +47,7 @@ public class BlurIndicator extends ProgressIndicator {
         if (progressPercent == 100) {
             currentBitmap = originalBitmap;
         }
-        final int radius = MAX_RADIUS - IndicatorUtils.calcPercent(MAX_RADIUS, progressPercent);
+        final int radius = maxValue - IndicatorUtils.calcPercent(maxValue, progressPercent);
         if (radius <= 0) {
             // insanity check
             currentBitmap = originalBitmap;

@@ -81,12 +81,18 @@ public abstract class ProgressIndicator {
     protected Bitmap preBitmap;
 
     /**
+     * An arbitrary number to calculate the percentage from.
+     */
+    protected int maxValue;
+
+    /**
      * Standard constructor. Initializes a ProgressIndicator instance.
      *
      * @param indicationProcess the type of processing this indicator should have.
      */
     public ProgressIndicator(@IndicationProcessingType int indicationProcess) {
         this.indicationProcess = indicationProcess;
+        maxValue = 100;
     }
 
     /**

@@ -1,4 +1,5 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools">
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/action_indicator_blur"
@@ -35,5 +36,11 @@
             android:orderInCategory="100"
             android:showAsAction="never"
             android:title="@string/action_alpha"/>
+
+        <item android:id="@+id/action_indicator_block_path"
+              android:orderInCategory="100"
+              android:showAsAction="never"
+              android:title="Block Path"
+              tools:ignore="HardcodedText"/>
     </group>
 </menu>
