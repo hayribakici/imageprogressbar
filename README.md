@@ -1,7 +1,24 @@
 ImageProgressBar
 ================
 
-Android Library of a ProgressBar as an image representation. [Download the latest aar.](./aar/imageprogressbar-1.1.aar)
+Android Library of a ProgressBar as an image representation. 
+
+#### Get it or [Download the latest aar.](./aar/imageprogressbar-1.2.aar)
+To get it with gradle, you need to add it in your root build.gradle at the end of repositories:
+```groovy
+	allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+```
+And then the dependency
+```groovy
+dependencies {
+		compile 'com.github.hayribakici:imageprogressbar:1.2'
+	}
+```
 
 This is a simple extensible android library that allows you to use an image for a loading indication. There are a couple of build-in indicators such as
  * `BlurIndicator`
@@ -27,22 +44,6 @@ A circulation progress indicator
 
 <img src="./assets/circle_1.png"  style="width: 360px;" alt="Circulation Progress Indicator Example"/>
 
-#### Get it
-To get it with gradle, you need to add it in your root build.gradle at the end of repositories:
-```groovy
-	allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
-	}
-```
-And then the dependency
-```groovy
-dependencies {
-		compile 'com.github.hayribakici:imageprogressbar:1.1'
-	}
-```
 
 #### Bind it in your layout
 
@@ -139,10 +140,9 @@ public interface OnProgressIndicationUpdatedListener {
 }
 ```
 
-## Known issues
-  * When loading an image with the glide library, the BlurProgressIndicator loads the image in a wrong way.
 
 ## Changelog
+1.2 adds counterclockwise turning in the `CircularIndicator`
   1.1 adds remote image loading with [picasso](https://github.com/square/picasso) or [glide](https://github.com/bumptech/glide)</br>
 1.0 initial release
 
