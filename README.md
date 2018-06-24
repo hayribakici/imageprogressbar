@@ -140,9 +140,9 @@ public interface OnProgressIndicationUpdatedListener {
 
 
 ## Changelog
-1.2 adds counterclockwise turning in the `CircularIndicator`
-  1.1 adds remote image loading with [picasso](https://github.com/square/picasso) or [glide](https://github.com/bumptech/glide)</br>
-1.0 initial release
+- 1.2 adds counterclockwise turning in the `CircularIndicator`
+- 1.1 adds remote image loading with [picasso](https://github.com/square/picasso) or [glide](https://github.com/bumptech/glide)</br>
+- 1.0 initial release
 
 ## Licence
 Apache Licence
