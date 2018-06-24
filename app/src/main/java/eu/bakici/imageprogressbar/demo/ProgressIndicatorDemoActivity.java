@@ -50,7 +50,7 @@ public class ProgressIndicatorDemoActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         progressImageView = findViewById(R.id.image);
-        progressImageView.setImageResource(R.drawable.sidney);
+        progressImageView.setImageResource(R.drawable.cobble);
         seekBar = findViewById(R.id.progress_bar);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -70,8 +70,9 @@ public class ProgressIndicatorDemoActivity extends Activity {
         radioImageLoader.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
+                reset();
                 if (checkedId == R.id.radio_asset) {
-                    progressImageView.setImageResource(R.drawable.sidney);
+                    progressImageView.setImageResource(R.drawable.cobble);
                 } else if (checkedId == R.id.radio_glide) {
                     Glide.with(ProgressIndicatorDemoActivity.this)
                             .load("https://upload.wikimedia.org/wikipedia/commons/f/f5/Western_BACE_Cobblebank.jpg")
@@ -96,7 +97,8 @@ public class ProgressIndicatorDemoActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         super.onOptionsItemSelected(item);
-        reset();
+        progressImageView.destroy();
+        seekBar.setProgress(-1);
         final int itemId = item.getItemId();
         switch (itemId) {
             case R.id.action_indicator_blur:
@@ -142,14 +144,14 @@ public class ProgressIndicatorDemoActivity extends Activity {
 
 
     private void reset() {
-        progressImageView.destroy();
-        seekBar.setProgress(0);
+        progressImageView.reset();
+        seekBar.setProgress(-1);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        reset();
+        progressImageView.destroy();
         Picasso.with(this).shutdown();
         Glide.get(this).clearMemory();
     }

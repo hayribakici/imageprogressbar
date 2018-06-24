@@ -34,7 +34,7 @@ import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 public class HybridIndicator extends ProgressIndicator {
 
     private int currProgressPercent = 0;
-    private int currBlockPosOfPercent = 0;
+    private int currPercent = 0;
     private Handler uIHandler;
     private HandlerThread handlerThread;
     private Handler blockUpdatedHandler;
@@ -58,41 +58,41 @@ public class HybridIndicator extends ProgressIndicator {
      * Same as {@link #onProgress(Bitmap, int)} but with a callback.
      *
      * @param originalBitmap  the original bitmap.
-     * @param progressPercent the percentage of the current progress.
+     * @param progress the percentage of the current progress.
      * @param listener        a callback listener for filling the gaps between progress jumps.
      */
     public void onProgress(final Bitmap originalBitmap,
-                           @IntRange(from = 0, to = 100) int progressPercent,
+                           @IntRange(from = 0, to = 100) int progress,
                            final OnProgressIndicationUpdatedListener listener) {
         final int height = originalBitmap.getHeight();
         final int width = originalBitmap.getWidth();
         final Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(output);
 
-        int blockPosOfPercent = IndicatorUtils.calcPercent(maxValue, progressPercent) + 1;
+        int percent = IndicatorUtils.calcPercent(maxValue, progress) + 1;
 
-        if (blockPosOfPercent - currBlockPosOfPercent > 1) {
+        if (percent - currPercent > 1) {
             // we need to cover all block positions
             // when blockSum is big, we might skip some positions,
             // therefore we are catching up.
-            int diffPercent = blockPosOfPercent - currBlockPosOfPercent;
-            blockUpdatedHandler.post(new CatchUpBlocksRunnable(diffPercent, originalBitmap, output, canvas, currBlockPosOfPercent, listener));
-            currBlockPosOfPercent = blockPosOfPercent;
+            int diffPercent = percent - currPercent;
+            blockUpdatedHandler.post(new CatchUpRunnable(diffPercent, originalBitmap, output, canvas, currPercent, listener));
+            currPercent = percent;
             return;
         }
 
-        currBlockPosOfPercent = blockPosOfPercent;
+        currPercent = percent;
 
-        if (currProgressPercent < progressPercent - 1) {
+        if (currProgressPercent < progress - 1) {
             // we have a rather large progressbar jump
-            final int diffPercent = progressPercent - currProgressPercent;
+            final int diffPercent = progress - currProgressPercent;
             uIHandler.post(new ProgressJumpRunnable(diffPercent, originalBitmap, output, canvas, currProgressPercent, listener));
-            currProgressPercent = progressPercent;
+            currProgressPercent = progress;
             return;
         }
-        currProgressPercent = progressPercent;
+        currProgressPercent = progress;
 
-        fillBitmap(originalBitmap, canvas, blockPosOfPercent - 1);
+        fillBitmap(originalBitmap, canvas, percent - 1);
         preBitmap.recycle();
         preBitmap = output;
         listener.onProgressIndicationUpdated(output);
@@ -149,11 +149,27 @@ public class HybridIndicator extends ProgressIndicator {
                     });
                 }
             }
+            /*
+            ynchronized (HybridIndicator.this) {
+                for (int i = 1; i <= diff; i++) {
+                    final int missingProgressPercent = current + i;
+                    fillBitmap(source, canvas, missingProgressPercent - 1);
+
+                    preBitmap = output;
+                    uIHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mListener.onProgressIndicationUpdated(output);
+                        }
+                    });
+
+                }
+             */
         }
     }
 
 
-    private class CatchUpBlocksRunnable implements Runnable {
+    private class CatchUpRunnable implements Runnable {
 
         private final int diff;
         private final Canvas canvas;
@@ -163,12 +179,12 @@ public class HybridIndicator extends ProgressIndicator {
 
         private final OnProgressIndicationUpdatedListener mListener;
 
-        CatchUpBlocksRunnable(int diff,
-                              Bitmap source,
-                              Bitmap output,
-                              Canvas canvas,
-                              int curr,
-                              OnProgressIndicationUpdatedListener listener) {
+        CatchUpRunnable(int diff,
+                        Bitmap source,
+                        Bitmap output,
+                        Canvas canvas,
+                        int curr,
+                        OnProgressIndicationUpdatedListener listener) {
             this.diff = diff;
             this.source = source;
             this.output = output;

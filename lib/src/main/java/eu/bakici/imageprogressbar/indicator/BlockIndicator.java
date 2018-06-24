@@ -25,6 +25,7 @@ import android.support.annotation.IntDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
@@ -33,6 +34,8 @@ import eu.bakici.imageprogressbar.utils.IndicatorUtils;
  * Helper class that slices the image into blocks.
  */
 public abstract class BlockIndicator extends HybridIndicator {
+
+
 
     @IntDef(value = {
             BLOCK_SIZE_BIG,
@@ -43,10 +46,10 @@ public abstract class BlockIndicator extends HybridIndicator {
     @Retention(RetentionPolicy.SOURCE)
     public @interface BlockSize {}
 
-    public static final int BLOCK_SIZE_BIG = 60;
+    public static final int BLOCK_SIZE_BIG = 75;
     public static final int BLOCK_SIZE_MEDIUM = 50;
     public static final int BLOCK_SIZE_SMALL = 30;
-    public static final int BLOCK_SIZE_EXTRA_SMALL = 20;
+    public static final int BLOCK_SIZE_EXTRA_SMALL = 15;
 
     /**
      * The blocks in rect objects.
@@ -69,6 +72,16 @@ public abstract class BlockIndicator extends HybridIndicator {
      */
     protected int pixels;
 
+    /**
+     * Number of columns the bitmap is sliced.
+     */
+    protected int numberOfCols;
+
+    /**
+     * Number of rows the bitmap is sliced.
+     */
+    protected int numberOfRows;
+
 
     public BlockIndicator() {
         this(BLOCK_SIZE_MEDIUM);
@@ -88,23 +101,34 @@ public abstract class BlockIndicator extends HybridIndicator {
         width = originalBitmap.getWidth();
         height = originalBitmap.getHeight();
         // adjusting the number of rows and columns
-        int numberOfCols = (width / pixels) + 1;
-        int numberOfRows = (height / pixels) + 1;
-        int blockSumSize = pixels;
+        numberOfCols = (width / pixels) + 1;
+        numberOfRows = (height / pixels) + 1;
+        int blockSize = pixels;
 
         blockSum = numberOfCols * numberOfRows;
         blocks = new ArrayList<>(blockSum);
 
+        int pivotIndex;
         for (int i = 0; i < blockSum; i++) {
             int col = i % numberOfCols;
             int row = i / numberOfCols;
+            int mod = row % 2;
 
-            int left = col * blockSumSize;
-            int top = row * blockSumSize;
-            int right = Math.min(left + blockSumSize, width);
-            int bottom = Math.min(top + blockSumSize, height);
+            int left = col * blockSize;
+            int top = row * blockSize;
+            int right = Math.min(left + blockSize, width);
+            int bottom = Math.min(top + blockSize, height);
             Rect block = new Rect(left, top, right, bottom);
-            blocks.add(block);
+            int index;
+            if (mod == 0) {
+                index = i;
+            } else {
+                pivotIndex = i;
+                index = i - pivotIndex + (numberOfCols - 1) - col;
+            }
+
+
+            blocks.add(index, block);
         }
         onPostBlockInitialization();
         currentBitmap = preBitmap;
@@ -120,9 +144,9 @@ public abstract class BlockIndicator extends HybridIndicator {
         if (blockPos >= blocks.size()) {
             return;
         }
-        final Rect randomBlock = blocks.get(blockPos);
+        final Rect block = blocks.get(blockPos);
         final Paint paint = new Paint();
         canvas.drawBitmap(preBitmap, 0, 0, paint);
-        canvas.drawBitmap(originalBitmap, randomBlock, randomBlock, paint);
+        canvas.drawBitmap(originalBitmap, block, block, paint);
     }
 }

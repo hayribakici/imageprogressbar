@@ -261,6 +261,15 @@ public class ProgressImageView extends ImageView {
         }
     }
 
+    /**
+     * Resets the imageView to its initial state.
+     */
+    public void reset() {
+        if (indicator != null) {
+            fireOnPreProgress();
+        }
+    }
+
     private static class ProgressImageAsyncTask extends AsyncTask<Bitmap, Void, Bitmap> {
 
 

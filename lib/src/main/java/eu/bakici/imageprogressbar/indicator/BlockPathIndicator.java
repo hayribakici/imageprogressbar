@@ -5,5 +5,13 @@ package eu.bakici.imageprogressbar.indicator;
  */
 public class BlockPathIndicator extends BlockIndicator {
 
+    public BlockPathIndicator() {
+        super();
+    }
+
+    public BlockPathIndicator(int size) {
+        super(size);
+    }
+
 
 }
