@@ -3,7 +3,7 @@ package eu.bakici.imageprogressbar.indicator;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.support.annotation.IntRange;
+import androidx.annotation.IntRange;
 import android.util.Log;
 
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;

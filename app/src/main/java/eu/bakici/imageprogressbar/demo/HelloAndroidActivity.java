@@ -1,12 +1,12 @@
 package eu.bakici.imageprogressbar.demo;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 
 import java.util.LinkedList;
@@ -21,6 +21,7 @@ import eu.bakici.imageprogressbar.indicator.PathIndicator;
 import eu.bakici.imageprogressbar.indicator.PixelizeIndicator;
 import eu.bakici.imageprogressbar.indicator.RandomBlockIndicator;
 import eu.bakici.imageprogressbar.indicator.SpiralBlockIndicator;
+import eu.bakici.imageprogressbar.indicator.WaveIndicator;
 
 
 public class HelloAndroidActivity extends Activity {
@@ -70,74 +71,47 @@ public class HelloAndroidActivity extends Activity {
         return true;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         reset();
+        item.setChecked(!item.isChecked());
+
         final int itemId = item.getItemId();
         switch (itemId) {
             case R.id.action_indicator_blur:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
+
                 mProgressImageView.setProgressIndicator(new BlurIndicator(this));
                 break;
             case R.id.action_indicator_colorfill:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
+
                 mProgressImageView.setProgressIndicator(new ColorFillIndicator(ColorFillIndicator.PROGRESS_DIRECTION_VERTICAL_TOP_DOWN));
                 break;
             case R.id.action_indicator_random_block:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
+
                 mProgressImageView.setProgressIndicator(new RandomBlockIndicator(BlockIndicator.BLOCK_SIZE_SMALL));
                 break;
             case R.id.action_indicator_spiral:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
+
                 mProgressImageView.setProgressIndicator(new SpiralBlockIndicator());
                 break;
             case R.id.action_indicator_pixelize:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
+
                 mProgressImageView.setProgressIndicator(new PixelizeIndicator(this));
                 break;
             case R.id.action_indicator_ciculator:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
                 mProgressImageView.setProgressIndicator(new CircularIndicator());
                 break;
             case R.id.action_indicator_path:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
+
                 mProgressImageView.setProgressIndicator(new PathIndicator(new LinkedList<Point>()));
                 break;
             case R.id.action_indicator_alpha:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
+                item.setChecked(!item.isChecked());
                 mProgressImageView.setProgressIndicator(new AlphaIndicator());
+                break;
+            case R.id.action_indicator_wave:
+                mProgressImageView.setProgressIndicator(new WaveIndicator(this));
                 break;
             default:
                 return super.onOptionsItemSelected(item);

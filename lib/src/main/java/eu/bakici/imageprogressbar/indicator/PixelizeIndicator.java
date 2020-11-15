@@ -3,7 +3,7 @@ package eu.bakici.imageprogressbar.indicator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.support.annotation.IntRange;
+import androidx.annotation.IntRange;
 
 public class PixelizeIndicator extends ProgressIndicator {
 

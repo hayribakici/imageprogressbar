@@ -12,5 +12,6 @@
     <string name="action_circle">Circulator</string>
     <string name="action_path">Path</string>
     <string name="action_alpha">Alpha</string>
+    <string name="action_wave">Wave</string>
 
 </resources>

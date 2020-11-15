@@ -1,13 +1,11 @@
 package eu.bakici.imageprogressbar.indicator;
 
 import android.graphics.Bitmap;
-import android.graphics.Rect;
-import android.support.annotation.IntDef;
+
+import androidx.annotation.IntDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
-import java.util.List;
 
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 

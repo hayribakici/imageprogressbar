@@ -8,7 +8,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.Shader;
-import android.support.annotation.IntRange;
+import androidx.annotation.IntRange;
 
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 

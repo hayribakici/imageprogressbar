@@ -1,7 +1,7 @@
 package eu.bakici.imageprogressbar.indicator;
 
 import android.graphics.Bitmap;
-import android.support.annotation.IntRange;
+import androidx.annotation.IntRange;
 
 public class HybridIndicator extends ProgressIndicator {
 
