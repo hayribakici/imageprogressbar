@@ -16,6 +16,7 @@ package eu.bakici.imageprogressbar.demo;
  * limitations under the License.
  */
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -34,6 +35,7 @@ import eu.bakici.imageprogressbar.indicator.CircularIndicator;
 import eu.bakici.imageprogressbar.indicator.ColorFillIndicator;
 import eu.bakici.imageprogressbar.indicator.PixelizeIndicator;
 import eu.bakici.imageprogressbar.indicator.RandomBlockIndicator;
+import eu.bakici.imageprogressbar.indicator.RandomStripeIndicator;
 
 
 public class ProgressIndicatorDemoActivity extends Activity {
@@ -69,6 +71,7 @@ public class ProgressIndicatorDemoActivity extends Activity {
         radioImageLoader.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
+                seekBar.setProgress(0);
                 if (checkedId == R.id.radio_asset) {
                     progressImageView.setImageResource(R.drawable.sidney);
                 } else if (checkedId == R.id.radio_glide) {
@@ -92,59 +95,34 @@ public class ProgressIndicatorDemoActivity extends Activity {
         return true;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         super.onOptionsItemSelected(item);
         reset();
         final int itemId = item.getItemId();
+        item.setChecked(!item.isChecked());
         switch (itemId) {
             case R.id.action_indicator_blur:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
                 progressImageView.setProgressIndicator(new BlurIndicator(this));
                 return true;
             case R.id.action_indicator_colorfill:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
                 progressImageView.setProgressIndicator(new ColorFillIndicator(ColorFillIndicator.PROGRESS_DIRECTION_HORIZONTAL_LEFT_RIGHT));
                 return true;
             case R.id.action_indicator_random_block:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
                 progressImageView.setProgressIndicator(new RandomBlockIndicator(BlockIndicator.BLOCK_SIZE_SMALL));
                 return true;
             case R.id.action_indicator_pixelize:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
                 progressImageView.setProgressIndicator(new PixelizeIndicator(this));
                 return true;
             case R.id.action_indicator_ciculator:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
                 progressImageView.setProgressIndicator(new CircularIndicator());
                 return true;
             case R.id.action_indicator_alpha:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
                 progressImageView.setProgressIndicator(new AlphaIndicator());
+                return true;
+            case R.id.action_indicator_stripe:
+                progressImageView.setProgressIndicator(new RandomStripeIndicator(RandomStripeIndicator.LEVEL_THIN));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

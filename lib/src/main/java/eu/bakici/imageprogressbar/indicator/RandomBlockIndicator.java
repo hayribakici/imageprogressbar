@@ -20,9 +20,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
 
 import java.util.Collections;
 
@@ -38,12 +35,6 @@ public class RandomBlockIndicator extends BlockIndicator {
 
     private int currBlockPosOfPercent = 0;
 
-    private Handler uIHandler;
-
-    private HandlerThread handlerThread;
-
-    private Handler blockUpdatedHandler;
-
 
     public RandomBlockIndicator() {
         this(BLOCK_SIZE_MEDIUM);
@@ -51,10 +42,6 @@ public class RandomBlockIndicator extends BlockIndicator {
 
     public RandomBlockIndicator(final int pixels) {
         super(pixels);
-        uIHandler = new Handler(Looper.getMainLooper());
-        handlerThread = new HandlerThread("jumper", HandlerThread.MIN_PRIORITY);
-        handlerThread.start();
-        blockUpdatedHandler = new Handler(handlerThread.getLooper());
     }
 
     @Override

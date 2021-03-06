@@ -24,6 +24,8 @@ import android.graphics.Paint;
 
 public final class IndicatorUtils {
 
+    public static String HYBRID_THREAD_NAME = "jumper";
+
     public static int calcPercent(final int value, final int percent) {
         final float p = (float) percent;
         final float p100 = p / 100;

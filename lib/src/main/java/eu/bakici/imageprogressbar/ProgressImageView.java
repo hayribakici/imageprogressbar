@@ -263,36 +263,36 @@ public class ProgressImageView extends ImageView implements OnPostExecuteListene
     static class ProgressImageAsyncTask extends AsyncTask<Bitmap, Void, Bitmap> {
 
 
-        private final ProgressIndicator mIndicator;
-        private final int mProgressPercent;
-        private final boolean mIsPreProgress;
-        private final OnPostExecuteListener<Bitmap> mListener;
+        private final ProgressIndicator indicator;
+        private final int progressPercent;
+        private final boolean isPreProgress;
+        private final OnPostExecuteListener<Bitmap> listener;
 
         public ProgressImageAsyncTask(final ProgressIndicator indicator,
                                       final int progressPercent,
                                       boolean preProgress,
                                       OnPostExecuteListener<Bitmap> listener) {
-            mIndicator = indicator;
-            mProgressPercent = progressPercent;
-            mIsPreProgress = preProgress;
-            mListener = listener;
+            this.indicator = indicator;
+            this.progressPercent = progressPercent;
+            this.isPreProgress = preProgress;
+            this.listener = listener;
 
         }
 
         @Override
         protected Bitmap doInBackground(final Bitmap... params) {
             final Bitmap bitmap = params[0];
-            if (mIsPreProgress) {
-                mIndicator.onPreProgress(bitmap);
+            if (isPreProgress) {
+                indicator.onPreProgress(bitmap);
             } else {
-                mIndicator.onProgress(bitmap, mProgressPercent);
+                indicator.onProgress(bitmap, progressPercent);
             }
-            return mIndicator.getCurrentBitmap();
+            return indicator.getCurrentBitmap();
         }
 
         @Override
         protected final void onPostExecute(final Bitmap bitmap) {
-            mListener.onPostExecute(bitmap);
+            listener.onPostExecute(bitmap);
         }
 
 

@@ -31,7 +31,7 @@ import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 public class ColorFillIndicator extends ProgressIndicator {
 
     /**
-     * Type of how the image will be processed.
+     * Type of how the image will be filled.
      */
     @Retention(RetentionPolicy.SOURCE)
     @IntDef(value = {

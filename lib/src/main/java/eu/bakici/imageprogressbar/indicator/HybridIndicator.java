@@ -17,7 +17,12 @@ package eu.bakici.imageprogressbar.indicator;
  */
 
 import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 import android.support.annotation.IntRange;
+
+import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
 /**
  * An indicator that is a synchronous indicator at its core, but does now and then gives asynchronous
@@ -27,9 +32,18 @@ import android.support.annotation.IntRange;
  */
 public class HybridIndicator extends ProgressIndicator {
 
+    protected Handler uIHandler;
+
+    protected HandlerThread handlerThread;
+
+    protected Handler blockUpdatedHandler;
 
     public HybridIndicator() {
         super(HYBRID);
+        uIHandler = new Handler(Looper.getMainLooper());
+        handlerThread = new HandlerThread(IndicatorUtils.HYBRID_THREAD_NAME, HandlerThread.MIN_PRIORITY);
+        handlerThread.start();
+        blockUpdatedHandler = new Handler(handlerThread.getLooper());
     }
 
     @Override

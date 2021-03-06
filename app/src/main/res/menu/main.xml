@@ -28,12 +28,17 @@
             android:id="@+id/action_indicator_ciculator"
             android:orderInCategory="100"
             android:showAsAction="never"
-            android:title="@string/action_circle"/>
+            android:title="@string/action_circle" />
 
         <item
             android:id="@+id/action_indicator_alpha"
             android:orderInCategory="100"
             android:showAsAction="never"
-            android:title="@string/action_alpha"/>
+            android:title="@string/action_alpha" />
+        <item
+            android:id="@+id/action_indicator_stripe"
+            android:orderInCategory="100"
+            android:showAsAction="never"
+            android:title="@string/action_line" />
     </group>
 </menu>
