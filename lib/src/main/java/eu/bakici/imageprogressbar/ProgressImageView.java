@@ -44,6 +44,8 @@ public class ProgressImageView extends ImageView implements OnPostExecuteListene
 
     private final static String BUNDLE_CURRENT_BITMAP = TAG + ".bundle.bitmap";
 
+    private final static String INDICATOR = TAG + "indicator";
+
 
     private Bitmap originalBitmap;
 

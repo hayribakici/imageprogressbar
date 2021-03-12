@@ -48,7 +48,7 @@ public class HybridIndicator extends ProgressIndicator {
     }
 
     @Override
-    public final void onProgress(final @NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+    public final Bitmap createBitmapOnProgress(final @NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
         throw new UnsupportedOperationException("onProgress is not implemented");
         // onProgress(Bitmap, progressPercent, listener) is used
     }

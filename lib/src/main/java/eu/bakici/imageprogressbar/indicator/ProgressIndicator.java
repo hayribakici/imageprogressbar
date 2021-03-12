@@ -17,6 +17,8 @@ package eu.bakici.imageprogressbar.indicator;
  */
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.CallSuper;
 import android.support.annotation.IntDef;
 import android.support.annotation.IntRange;
@@ -29,7 +31,7 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * Adapter class for Progress indication.
  */
-public abstract class ProgressIndicator {
+public class ProgressIndicator implements Parcelable {
 
     static final String TAG = ProgressIndicator.class.getSimpleName();
 
@@ -70,11 +72,17 @@ public abstract class ProgressIndicator {
     @Nullable
     protected Bitmap currentBitmap;
 
-    /**
-     * The type of processing this indicator is running on.
-     */
-    @IndicationProcessingType
-    private final int indicationProcess;
+    public static final Creator<ProgressIndicator> CREATOR = new Creator<ProgressIndicator>() {
+        @Override
+        public ProgressIndicator createFromParcel(Parcel source) {
+            return new ProgressIndicator(source);
+        }
+
+        @Override
+        public ProgressIndicator[] newArray(int size) {
+            return new ProgressIndicator[size];
+        }
+    };
 
     /**
      * The bitmap when onPreProgress is called
@@ -91,24 +99,39 @@ public abstract class ProgressIndicator {
     }
 
     /**
-     * This method is optional.
-     * Called once at the beginning before the action progress is called. This method
-     * allows for instance to do some Bitmap manipulation before the progress starts.
+     * The type of processing this indicator is running on.
+     */
+    @IndicationProcessingType
+    private int indicationProcess;
+
+    @SuppressWarnings("all")
+    protected ProgressIndicator(Parcel in) {
+        this.currentBitmap = in.readParcelable(Bitmap.class.getClassLoader());
+        this.indicationProcess = in.readInt();
+        this.preBitmap = in.readParcelable(Bitmap.class.getClassLoader());
+    }
+
+    /**
+     * This method is optional. Called once at the beginning before the actual progress is called.
+     * This method allows for instance to do some Bitmap manipulation before the progress starts.
      *
      * @param originalBitmap the original bitmap.
+     * @return the manipulated bitmap that should be displayed, before the progress starts.
      */
-    public void onPreProgress(@NonNull Bitmap originalBitmap) {
+    public Bitmap createPreProgressBitmap(Bitmap originalBitmap) {
         throw new UnsupportedOperationException("onPreProgress is not implemented");
     }
 
-
     /**
-     * Called when the progress bar is moving.
+     * Called when the progress bat is moving.
      *
-     * @param originalBitmap  the original bitmap
-     * @param progressPercent the values in percent. Goes from 0 to 100
+     * @param originalBitmap  the original bitmap.
+     * @param progressPercent the values in percent. Goes from 0 to 100.
+     * @return the manipulated bitmap that should be displayed based on the percentage of the progress bar.
      */
-    public abstract void onProgress(@NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent);
+    public Bitmap createBitmapOnProgress(Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+        return null;
+    }
 
     /**
      * The current displayed bitmap.
@@ -135,5 +158,39 @@ public abstract class ProgressIndicator {
     @IndicationProcessingType
     public int getIndicationProcessingType() {
         return indicationProcess;
+    }
+
+    /**
+     * This method is optional.
+     * Called once at the beginning before the action progress is called. This method
+     * allows for instance to do some Bitmap manipulation before the progress starts.
+     *
+     * @param originalBitmap the original bitmap.
+     */
+    public void onPreProgress(@NonNull Bitmap originalBitmap) {
+        preBitmap = createPreProgressBitmap(originalBitmap);
+        currentBitmap = preBitmap;
+    }
+
+    /**
+     * Called when the progress bar is moving.
+     *
+     * @param originalBitmap  the original bitmap
+     * @param progressPercent the values in percent. Goes from 0 to 100
+     */
+    public void onProgress(@NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+        currentBitmap = createBitmapOnProgress(originalBitmap, progressPercent);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.currentBitmap, flags);
+        dest.writeInt(this.indicationProcess);
+        dest.writeParcelable(this.preBitmap, flags);
     }
 }

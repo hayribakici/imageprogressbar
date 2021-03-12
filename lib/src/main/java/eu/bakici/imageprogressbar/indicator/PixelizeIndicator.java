@@ -16,37 +16,34 @@ package eu.bakici.imageprogressbar.indicator;
  * limitations under the License.
  */
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.IntRange;
-import android.support.annotation.NonNull;
 
 public class PixelizeIndicator extends ProgressIndicator {
 
     private static final long TIME_BETWEEN_TASKS = 400;
     private static final float PROGRESS_TO_PIXELIZATION_FACTOR = 3000.f;
 
+
     private final Context context;
     private long lastTime;
 
-    public PixelizeIndicator(final Context context) {
-        this(context, ASYNC);
+    public PixelizeIndicator() {
+        this(ASYNC);
     }
 
-    public PixelizeIndicator(Context context,
-                             @IntRange(from = SYNC, to = ASYNC) @IndicationProcessingType int processingType) {
+    public PixelizeIndicator(@IntRange(from = SYNC, to = ASYNC) @IndicationProcessingType int processingType) {
         super(processingType);
         this.context = context;
     }
 
     @Override
-    public void onPreProgress(final @NonNull Bitmap originalBitmap) {
-        currentBitmap = pixelizeImage(100 / PROGRESS_TO_PIXELIZATION_FACTOR, originalBitmap).getBitmap();
+    public Bitmap createPreProgressBitmap(Bitmap originalBitmap) {
+        return pixelizeImage(100 / PROGRESS_TO_PIXELIZATION_FACTOR, originalBitmap);
     }
 
     @Override
-    public void onProgress(final @NonNull Bitmap originalBitmap, final int progressPercent) {
+    public Bitmap createBitmapOnProgress(Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
         /**
          * Checks if enough time has elapsed since the last pixelization call was invoked.
          * This prevents too many pixelization processes from being invoked at the same time
@@ -55,16 +52,16 @@ public class PixelizeIndicator extends ProgressIndicator {
         if ((System.currentTimeMillis() - lastTime) > TIME_BETWEEN_TASKS) {
             lastTime = System.currentTimeMillis();
             int progress = 100 - progressPercent;
-            currentBitmap = pixelizeImage(progress / PROGRESS_TO_PIXELIZATION_FACTOR, originalBitmap).getBitmap();
+            return pixelizeImage(progress / PROGRESS_TO_PIXELIZATION_FACTOR, originalBitmap);
         }
-
+        return mCurrentBitmap;
     }
 
     /**
      * Selects either the custom pixelization algorithm that sets and gets bitmap
      * pixels manually or the one that uses built-in bitmap operations.
      */
-    public BitmapDrawable pixelizeImage(float pixelizationFactor, Bitmap bitmap) {
+    public Bitmap pixelizeImage(float pixelizationFactor, Bitmap bitmap) {
         return builtInPixelization(pixelizationFactor, bitmap);
     }
 
@@ -76,7 +73,7 @@ public class PixelizeIndicator extends ProgressIndicator {
      * original size (while setting the filter flag to false), the same effect can be
      * achieved with much better performance.
      */
-    public BitmapDrawable builtInPixelization(float pixelizationFactor, Bitmap bitmap) {
+    public Bitmap builtInPixelization(float pixelizationFactor, Bitmap bitmap) {
 
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
@@ -108,7 +105,6 @@ public class PixelizeIndicator extends ProgressIndicator {
          * it uses internal optimizations to fit the ImageView.
          * */
 
-        Bitmap upscaled = Bitmap.createScaledBitmap(pixelatedBitmap, width, height, false);
-        return new BitmapDrawable(context.getResources(), upscaled);
+        return Bitmap.createScaledBitmap(pixelatedBitmap, width, height, false);
     }
 }

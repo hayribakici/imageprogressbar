@@ -51,7 +51,7 @@ public class RandomBlockIndicator extends BlockIndicator {
     }
 
     @Override
-    public void onProgress(final @NonNull Bitmap originalBitmap, final int progressPercent, final OnProgressIndicationUpdatedListener callback) {
+    public Bitmap createBitmapOnProgress(final @NonNull Bitmap originalBitmap, final int progressPercent, final OnProgressIndicationUpdatedListener callback) {
 
         final int height = this.height;
         final int width = this.width;
@@ -67,7 +67,7 @@ public class RandomBlockIndicator extends BlockIndicator {
             int diffPercent = blockPosOfPercent - currBlockPosOfPercent;
             blockUpdatedHandler.post(new CatchUpBlocksRunnable(diffPercent, originalBitmap, output, canvas, currBlockPosOfPercent, callback));
             currBlockPosOfPercent = blockPosOfPercent;
-            return;
+            return null;
         }
 
         currBlockPosOfPercent = blockPosOfPercent;
@@ -77,7 +77,7 @@ public class RandomBlockIndicator extends BlockIndicator {
             final int diffPercent = progressPercent - currProgressPercent;
             uIHandler.post(new ProgressJumpRunnable(diffPercent, originalBitmap, output, canvas, currProgressPercent, callback));
             currProgressPercent = progressPercent;
-            return;
+            return null;
         }
         currProgressPercent = progressPercent;
 
@@ -85,6 +85,7 @@ public class RandomBlockIndicator extends BlockIndicator {
         preBitmap.recycle();
         preBitmap = output;
         callback.onProgressIndicationUpdated(output);
+        return null;
     }
 
     private void addColorBlockToBitmap(final Bitmap originalBitmap, final Canvas canvas, final int blockPos) {
