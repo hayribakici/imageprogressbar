@@ -50,19 +50,18 @@ public class RandomStripeIndicator extends HybridIndicator {
     }
 
     @Override
-    public void onPreProgress(@NonNull Bitmap originalBitmap) {
-        preBitmap = IndicatorUtils.convertGrayscale(originalBitmap);
-        currentBitmap = preBitmap;
+    public Bitmap getPreProgressBitmap(@NonNull Bitmap originalBitmap) {
 
         int width = originalBitmap.getWidth();
         for (int i = 0; i < width + thickness; i += thickness) {
             stripes.add(new FlaggedRect(Math.min(i, width), 0, Math.min(i + thickness, width), originalBitmap.getHeight()));
         }
         Collections.shuffle(stripes);
+        return IndicatorUtils.convertGrayscale(originalBitmap);
     }
 
     @Override
-    public void onProgress(@NonNull Bitmap originalBitmap, int progressPercent, final OnProgressIndicationUpdatedListener callback) {
+    public Bitmap getBitmapOnProgress(@NonNull Bitmap originalBitmap, int progressPercent, final OnProgressIndicationUpdatedListener callback) {
 
         int stripeCount = stripes.size();
 
@@ -89,7 +88,7 @@ public class RandomStripeIndicator extends HybridIndicator {
 //
 //            }
             prevProgressPercent = progressPercent;
-            return;
+            return originalBitmap;
         }
         prevProgressPercent = progressPercent;
         currPercent = value;
@@ -104,9 +103,10 @@ public class RandomStripeIndicator extends HybridIndicator {
         currProgressPercent = progressPercent;
 
         addColorStripeToBitmap(originalBitmap, canvas, value - 1);
-        preBitmap.recycle();
-        preBitmap = output;
+        preProgressBitmap.recycle();
+        preProgressBitmap = output;
         callback.onProgressIndicationUpdated(output);
+        return preProgressBitmap;
     }
 
     private void addColorStripeToBitmap(final Bitmap originalBitmap, final Canvas canvas, final int pos) {
@@ -116,7 +116,7 @@ public class RandomStripeIndicator extends HybridIndicator {
         }
         final FlaggedRect randomStripe = stripes.get(pos);
         final Paint paint = new Paint();
-        canvas.drawBitmap(preBitmap, 0, 0, paint);
+        canvas.drawBitmap(preProgressBitmap, 0, 0, paint);
         if (!randomStripe.isFlagged()) {
             canvas.drawBitmap(originalBitmap, randomStripe.getRect(), randomStripe.getRect(), paint);
             randomStripe.setFlagged(true);
@@ -161,7 +161,7 @@ public class RandomStripeIndicator extends HybridIndicator {
                     final int missingProgressPercent = curr + i;
                     int percent = IndicatorUtils.getValueOfPercent(stripes.size(), missingProgressPercent);
                     addColorStripeToBitmap(bitmap, canvas, percent - 1);
-                    preBitmap = output;
+                    preProgressBitmap = output;
                     uIHandler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -199,7 +199,7 @@ public class RandomStripeIndicator extends HybridIndicator {
                 for (int i = prevValue; i <= currValue; i++) {
                     addColorStripeToBitmap(bitmap, canvas, i);
 
-                    preBitmap = output;
+                    preProgressBitmap = output;
                     uIHandler.post(new Runnable() {
                         @Override
                         public void run() {

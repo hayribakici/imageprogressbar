@@ -67,9 +67,9 @@ public class CircularIndicator extends ProgressIndicator {
 
     @Override
     public void onPreProgress(final @NonNull Bitmap originalBitmap) {
-        preBitmap = IndicatorUtils.convertGrayscale(originalBitmap);
+        preProgressBitmap = IndicatorUtils.convertGrayscale(originalBitmap);
         shader = new BitmapShader(originalBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-        currentBitmap = preBitmap;
+        currentBitmap = preProgressBitmap;
     }
 
     @Override
@@ -81,7 +81,7 @@ public class CircularIndicator extends ProgressIndicator {
         Bitmap bitmap = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
-        canvas.drawBitmap(preBitmap, 0, 0, new Paint());
+        canvas.drawBitmap(preProgressBitmap, 0, 0, new Paint());
         final RectF arc = new RectF(source.getWidth() * -0.5f,
                 source.getHeight() * -0.5f,
                 source.getWidth() * 1.5f,

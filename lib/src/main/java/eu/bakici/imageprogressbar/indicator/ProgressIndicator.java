@@ -85,9 +85,10 @@ public class ProgressIndicator implements Parcelable {
     };
 
     /**
-     * The bitmap when onPreProgress is called
+     * The type of processing this indicator is running on.
      */
-    protected Bitmap preBitmap;
+    @IndicationProcessingType
+    private final int indicationProcess;
 
     /**
      * Standard constructor. Initializes a ProgressIndicator instance.
@@ -99,16 +100,15 @@ public class ProgressIndicator implements Parcelable {
     }
 
     /**
-     * The type of processing this indicator is running on.
+     * The bitmap when onPreProgress is called
      */
-    @IndicationProcessingType
-    private int indicationProcess;
+    protected Bitmap preProgressBitmap;
 
     @SuppressWarnings("all")
     protected ProgressIndicator(Parcel in) {
         this.currentBitmap = in.readParcelable(Bitmap.class.getClassLoader());
         this.indicationProcess = in.readInt();
-        this.preBitmap = in.readParcelable(Bitmap.class.getClassLoader());
+        this.preProgressBitmap = in.readParcelable(Bitmap.class.getClassLoader());
     }
 
     /**
@@ -118,7 +118,7 @@ public class ProgressIndicator implements Parcelable {
      * @param originalBitmap the original bitmap.
      * @return the manipulated bitmap that should be displayed, before the progress starts.
      */
-    public Bitmap createPreProgressBitmap(Bitmap originalBitmap) {
+    public Bitmap getPreProgressBitmap(Bitmap originalBitmap) {
         throw new UnsupportedOperationException("onPreProgress is not implemented");
     }
 
@@ -129,7 +129,7 @@ public class ProgressIndicator implements Parcelable {
      * @param progressPercent the values in percent. Goes from 0 to 100.
      * @return the manipulated bitmap that should be displayed based on the percentage of the progress bar.
      */
-    public Bitmap createBitmapOnProgress(Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+    public Bitmap getBitmapOnProgress(@NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
         return null;
     }
 
@@ -167,9 +167,9 @@ public class ProgressIndicator implements Parcelable {
      *
      * @param originalBitmap the original bitmap.
      */
-    public void onPreProgress(@NonNull Bitmap originalBitmap) {
-        preBitmap = createPreProgressBitmap(originalBitmap);
-        currentBitmap = preBitmap;
+    public final void onPreProgress(@NonNull Bitmap originalBitmap) {
+        preProgressBitmap = getPreProgressBitmap(originalBitmap);
+        currentBitmap = preProgressBitmap;
     }
 
     /**
@@ -178,8 +178,8 @@ public class ProgressIndicator implements Parcelable {
      * @param originalBitmap  the original bitmap
      * @param progressPercent the values in percent. Goes from 0 to 100
      */
-    public void onProgress(@NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
-        currentBitmap = createBitmapOnProgress(originalBitmap, progressPercent);
+    public final void onProgress(@NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+        currentBitmap = getBitmapOnProgress(originalBitmap, progressPercent);
     }
 
     @Override
@@ -191,6 +191,6 @@ public class ProgressIndicator implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(this.currentBitmap, flags);
         dest.writeInt(this.indicationProcess);
-        dest.writeParcelable(this.preBitmap, flags);
+        dest.writeParcelable(this.preProgressBitmap, flags);
     }
 }

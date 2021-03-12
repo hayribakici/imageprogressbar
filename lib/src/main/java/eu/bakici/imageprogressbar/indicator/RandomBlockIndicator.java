@@ -50,8 +50,7 @@ public class RandomBlockIndicator extends BlockIndicator {
         Collections.shuffle(blocks);
     }
 
-    @Override
-    public Bitmap createBitmapOnProgress(final @NonNull Bitmap originalBitmap, final int progressPercent, final OnProgressIndicationUpdatedListener callback) {
+    public Bitmap getBitmapOnProgress(final @NonNull Bitmap originalBitmap, final int progressPercent, final OnProgressIndicationUpdatedListener callback) {
 
         final int height = this.height;
         final int width = this.width;
@@ -82,8 +81,8 @@ public class RandomBlockIndicator extends BlockIndicator {
         currProgressPercent = progressPercent;
 
         addColorBlockToBitmap(originalBitmap, canvas, blockPosOfPercent - 1);
-        preBitmap.recycle();
-        preBitmap = output;
+        preProgressBitmap.recycle();
+        preProgressBitmap = output;
         callback.onProgressIndicationUpdated(output);
         return null;
     }
@@ -94,7 +93,7 @@ public class RandomBlockIndicator extends BlockIndicator {
         }
         final Rect randomBlock = blocks.get(blockPos);
         final Paint paint = new Paint();
-        canvas.drawBitmap(preBitmap, 0, 0, paint);
+        canvas.drawBitmap(preProgressBitmap, 0, 0, paint);
         canvas.drawBitmap(originalBitmap, randomBlock, randomBlock, paint);
     }
 
@@ -128,7 +127,7 @@ public class RandomBlockIndicator extends BlockIndicator {
                     final int missingProgressPercent = mCurr + i;
                     int percent = IndicatorUtils.getValueOfPercent(blockSum, missingProgressPercent);
                     addColorBlockToBitmap(mBitmap, mCanvas, percent - 1);
-                    preBitmap = mOutput;
+                    preProgressBitmap = mOutput;
                     uIHandler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -172,7 +171,7 @@ public class RandomBlockIndicator extends BlockIndicator {
                     final int missingProgressPercent = mCurr + i;
                     addColorBlockToBitmap(mBitmap, mCanvas, missingProgressPercent - 1);
 
-                    preBitmap = mOutput;
+                    preProgressBitmap = mOutput;
                     uIHandler.post(new Runnable() {
                         @Override
                         public void run() {

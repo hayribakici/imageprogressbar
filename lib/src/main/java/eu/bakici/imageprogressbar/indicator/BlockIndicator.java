@@ -82,7 +82,7 @@ public abstract class BlockIndicator extends HybridIndicator {
     }
 
     @Override
-    public Bitmap createPreProgressBitmap(final @NonNull Bitmap originalBitmap) {
+    public Bitmap getPreProgressBitmap(final @NonNull Bitmap originalBitmap) {
         Bitmap bwBitmap = IndicatorUtils.convertGrayscale(originalBitmap);
         width = originalBitmap.getWidth();
         height = originalBitmap.getHeight();

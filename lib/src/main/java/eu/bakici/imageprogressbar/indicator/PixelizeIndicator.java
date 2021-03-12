@@ -18,6 +18,7 @@ package eu.bakici.imageprogressbar.indicator;
 
 import android.graphics.Bitmap;
 import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 
 public class PixelizeIndicator extends ProgressIndicator {
 
@@ -25,7 +26,6 @@ public class PixelizeIndicator extends ProgressIndicator {
     private static final float PROGRESS_TO_PIXELIZATION_FACTOR = 3000.f;
 
 
-    private final Context context;
     private long lastTime;
 
     public PixelizeIndicator() {
@@ -34,17 +34,16 @@ public class PixelizeIndicator extends ProgressIndicator {
 
     public PixelizeIndicator(@IntRange(from = SYNC, to = ASYNC) @IndicationProcessingType int processingType) {
         super(processingType);
-        this.context = context;
     }
 
     @Override
-    public Bitmap createPreProgressBitmap(Bitmap originalBitmap) {
+    public Bitmap getPreProgressBitmap(Bitmap originalBitmap) {
         return pixelizeImage(100 / PROGRESS_TO_PIXELIZATION_FACTOR, originalBitmap);
     }
 
     @Override
-    public Bitmap createBitmapOnProgress(Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
-        /**
+    public Bitmap getBitmapOnProgress(@NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+        /*
          * Checks if enough time has elapsed since the last pixelization call was invoked.
          * This prevents too many pixelization processes from being invoked at the same time
          * while previous ones have not yet completed.
@@ -54,7 +53,7 @@ public class PixelizeIndicator extends ProgressIndicator {
             int progress = 100 - progressPercent;
             return pixelizeImage(progress / PROGRESS_TO_PIXELIZATION_FACTOR, originalBitmap);
         }
-        return mCurrentBitmap;
+        return currentBitmap;
     }
 
     /**

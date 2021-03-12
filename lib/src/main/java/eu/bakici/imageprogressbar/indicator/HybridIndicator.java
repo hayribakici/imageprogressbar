@@ -48,7 +48,7 @@ public class HybridIndicator extends ProgressIndicator {
     }
 
     @Override
-    public final Bitmap createBitmapOnProgress(final @NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+    public final Bitmap getBitmapOnProgress(final @NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
         throw new UnsupportedOperationException("onProgress is not implemented");
         // onProgress(Bitmap, progressPercent, listener) is used
     }
@@ -61,8 +61,13 @@ public class HybridIndicator extends ProgressIndicator {
      * @param progressPercent the percentage of the current progress.
      * @param listener        a callback listener for filling the gaps between progress jumps.
      */
-    public void onProgress(@NonNull final Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent, final OnProgressIndicationUpdatedListener listener) {
-        throw new UnsupportedOperationException("onProgress is not implemented");
+    public final void onProgress(@NonNull final Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent, final OnProgressIndicationUpdatedListener listener) {
+        currentBitmap = getBitmapOnProgress(originalBitmap, progressPercent, listener);
+    }
+
+
+    protected Bitmap getBitmapOnProgress(Bitmap originalBitmap, int progressPercent, OnProgressIndicationUpdatedListener listener) {
+        return null;
     }
 
     // TODO add method that queues Runnables

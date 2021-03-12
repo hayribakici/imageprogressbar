@@ -37,12 +37,12 @@ public class BlurIndicator extends ProgressIndicator {
     }
 
     @Override
-    public Bitmap createPreProgressBitmap(final Bitmap originalBitmap) {
+    public Bitmap getPreProgressBitmap(final Bitmap originalBitmap) {
         return Blur.fastblur(mContext, originalBitmap, MAX_RADIUS);
     }
 
     @Override
-    public synchronized Bitmap createBitmapOnProgress(final @NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+    public synchronized Bitmap getBitmapOnProgress(final @NonNull @NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
 
         if (progressPercent == 100) {
             return originalBitmap;
