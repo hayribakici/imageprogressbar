@@ -34,7 +34,7 @@ import java.lang.reflect.Method;
 import eu.bakici.imageprogressbar.indicator.HybridIndicator;
 import eu.bakici.imageprogressbar.indicator.ProgressIndicator;
 
-public class ProgressImageView extends ImageView {
+public class ProgressImageView extends ImageView implements OnPostExecuteListener<Bitmap> {
 
     private static final int MAX_PERCENT = 100;
 
@@ -50,7 +50,7 @@ public class ProgressImageView extends ImageView {
     private int maximum = 100;
 
     private int progress;
-    private ProgressIndicator inticator;
+    private ProgressIndicator indicator;
     private boolean fromSuper = false;
 
     public ProgressImageView(final Context context) {
@@ -67,6 +67,7 @@ public class ProgressImageView extends ImageView {
 
     /**
      * Calls {@code super.setImageDrawable(Drawable drawable)}
+     *
      * @param bm the bitmap to set.
      */
     private void superSetImageBitmap(final Bitmap bm) {
@@ -90,10 +91,18 @@ public class ProgressImageView extends ImageView {
         if (bitmap != null) {
             // it is important to store the bitmap that should be displayed to enable the
             // proper image manipulation
-            initOriginalBitmap(bitmap);
+            originalBitmap = bitmap;
+            fireOnPreProgress();
         } else {
             throw new IllegalArgumentException("Drawable does not contain bitmap");
         }
+    }
+
+    @Override
+    public void setImageResource(int resId) {
+        super.setImageResource(resId);
+        originalBitmap = ((BitmapDrawable) getDrawable()).getBitmap();
+        fireOnPreProgress();
     }
 
     @Nullable
@@ -108,8 +117,8 @@ public class ProgressImageView extends ImageView {
                 // Therefore we check if a method named 'getBitmap' exists.
                 // and we return the value of it to initialize the original bitmap for
                 // proper image manipulation.
-                Method getBitmapMethod = drawableClass.getMethod("getBitmap", null);
-                return (Bitmap) getBitmapMethod.invoke(drawable, null);
+                Method getBitmapMethod = drawableClass.getMethod("getBitmap");
+                return (Bitmap) getBitmapMethod.invoke(drawable);
             } catch (NoSuchMethodException e) {
                 return null;
             } catch (InvocationTargetException e) {
@@ -118,19 +127,6 @@ public class ProgressImageView extends ImageView {
                 return null;
             }
         }
-    }
-
-
-    @Override
-    public void setImageResource(int resId) {
-        super.setImageResource(resId);
-    }
-
-
-    private void initOriginalBitmap(final Bitmap bitmap) {
-        originalBitmap = bitmap;
-        fireOnPreProgress();
-
     }
 
     @Override
@@ -154,8 +150,8 @@ public class ProgressImageView extends ImageView {
         final Bundle bundle = new Bundle();
         bundle.putParcelable("super_state", super.onSaveInstanceState());
         bundle.putInt(BUNDLE_CURRENT_PROGRESS, progress);
-        if (inticator != null) {
-            bundle.putParcelable(BUNDLE_CURRENT_BITMAP, inticator.getCurrentBitmap());
+        if (indicator != null) {
+            bundle.putParcelable(BUNDLE_CURRENT_BITMAP, indicator.getCurrentBitmap());
         }
         return bundle;
     }
@@ -171,7 +167,7 @@ public class ProgressImageView extends ImageView {
     }
 
     private void setProgress(final int progress, final boolean silent) {
-        if (inticator == null) {
+        if (indicator == null) {
             return;
         }
         this.progress = progress;
@@ -205,22 +201,22 @@ public class ProgressImageView extends ImageView {
     }
 
     public void setProgressIndicator(final ProgressIndicator progressIndicator) {
-        inticator = progressIndicator;
+        indicator = progressIndicator;
         fireOnPreProgress();
     }
 
 
     private void fireOnPreProgress() {
-        if (inticator != null) {
-            final int process = inticator.getIndicationProcessingType();
+        if (indicator != null) {
+            final int process = indicator.getIndicationProcessingType();
             switch (process) {
                 case ProgressIndicator.HYBRID:
                 case ProgressIndicator.SYNC:
-                    inticator.onPreProgress(originalBitmap);
-                    superSetImageBitmap(inticator.getCurrentBitmap());
+                    indicator.onPreProgress(originalBitmap);
+                    superSetImageBitmap(indicator.getCurrentBitmap());
                     break;
                 case ProgressIndicator.ASYNC:
-                    new ProgressImageAsyncTask(inticator, this, true).execute(originalBitmap);
+                    new ProgressImageAsyncTask(indicator, getProgressPercent(), true, this).execute(originalBitmap);
                     break;
             }
         }
@@ -228,18 +224,18 @@ public class ProgressImageView extends ImageView {
 
 
     private void fireOnProgress() {
-        if (inticator != null) {
-            final int process = inticator.getIndicationProcessingType();
+        if (indicator != null) {
+            final int process = indicator.getIndicationProcessingType();
             switch (process) {
                 case ProgressIndicator.SYNC:
-                    inticator.onProgress(originalBitmap, getProgressPercent());
-                    superSetImageBitmap(inticator.getCurrentBitmap());
+                    indicator.onProgress(originalBitmap, getProgressPercent());
+                    superSetImageBitmap(indicator.getCurrentBitmap());
                     break;
                 case ProgressIndicator.ASYNC:
-                    new ProgressImageAsyncTask(inticator, this, false).execute(originalBitmap);
+                    new ProgressImageAsyncTask(indicator, getProgressPercent(), false, this).execute(originalBitmap);
                     break;
                 case ProgressIndicator.HYBRID:
-                    ((HybridIndicator) inticator).onProgress(originalBitmap, getProgressPercent(),
+                    ((HybridIndicator) indicator).onProgress(originalBitmap, getProgressPercent(),
                             new HybridIndicator.OnProgressIndicationUpdatedListener() {
                                 @Override
                                 public void onProgressIndicationUpdated(final Bitmap bitmap) {
@@ -254,42 +250,58 @@ public class ProgressImageView extends ImageView {
 
 
     public void destroy() {
-        if (inticator != null) {
-            inticator.cleanUp();
+        if (indicator != null) {
+            indicator.cleanUp();
         }
     }
 
-    private static class ProgressImageAsyncTask extends AsyncTask<Bitmap, Void, Bitmap> {
+    @Override
+    public void onPostExecute(Bitmap param) {
+        setImageBitmap(param);
+    }
+
+    static class ProgressImageAsyncTask extends AsyncTask<Bitmap, Void, Bitmap> {
 
 
-        private final ProgressIndicator mIndicator;
-        private final ProgressImageView mImageView;
-        private final boolean mIsPreProgress;
+        private final ProgressIndicator indicator;
+        private final int progressPercent;
+        private final boolean isPreProgress;
+        private final OnPostExecuteListener<Bitmap> listener;
 
         public ProgressImageAsyncTask(final ProgressIndicator indicator,
-                                      final ProgressImageView imageView,
-                                      boolean preProgress) {
-            mIndicator = indicator;
-            mImageView = imageView;
-            mIsPreProgress = preProgress;
+                                      final int progressPercent,
+                                      boolean preProgress,
+                                      OnPostExecuteListener<Bitmap> listener) {
+            this.indicator = indicator;
+            this.progressPercent = progressPercent;
+            this.isPreProgress = preProgress;
+            this.listener = listener;
 
         }
 
         @Override
         protected Bitmap doInBackground(final Bitmap... params) {
             final Bitmap bitmap = params[0];
-            if (mIsPreProgress) {
-                mIndicator.onPreProgress(bitmap);
+            if (isPreProgress) {
+                indicator.onPreProgress(bitmap);
             } else {
-                mIndicator.onProgress(bitmap, mImageView.getProgressPercent());
+                indicator.onProgress(bitmap, progressPercent);
             }
-            return mIndicator.getCurrentBitmap();
+            return indicator.getCurrentBitmap();
         }
 
         @Override
         protected final void onPostExecute(final Bitmap bitmap) {
-            mImageView.superSetImageBitmap(bitmap);
+            listener.onPostExecute(bitmap);
         }
+
+
     }
+
+
+}
+
+interface OnPostExecuteListener<T> {
+    void onPostExecute(T param);
 }
 

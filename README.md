@@ -1,7 +1,24 @@
 ImageProgressBar
 ================
 
-Android Library of a ProgressBar as an image representation. [Download the latest aar.](./aar/imageprogressbar-1.0.aar)
+Android Library of a ProgressBar as an image representation. 
+
+#### Get it or [Download the latest aar.](./aar/imageprogressbar-1.2.aar)
+To get it with gradle, you need to add it in your root build.gradle at the end of repositories:
+```groovy
+	allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+```
+And then the dependency
+```groovy
+dependencies {
+		compile 'com.github.hayribakici:imageprogressbar:1.2'
+	}
+```
 
 This is a simple extensible android library that allows you to use an image for a loading indication. There are a couple of build-in indicators such as
  * `BlurIndicator`
@@ -21,28 +38,27 @@ This is a simple extensible android library that allows you to use an image for 
 
 A blur-progress Indicator
 
-<img src="./assets/blur.gif" alt="Drawing" style="width: 360px;" alt="Blur Progress Indicator Example"/>
+<img src="./assets/blur.gif" width="250" style="width: 200px;" alt="Blur Progress Indicator Example"/>
 
-A circulation progress indicator
+##### A circulation progress indicator
 
-<img src="./assets/circle_1.png"  style="width: 360px;" alt="Circulation Progress Indicator Example"/>
+<img src="./assets/circle_1.png" width="250" style="width: 200px;" alt="Circulation Progress Indicator Example"/>
 
 
 #### Bind it in your layout
 
 ```xml
 <eu.bakici.imageprogressbar.ProgressImageView
-        android:id="@+id/image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/sidney" />
+	android:id="@+id/image"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:src="@drawable/sidney" />
 ```
 
 The indicators are set with the following calls:
 ```java
 ProgressImageView progressImageView = (ProgressImageView) findViewById(R.id.image);
 progressImageView.setProgressIndicator(new CircularIndicator());
-
 ```
 
 and updated with
@@ -56,10 +72,9 @@ The ProgressImageView is designed to bind various progress indicator representat
 
 ```java
 public abstract class ProgressIndicator {
-
-  public ProgressIndicator(@IndicationProcessingType int indicationProcess) {
-          mIndicationProcess = indicationProcess;
-      }
+	public ProgressIndicator(@IndicationProcessingType int indicationProcess) {
+	  mIndicationProcess = indicationProcess;
+  }
 
 
 /**
@@ -70,8 +85,8 @@ public abstract class ProgressIndicator {
 * @param originalBitmap the original bitmap.
 */
 public void onPreProgress(Bitmap originalBitmap) {
-  // pre process your bitmap here first
-  // (e.g. make grayscale)
+	// pre process your bitmap here first
+	// (e.g. make grayscale)
 }
 
 
@@ -109,7 +124,7 @@ You need to implement the following method:
  */
 public void onProgress(final Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent, final OnProgressIndicationUpdatedListener listener) {
     // do you image manipulation here
-    // you also get a callback for 'catching up' the progression.
+	// you also get a callback for 'catching up' the progression.
 }
 ```
 
@@ -123,18 +138,11 @@ public interface OnProgressIndicationUpdatedListener {
 }
 ```
 
-### TODO
- * refactor indicator pattern for better usability
- * restore image when device config is
- changed (e.g. device rotation).
-
-
-## Known issues
-Blurring issues, when using glide library and BlurIndicator.
 
 ## Changelog
-1.1 adds remote image loading with [picasso](https://github.com/square/picasso) or [glide](https://github.com/bumptech/glide)
-1.0 initial release
+- 1.2 adds counterclockwise turning in the `CircularIndicator`
+- 1.1 adds remote image loading with [picasso](https://github.com/square/picasso) or [glide](https://github.com/bumptech/glide)</br>
+- 1.0 initial release
 
 ## Licence
 Apache Licence

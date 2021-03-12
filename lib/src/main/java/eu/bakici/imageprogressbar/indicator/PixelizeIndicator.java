@@ -20,14 +20,15 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 
 public class PixelizeIndicator extends ProgressIndicator {
 
     private static final long TIME_BETWEEN_TASKS = 400;
     private static final float PROGRESS_TO_PIXELIZATION_FACTOR = 3000.f;
-    private final Context mContext;
 
-    private long mLastTime;
+    private final Context context;
+    private long lastTime;
 
     public PixelizeIndicator(final Context context) {
         this(context, ASYNC);
@@ -36,25 +37,25 @@ public class PixelizeIndicator extends ProgressIndicator {
     public PixelizeIndicator(Context context,
                              @IntRange(from = SYNC, to = ASYNC) @IndicationProcessingType int processingType) {
         super(processingType);
-        mContext = context;
+        this.context = context;
     }
 
     @Override
-    public void onPreProgress(final Bitmap originalBitmap) {
-        mCurrentBitmap = pixelizeImage(100 / PROGRESS_TO_PIXELIZATION_FACTOR, originalBitmap).getBitmap();
+    public void onPreProgress(final @NonNull Bitmap originalBitmap) {
+        currentBitmap = pixelizeImage(100 / PROGRESS_TO_PIXELIZATION_FACTOR, originalBitmap).getBitmap();
     }
 
     @Override
-    public void onProgress(final Bitmap originalBitmap, final int progressPercent) {
+    public void onProgress(final @NonNull Bitmap originalBitmap, final int progressPercent) {
         /**
          * Checks if enough time has elapsed since the last pixelization call was invoked.
          * This prevents too many pixelization processes from being invoked at the same time
          * while previous ones have not yet completed.
          */
-        if ((System.currentTimeMillis() - mLastTime) > TIME_BETWEEN_TASKS) {
-            mLastTime = System.currentTimeMillis();
+        if ((System.currentTimeMillis() - lastTime) > TIME_BETWEEN_TASKS) {
+            lastTime = System.currentTimeMillis();
             int progress = 100 - progressPercent;
-            mCurrentBitmap = pixelizeImage(progress / PROGRESS_TO_PIXELIZATION_FACTOR, originalBitmap).getBitmap();
+            currentBitmap = pixelizeImage(progress / PROGRESS_TO_PIXELIZATION_FACTOR, originalBitmap).getBitmap();
         }
 
     }
@@ -108,6 +109,6 @@ public class PixelizeIndicator extends ProgressIndicator {
          * */
 
         Bitmap upscaled = Bitmap.createScaledBitmap(pixelatedBitmap, width, height, false);
-        return new BitmapDrawable(mContext.getResources(), upscaled);
+        return new BitmapDrawable(context.getResources(), upscaled);
     }
 }

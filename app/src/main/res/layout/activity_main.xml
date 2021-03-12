@@ -1,5 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
+              xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
 
@@ -14,5 +14,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scaleType="fitCenter"/>
+
+    <RadioGroup
+        android:id="@+id/radio_image_loader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <RadioButton
+            android:id="@+id/radio_asset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Use local asset"
+            tools:ignore="HardcodedText"/>
+        <RadioButton
+            android:id="@+id/radio_glide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_weight="1"
+            android:text="Use Glide"
+            tools:ignore="HardcodedText"/>
+        <RadioButton
+            android:id="@+id/radio_picasso"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_weight="1"
+            android:text="Use Picasso"
+            tools:ignore="HardcodedText"/>
+    </RadioGroup>
 
 </LinearLayout>

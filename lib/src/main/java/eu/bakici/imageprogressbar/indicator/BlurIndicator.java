@@ -19,6 +19,7 @@ package eu.bakici.imageprogressbar.indicator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
@@ -28,31 +29,31 @@ public class BlurIndicator extends ProgressIndicator {
 
     private static final int MAX_RADIUS = 25;
 
-    private final Context mContext;
+    private final Context context;
 
     public BlurIndicator(final Context context) {
         super(ASYNC);
-        mContext = context;
+        this.context = context;
     }
 
     @Override
-    public void onPreProgress(final Bitmap originalBitmap) {
-        mCurrentBitmap = Blur.fastblur(mContext, originalBitmap, MAX_RADIUS);
+    public void onPreProgress(final @NonNull Bitmap originalBitmap) {
+        currentBitmap = Blur.fastblur(context, originalBitmap, MAX_RADIUS);
     }
 
     @Override
-    public synchronized void onProgress(final Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+    public synchronized void onProgress(final @NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
 
         if (progressPercent == 100) {
-            mCurrentBitmap = originalBitmap;
+            currentBitmap = originalBitmap;
         }
-        final int radius = MAX_RADIUS - IndicatorUtils.calcPercent(MAX_RADIUS, progressPercent);
+        final int radius = MAX_RADIUS - IndicatorUtils.getValueOfPercent(MAX_RADIUS, progressPercent);
         if (radius <= 0) {
             // insanity check
-            mCurrentBitmap = originalBitmap;
+            currentBitmap = originalBitmap;
             return;
         }
-        mCurrentBitmap = Blur.fastblur(mContext, originalBitmap, radius);
+        currentBitmap = Blur.fastblur(context, originalBitmap, radius);
     }
 
 }

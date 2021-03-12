@@ -22,6 +22,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.IntDef;
 import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -31,7 +32,7 @@ import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 public class ColorFillIndicator extends ProgressIndicator {
 
     /**
-     * Type of how the image will be processed.
+     * Type of how the image will be filled.
      */
     @Retention(RetentionPolicy.SOURCE)
     @IntDef(value = {
@@ -64,33 +65,33 @@ public class ColorFillIndicator extends ProgressIndicator {
     public final static int PROGRESS_DIRECTION_VERTICAL_BOTTOM_UP = 3;
 
     @ProgressDirection
-    private int mProgressDirection;
+    private int direction;
 
     public ColorFillIndicator(@ProgressDirection int direction) {
         super(SYNC);
-        mProgressDirection = direction;
+        this.direction = direction;
     }
 
 
     @Override
-    public void onPreProgress(final Bitmap originalBitmap) {
+    public void onPreProgress(final @NonNull Bitmap originalBitmap) {
         final Bitmap bw = IndicatorUtils.convertGrayscale(originalBitmap);
-        mPreBitmap = bw;
-        mCurrentBitmap = bw;
+        preBitmap = bw;
+        currentBitmap = bw;
     }
 
     @Override
-    public void onProgress(final Bitmap originalBitmap, @IntRange(from = 0, to = 100)int progressPercent) {
+    public void onProgress(final @NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
 
         final int bitmapHeight = originalBitmap.getHeight();
         final int bitmapWidth = originalBitmap.getWidth();
-        final int heightPercent = IndicatorUtils.calcPercent(bitmapHeight, progressPercent);
-        final int widthPercent = IndicatorUtils.calcPercent(bitmapWidth, progressPercent);
+        final int heightPercent = IndicatorUtils.getValueOfPercent(bitmapHeight, progressPercent);
+        final int widthPercent = IndicatorUtils.getValueOfPercent(bitmapWidth, progressPercent);
 
 
         Rect bitmapBWRect;
         Rect bitmapSourceRect;
-        switch (mProgressDirection) {
+        switch (direction) {
             case PROGRESS_DIRECTION_HORIZONTAL_LEFT_RIGHT:
                 bitmapSourceRect = new Rect(0, 0, widthPercent, bitmapHeight);
                 bitmapBWRect = new Rect(widthPercent, 0, bitmapWidth, bitmapHeight);
@@ -118,8 +119,8 @@ public class ColorFillIndicator extends ProgressIndicator {
         final Canvas canvas = new Canvas(output);
         final Paint normalPaint = new Paint();
 
-        canvas.drawBitmap(mPreBitmap, bitmapBWRect, bitmapBWRect, normalPaint);
+        canvas.drawBitmap(preBitmap, bitmapBWRect, bitmapBWRect, normalPaint);
         canvas.drawBitmap(originalBitmap, bitmapSourceRect, bitmapSourceRect, normalPaint);
-        mCurrentBitmap = output;
+        currentBitmap = output;
     }
 }
