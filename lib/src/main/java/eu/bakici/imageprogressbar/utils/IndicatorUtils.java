@@ -22,16 +22,38 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 
+/**
+ * Helper class with Util functions.
+ */
 public final class IndicatorUtils {
 
     public static String HYBRID_THREAD_NAME = "jumper";
 
-    public static int calcPercent(final int value, final int percent) {
-        final float p = (float) percent;
-        final float p100 = p / 100;
-        return Math.round(value * p100);
+    /**
+     * Calculates the amount of {@code value} based on {@code percent}.
+     *
+     * @return the value between [0, value] that is calculated from {@code percent}.
+     */
+    public static int getValueOfPercent(final int value, final int percent) {
+        return Math.round(getValueOfPercentFloat(value, percent));
     }
 
+    /**
+     * Calculates the amount of {@code value} based on on {@code percent}.
+     *
+     * @return the value between [0, value] that is calculated from {@code percent}.
+     */
+    public static float getValueOfPercentFloat(final int value, final int percent) {
+        final float p100 = (float) percent * 0.01f;
+        return value * p100;
+    }
+
+    /**
+     * Converts a given {@code source} bitmap into grayscale.
+     *
+     * @param source the original (colored) bitmap to convert.
+     * @return a bitmap in grayscale.
+     */
     public static Bitmap convertGrayscale(final Bitmap source) {
         final int width = source.getWidth();
         final int height = source.getHeight();

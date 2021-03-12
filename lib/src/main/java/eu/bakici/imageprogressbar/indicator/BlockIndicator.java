@@ -19,6 +19,7 @@ package eu.bakici.imageprogressbar.indicator;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -81,7 +82,7 @@ public abstract class BlockIndicator extends HybridIndicator {
     }
 
     @Override
-    public void onPreProgress(final Bitmap originalBitmap) {
+    public void onPreProgress(final @NonNull Bitmap originalBitmap) {
         preBitmap = IndicatorUtils.convertGrayscale(originalBitmap);
         width = originalBitmap.getWidth();
         height = originalBitmap.getHeight();

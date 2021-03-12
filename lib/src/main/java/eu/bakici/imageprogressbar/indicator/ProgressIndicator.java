@@ -20,13 +20,14 @@ import android.graphics.Bitmap;
 import android.support.annotation.CallSuper;
 import android.support.annotation.IntDef;
 import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Base class for Progress indication.
+ * Adapter class for Progress indication.
  */
 public abstract class ProgressIndicator {
 
@@ -73,7 +74,7 @@ public abstract class ProgressIndicator {
      * The type of processing this indicator is running on.
      */
     @IndicationProcessingType
-    private int indicationProcess;
+    private final int indicationProcess;
 
     /**
      * The bitmap when onPreProgress is called
@@ -96,7 +97,7 @@ public abstract class ProgressIndicator {
      *
      * @param originalBitmap the original bitmap.
      */
-    public void onPreProgress(Bitmap originalBitmap) {
+    public void onPreProgress(@NonNull Bitmap originalBitmap) {
         throw new UnsupportedOperationException("onPreProgress is not implemented");
     }
 
@@ -107,7 +108,7 @@ public abstract class ProgressIndicator {
      * @param originalBitmap  the original bitmap
      * @param progressPercent the values in percent. Goes from 0 to 100
      */
-    public abstract void onProgress(Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent);
+    public abstract void onProgress(@NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent);
 
     /**
      * The current displayed bitmap.

@@ -19,6 +19,7 @@ package eu.bakici.imageprogressbar.indicator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
@@ -36,17 +37,17 @@ public class BlurIndicator extends ProgressIndicator {
     }
 
     @Override
-    public void onPreProgress(final Bitmap originalBitmap) {
+    public void onPreProgress(final @NonNull Bitmap originalBitmap) {
         currentBitmap = Blur.fastblur(context, originalBitmap, MAX_RADIUS);
     }
 
     @Override
-    public synchronized void onProgress(final Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+    public synchronized void onProgress(final @NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
 
         if (progressPercent == 100) {
             currentBitmap = originalBitmap;
         }
-        final int radius = MAX_RADIUS - IndicatorUtils.calcPercent(MAX_RADIUS, progressPercent);
+        final int radius = MAX_RADIUS - IndicatorUtils.getValueOfPercent(MAX_RADIUS, progressPercent);
         if (radius <= 0) {
             // insanity check
             currentBitmap = originalBitmap;

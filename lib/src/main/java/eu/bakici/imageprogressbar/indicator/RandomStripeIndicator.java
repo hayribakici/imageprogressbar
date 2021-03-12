@@ -20,6 +20,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -39,7 +41,8 @@ public class RandomStripeIndicator extends HybridIndicator {
     private final int thickness;
     private final List<FlaggedRect> stripes;
     private int currProgressPercent = 0;
-    private int currBlockPosOfPercent = 0;
+    private int currPercent = 0;
+    private int prevProgressPercent;
 
     public RandomStripeIndicator(@StripeThickness int thickness) {
         this.thickness = thickness;
@@ -47,7 +50,7 @@ public class RandomStripeIndicator extends HybridIndicator {
     }
 
     @Override
-    public void onPreProgress(Bitmap originalBitmap) {
+    public void onPreProgress(@NonNull Bitmap originalBitmap) {
         preBitmap = IndicatorUtils.convertGrayscale(originalBitmap);
         currentBitmap = preBitmap;
 
@@ -59,37 +62,48 @@ public class RandomStripeIndicator extends HybridIndicator {
     }
 
     @Override
-    public void onProgress(Bitmap originalBitmap, int progressPercent, final OnProgressIndicationUpdatedListener callback) {
-        if (progressPercent == 0) {
-            return;
-        }
-        int percent = IndicatorUtils.calcPercent(stripes.size(), progressPercent);
+    public void onProgress(@NonNull Bitmap originalBitmap, int progressPercent, final OnProgressIndicationUpdatedListener callback) {
+
+        int stripeCount = stripes.size();
+
+        int value = IndicatorUtils.getValueOfPercent(stripeCount, progressPercent);
 
         final Bitmap output = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(output);
-
-        if (percent - currBlockPosOfPercent > 1) {
+        Log.d("Stripe", String.format("progressPercent %s, previousProgressPercent %s", progressPercent, prevProgressPercent));
+        if (progressPercent - prevProgressPercent > 1) {
             // we need to cover all block positions
-            // when blockSum is big, we might skip some positions,
-            // therefore we are catching up.
-            int diffPercent = percent - currBlockPosOfPercent;
-            blockUpdatedHandler.post(new CatchUpStripesRunnable(diffPercent, originalBitmap, output, canvas, currBlockPosOfPercent, callback));
-            currBlockPosOfPercent = percent;
+            // when stripeCount is large, we might skip some positions,
+            // when seeking through the SeekBar. Therefore we are catching up
+
+//            int diffPercent = progressPercent - prevProgressPercent;
+            int prevValue = IndicatorUtils.getValueOfPercent(stripeCount, prevProgressPercent);
+//            Log.d("Stripe", "diffPercent " + IndicatorUtils.getValueOfPercent(stripeCount, diffPercent));
+            blockUpdatedHandler.post(new CatchUpStripesRunnable(originalBitmap, output, canvas, value, prevValue, callback));
+//            for (int i = prevValue; i <= value; i++) {
+//                final int missingProgressPercent = prevProgressPercent + i;
+//
+//                Log.d("Stripe", "i: " + i);
+////                Log.d("Stripe", "catching up: " + IndicatorUtils.getValueOfPercent(stripeCount, missingProgressPercent));
+////                Log.d("Stripe", "catching up: " + IndicatorUtils.getValueOfPercentFloat(stripeCount, missingProgressPercent));
+//
+//            }
+            prevProgressPercent = progressPercent;
             return;
         }
+        prevProgressPercent = progressPercent;
+        currPercent = value;
 
-        currBlockPosOfPercent = percent;
-
-        if (currProgressPercent < progressPercent - 1) {
-            // we have a rather large progressbar jump
-            final int diffPercent = progressPercent - currProgressPercent;
-            uIHandler.post(new ProgressJumpRunnable(diffPercent, originalBitmap, output, canvas, currProgressPercent, callback));
-            currProgressPercent = progressPercent;
-            return;
-        }
+//        if (currProgressPercent < progressPercent - 1) {
+//            // we have a rather large progressbar jump
+//            final int diffPercent = progressPercent - currProgressPercent;
+//            uIHandler.post(new ProgressJumpRunnable(diffPercent, originalBitmap, output, canvas, currProgressPercent, callback));
+//            currProgressPercent = progressPercent;
+//            return;
+//        }
         currProgressPercent = progressPercent;
 
-        addColorStripeToBitmap(originalBitmap, canvas, percent - 1);
+        addColorStripeToBitmap(originalBitmap, canvas, value - 1);
         preBitmap.recycle();
         preBitmap = output;
         callback.onProgressIndicationUpdated(output);
@@ -107,16 +121,8 @@ public class RandomStripeIndicator extends HybridIndicator {
             canvas.drawBitmap(originalBitmap, randomStripe.getRect(), randomStripe.getRect(), paint);
             randomStripe.setFlagged(true);
         }
-
     }
 
-    @Override
-    public void cleanUp() {
-        super.cleanUp();
-        if (handlerThread.isAlive()) {
-            handlerThread.quit();
-        }
-    }
 
     /**
      * Type of lines the image will be filled.
@@ -133,20 +139,15 @@ public class RandomStripeIndicator extends HybridIndicator {
     private class ProgressJumpRunnable implements Runnable {
 
         private final int diff;
-
         private final Canvas canvas;
-
         private final Bitmap bitmap;
-
         private final Bitmap output;
-
         private final int curr;
-
         private final OnProgressIndicationUpdatedListener listener;
 
         ProgressJumpRunnable(int diff, Bitmap source, Bitmap output, Canvas canvas, int curr, OnProgressIndicationUpdatedListener listener) {
             this.diff = diff;
-            bitmap = source;
+            this.bitmap = source;
             this.output = output;
             this.canvas = canvas;
             this.curr = curr;
@@ -158,7 +159,7 @@ public class RandomStripeIndicator extends HybridIndicator {
             synchronized (RandomStripeIndicator.this) {
                 for (int i = 1; i <= diff; i++) {
                     final int missingProgressPercent = curr + i;
-                    int percent = IndicatorUtils.calcPercent(stripes.size(), missingProgressPercent);
+                    int percent = IndicatorUtils.getValueOfPercent(stripes.size(), missingProgressPercent);
                     addColorStripeToBitmap(bitmap, canvas, percent - 1);
                     preBitmap = output;
                     uIHandler.post(new Runnable() {
@@ -176,33 +177,27 @@ public class RandomStripeIndicator extends HybridIndicator {
 
     private class CatchUpStripesRunnable implements Runnable {
 
-        private final int diff;
-
+        private final int prevValue;
         private final Canvas canvas;
-
         private final Bitmap bitmap;
-
         private final Bitmap output;
-
-        private final int curr;
-
+        private final int currValue;
         private final OnProgressIndicationUpdatedListener listener;
 
-        CatchUpStripesRunnable(int diff, Bitmap source, Bitmap output, Canvas canvas, int curr, OnProgressIndicationUpdatedListener listener) {
-            this.diff = diff;
-            bitmap = source;
+        CatchUpStripesRunnable(Bitmap source, Bitmap output, Canvas canvas, int currValue, int prevValue, OnProgressIndicationUpdatedListener listener) {
+            this.bitmap = source;
             this.output = output;
             this.canvas = canvas;
-            this.curr = curr;
+            this.currValue = currValue;
+            this.prevValue = prevValue;
             this.listener = listener;
         }
 
         @Override
         public void run() {
             synchronized (RandomStripeIndicator.this) {
-                for (int i = 1; i <= diff; i++) {
-                    final int missingProgressPercent = curr + i;
-                    addColorStripeToBitmap(bitmap, canvas, missingProgressPercent - 1);
+                for (int i = prevValue; i <= currValue; i++) {
+                    addColorStripeToBitmap(bitmap, canvas, i);
 
                     preBitmap = output;
                     uIHandler.post(new Runnable() {

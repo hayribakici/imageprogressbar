@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
@@ -47,20 +48,36 @@ public class HybridIndicator extends ProgressIndicator {
     }
 
     @Override
-    public final void onProgress(final Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+    public final void onProgress(final @NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
         throw new UnsupportedOperationException("onProgress is not implemented");
         // onProgress(Bitmap, progressPercent, listener) is used
     }
 
 
     /**
-     * Same as {@link #onProgress(Bitmap, int)} but with a callback.
-     * @param originalBitmap the original bitmap.
+     * Same as {@link ProgressIndicator#onProgress(Bitmap, int)} but with a callback.
+     *
+     * @param originalBitmap  the original bitmap.
      * @param progressPercent the percentage of the current progress.
-     * @param listener a callback listener for filling the gaps between progress jumps.
+     * @param listener        a callback listener for filling the gaps between progress jumps.
      */
-    public void onProgress(final Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent, final OnProgressIndicationUpdatedListener listener) {
+    public void onProgress(@NonNull final Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent, final OnProgressIndicationUpdatedListener listener) {
         throw new UnsupportedOperationException("onProgress is not implemented");
+    }
+
+    // TODO add method that queues Runnables
+    // TODO add method that posts to main thread
+    // TODO add custom Runnable class
+//    protected void queue() {
+//
+//    }
+
+    @Override
+    public void cleanUp() {
+        super.cleanUp();
+        if (handlerThread.isAlive()) {
+            handlerThread.quit();
+        }
     }
 
     /**

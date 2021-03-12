@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.support.annotation.NonNull;
 
 import java.util.Collections;
 
@@ -50,14 +51,14 @@ public class RandomBlockIndicator extends BlockIndicator {
     }
 
     @Override
-    public void onProgress(final Bitmap originalBitmap, final int progressPercent, final OnProgressIndicationUpdatedListener callback) {
+    public void onProgress(final @NonNull Bitmap originalBitmap, final int progressPercent, final OnProgressIndicationUpdatedListener callback) {
 
         final int height = this.height;
         final int width = this.width;
         final Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(output);
 
-        int blockPosOfPercent = IndicatorUtils.calcPercent(blockSum, progressPercent) + 1;
+        int blockPosOfPercent = IndicatorUtils.getValueOfPercent(blockSum, progressPercent) + 1;
 
         if (blockPosOfPercent - currBlockPosOfPercent > 1) {
             // we need to cover all block positions
@@ -95,13 +96,6 @@ public class RandomBlockIndicator extends BlockIndicator {
         canvas.drawBitmap(preBitmap, 0, 0, paint);
         canvas.drawBitmap(originalBitmap, randomBlock, randomBlock, paint);
     }
-    @Override
-    public void cleanUp() {
-        super.cleanUp();
-        if (handlerThread.isAlive()) {
-            handlerThread.quit();
-        }
-    }
 
     private class ProgressJumpRunnable implements Runnable {
 
@@ -131,7 +125,7 @@ public class RandomBlockIndicator extends BlockIndicator {
             synchronized (RandomBlockIndicator.this) {
                 for (int i = 1; i <= mDiff; i++) {
                     final int missingProgressPercent = mCurr + i;
-                    int percent = IndicatorUtils.calcPercent(blockSum, missingProgressPercent);
+                    int percent = IndicatorUtils.getValueOfPercent(blockSum, missingProgressPercent);
                     addColorBlockToBitmap(mBitmap, mCanvas, percent - 1);
                     preBitmap = mOutput;
                     uIHandler.post(new Runnable() {

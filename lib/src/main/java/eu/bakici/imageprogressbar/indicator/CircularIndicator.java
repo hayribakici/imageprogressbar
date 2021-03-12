@@ -26,6 +26,7 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.support.annotation.IntDef;
 import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -65,15 +66,15 @@ public class CircularIndicator extends ProgressIndicator {
 
 
     @Override
-    public void onPreProgress(final Bitmap originalBitmap) {
+    public void onPreProgress(final @NonNull Bitmap originalBitmap) {
         preBitmap = IndicatorUtils.convertGrayscale(originalBitmap);
         shader = new BitmapShader(originalBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
         currentBitmap = preBitmap;
     }
 
     @Override
-    public void onProgress(final Bitmap source, @IntRange(from = 0, to = 100) int progressPercent) {
-        int angle = IndicatorUtils.calcPercent(FULL_CIRCLE, progressPercent);
+    public void onProgress(final @NonNull Bitmap source, @IntRange(from = 0, to = 100) int progressPercent) {
+        int angle = IndicatorUtils.getValueOfPercent(FULL_CIRCLE, progressPercent);
         if (turn == COUNTERCLOCKWISE) {
             angle = angle * (-1);
         }

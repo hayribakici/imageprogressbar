@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 
 public class PixelizeIndicator extends ProgressIndicator {
 
@@ -40,12 +41,12 @@ public class PixelizeIndicator extends ProgressIndicator {
     }
 
     @Override
-    public void onPreProgress(final Bitmap originalBitmap) {
+    public void onPreProgress(final @NonNull Bitmap originalBitmap) {
         currentBitmap = pixelizeImage(100 / PROGRESS_TO_PIXELIZATION_FACTOR, originalBitmap).getBitmap();
     }
 
     @Override
-    public void onProgress(final Bitmap originalBitmap, final int progressPercent) {
+    public void onProgress(final @NonNull Bitmap originalBitmap, final int progressPercent) {
         /**
          * Checks if enough time has elapsed since the last pixelization call was invoked.
          * This prevents too many pixelization processes from being invoked at the same time
