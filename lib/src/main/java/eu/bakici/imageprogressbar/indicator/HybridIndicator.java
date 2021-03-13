@@ -67,7 +67,7 @@ public class HybridIndicator extends ProgressIndicator {
 
 
     protected Bitmap getBitmapOnProgress(Bitmap originalBitmap, int progressPercent, OnProgressIndicationUpdatedListener listener) {
-        return null;
+        return getCurrentBitmap();
     }
 
     // TODO add method that queues Runnables

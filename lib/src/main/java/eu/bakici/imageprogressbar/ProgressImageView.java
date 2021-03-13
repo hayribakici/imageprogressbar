@@ -250,8 +250,10 @@ public class ProgressImageView extends ImageView implements OnPostExecuteListene
         }
     }
 
-
-    public void destroy() {
+    /**
+     * Frees memory. Needs to be called when
+     */
+    private void destroy() {
         if (indicator != null) {
             indicator.cleanUp();
         }

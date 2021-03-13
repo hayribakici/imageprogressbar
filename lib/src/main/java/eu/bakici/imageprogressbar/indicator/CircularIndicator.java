@@ -25,7 +25,6 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.support.annotation.IntDef;
-import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 
 import java.lang.annotation.Retention;
@@ -66,30 +65,31 @@ public class CircularIndicator extends ProgressIndicator {
 
 
     @Override
-    public void onPreProgress(final @NonNull Bitmap originalBitmap) {
-        preProgressBitmap = IndicatorUtils.convertGrayscale(originalBitmap);
+    public Bitmap getPreProgressBitmap(Bitmap originalBitmap) {
         shader = new BitmapShader(originalBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-        currentBitmap = preProgressBitmap;
+        return IndicatorUtils.convertGrayscale(originalBitmap);
     }
 
+
     @Override
-    public void onProgress(final @NonNull Bitmap source, @IntRange(from = 0, to = 100) int progressPercent) {
+    public Bitmap getBitmapOnProgress(@NonNull Bitmap originalBitmap, int progressPercent) {
         int angle = IndicatorUtils.getValueOfPercent(FULL_CIRCLE, progressPercent);
         if (turn == COUNTERCLOCKWISE) {
             angle = angle * (-1);
         }
-        Bitmap bitmap = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
         canvas.drawBitmap(preProgressBitmap, 0, 0, new Paint());
-        final RectF arc = new RectF(source.getWidth() * -0.5f,
-                source.getHeight() * -0.5f,
-                source.getWidth() * 1.5f,
-                source.getHeight() * 1.5f);
+        final RectF arc = new RectF(originalBitmap.getWidth() * -0.5f,
+                originalBitmap.getHeight() * -0.5f,
+                originalBitmap.getWidth() * 1.5f,
+                originalBitmap.getHeight() * 1.5f);
         paint.setShader(shader);
         canvas.drawArc(arc, 270, angle, true, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
-        canvas.drawBitmap(source, 0, 0, paint);
-        currentBitmap = bitmap;
+        canvas.drawBitmap(originalBitmap, 0, 0, paint);
+        return bitmap;
+
     }
 }

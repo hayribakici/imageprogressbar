@@ -79,7 +79,7 @@ public class ProgressIndicatorDemoActivity extends Activity {
                             .load("https://upload.wikimedia.org/wikipedia/commons/f/f5/Western_BACE_Cobblebank.jpg")
                             .into(progressImageView);
                 } else if (checkedId == R.id.radio_picasso) {
-                    Picasso.with(ProgressIndicatorDemoActivity.this)
+                    Picasso.get()
                             .load("https://upload.wikimedia.org/wikipedia/commons/f/f5/Western_BACE_Cobblebank.jpg")
                             .into(progressImageView);
                 }
@@ -113,7 +113,7 @@ public class ProgressIndicatorDemoActivity extends Activity {
                 progressImageView.setProgressIndicator(new RandomBlockIndicator(BlockIndicator.BLOCK_SIZE_SMALL));
                 return true;
             case R.id.action_indicator_pixelize:
-                progressImageView.setProgressIndicator(new PixelizeIndicator(this));
+                progressImageView.setProgressIndicator(new PixelizeIndicator());
                 return true;
             case R.id.action_indicator_ciculator:
                 progressImageView.setProgressIndicator(new CircularIndicator());
@@ -131,7 +131,6 @@ public class ProgressIndicatorDemoActivity extends Activity {
 
 
     private void reset() {
-        progressImageView.destroy();
         seekBar.setProgress(0);
     }
 
@@ -139,7 +138,7 @@ public class ProgressIndicatorDemoActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         reset();
-        Picasso.with(this).shutdown();
+        Picasso.get().shutdown();
         Glide.get(this).clearMemory();
     }
 }

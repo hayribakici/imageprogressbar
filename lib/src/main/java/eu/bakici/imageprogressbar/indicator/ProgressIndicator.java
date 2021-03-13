@@ -130,7 +130,7 @@ public class ProgressIndicator implements Parcelable {
      * @return the manipulated bitmap that should be displayed based on the percentage of the progress bar.
      */
     public Bitmap getBitmapOnProgress(@NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
-        return null;
+        return getCurrentBitmap();
     }
 
     /**
