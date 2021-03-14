@@ -114,13 +114,16 @@ public class RandomStripeIndicator extends HybridIndicator {
             // insanity check
             return;
         }
-        final FlaggedRect randomStripe = stripes.get(pos);
-        final Paint paint = new Paint();
-        canvas.drawBitmap(preProgressBitmap, 0, 0, paint);
-        if (!randomStripe.isFlagged()) {
-            canvas.drawBitmap(originalBitmap, randomStripe.getRect(), randomStripe.getRect(), paint);
-            randomStripe.setFlagged(true);
+        for (int i = Math.max(0, pos - 2); i <= pos + 2; i++) {
+            final FlaggedRect randomStripe = stripes.get(pos);
+            final Paint paint = new Paint();
+            canvas.drawBitmap(preProgressBitmap, 0, 0, paint);
+            if (!randomStripe.isFlagged()) {
+                canvas.drawBitmap(originalBitmap, randomStripe.getRect(), randomStripe.getRect(), paint);
+                randomStripe.setFlagged(true);
+            }
         }
+
     }
 
 

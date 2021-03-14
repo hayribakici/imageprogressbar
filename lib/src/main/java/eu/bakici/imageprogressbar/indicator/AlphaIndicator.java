@@ -19,7 +19,6 @@ package eu.bakici.imageprogressbar.indicator;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
@@ -35,14 +34,14 @@ public class AlphaIndicator extends ProgressIndicator {
         alphaPaint = new Paint();
     }
 
+
     @Override
-    public void onPreProgress(@NonNull Bitmap originalBitmap) {
-        preProgressBitmap = IndicatorUtils.convertGrayscale(originalBitmap);
-        currentBitmap = preProgressBitmap;
+    public Bitmap getPreProgressBitmap(Bitmap originalBitmap) {
+        return IndicatorUtils.convertGrayscale(originalBitmap);
     }
 
     @Override
-    public synchronized void onProgress(@NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+    public Bitmap getBitmapOnProgress(@NonNull Bitmap originalBitmap, int progressPercent) {
         final Bitmap output = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
 
@@ -50,6 +49,6 @@ public class AlphaIndicator extends ProgressIndicator {
 
         canvas.drawBitmap(preProgressBitmap, 0, 0, new Paint());
         canvas.drawBitmap(originalBitmap, 0, 0, alphaPaint);
-        currentBitmap = output;
+        return output;
     }
 }

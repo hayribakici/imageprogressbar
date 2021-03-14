@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
@@ -38,11 +39,11 @@ public class BlurIndicator extends ProgressIndicator {
 
     @Override
     public Bitmap getPreProgressBitmap(final Bitmap originalBitmap) {
-        return Blur.fastblur(mContext, originalBitmap, MAX_RADIUS);
+        return Blur.fastblur(context, originalBitmap, MAX_RADIUS);
     }
 
     @Override
-    public synchronized Bitmap getBitmapOnProgress(final @NonNull @NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+    public synchronized Bitmap getBitmapOnProgress(final @NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
 
         if (progressPercent == 100) {
             return originalBitmap;
@@ -53,7 +54,7 @@ public class BlurIndicator extends ProgressIndicator {
             return originalBitmap;
         }
         Log.d(TAG, "snapshot = " + radius);
-        return Blur.fastblur(mContext, originalBitmap, radius);
+        return Blur.fastblur(context, originalBitmap, radius);
     }
 
 }
