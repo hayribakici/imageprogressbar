@@ -53,7 +53,7 @@ public class RandomStripeIndicator extends HybridIndicator {
     public Bitmap getPreProgressBitmap(@NonNull Bitmap originalBitmap) {
 
         int width = originalBitmap.getWidth();
-        for (int i = 0; i < width + thickness; i += thickness) {
+        for (int i = 0; i < width + thickness + 1; i += thickness) {
             stripes.add(new FlaggedRect(Math.min(i, width), 0, Math.min(i + thickness, width), originalBitmap.getHeight()));
         }
         Collections.shuffle(stripes);
@@ -75,20 +75,12 @@ public class RandomStripeIndicator extends HybridIndicator {
             // when stripeCount is large, we might skip some positions,
             // when seeking through the SeekBar. Therefore we are catching up
 
-//            int diffPercent = progressPercent - prevProgressPercent;
             int prevValue = IndicatorUtils.getValueOfPercent(stripeCount, prevProgressPercent);
 //            Log.d("Stripe", "diffPercent " + IndicatorUtils.getValueOfPercent(stripeCount, diffPercent));
             blockUpdatedHandler.post(new CatchUpStripesRunnable(originalBitmap, output, canvas, value, prevValue, callback));
-//            for (int i = prevValue; i <= value; i++) {
-//                final int missingProgressPercent = prevProgressPercent + i;
-//
-//                Log.d("Stripe", "i: " + i);
-////                Log.d("Stripe", "catching up: " + IndicatorUtils.getValueOfPercent(stripeCount, missingProgressPercent));
-////                Log.d("Stripe", "catching up: " + IndicatorUtils.getValueOfPercentFloat(stripeCount, missingProgressPercent));
-//
-//            }
+
             prevProgressPercent = progressPercent;
-            return originalBitmap;
+            return output;
         }
         prevProgressPercent = progressPercent;
         currPercent = value;
@@ -103,7 +95,7 @@ public class RandomStripeIndicator extends HybridIndicator {
         currProgressPercent = progressPercent;
 
         addColorStripeToBitmap(originalBitmap, canvas, value - 1);
-        preProgressBitmap.recycle();
+//        preProgressBitmap.recycle();
         preProgressBitmap = output;
         callback.onProgressIndicationUpdated(output);
         return preProgressBitmap;
@@ -203,12 +195,7 @@ public class RandomStripeIndicator extends HybridIndicator {
                     addColorStripeToBitmap(bitmap, canvas, i);
 
                     preProgressBitmap = output;
-                    uIHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.onProgressIndicationUpdated(output);
-                        }
-                    });
+                    uIHandler.post(() -> listener.onProgressIndicationUpdated(output));
 
                 }
             }

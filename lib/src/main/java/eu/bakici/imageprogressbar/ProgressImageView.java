@@ -111,23 +111,22 @@ public class ProgressImageView extends ImageView implements OnPostExecuteListene
     private Bitmap extractBitmap(@NonNull Drawable drawable) {
         if (drawable instanceof BitmapDrawable) {
             return ((BitmapDrawable) drawable).getBitmap();
-        } else {
-            Class<? extends Drawable> drawableClass = drawable.getClass();
-            try {
-                // this is hacky and ugly. There is a possibility to get a custom drawable
-                // that is not part of the framework but stores a bitmap.
-                // Therefore we check if a method named 'getBitmap' exists.
-                // and we return the value of it to initialize the original bitmap for
-                // proper image manipulation.
-                Method getBitmapMethod = drawableClass.getMethod("getBitmap");
-                return (Bitmap) getBitmapMethod.invoke(drawable);
-            } catch (NoSuchMethodException e) {
-                return null;
-            } catch (InvocationTargetException e) {
-                return null;
-            } catch (IllegalAccessException e) {
-                return null;
-            }
+        }
+        Class<? extends Drawable> drawableClass = drawable.getClass();
+        try {
+            // this is hacky and ugly. There is a possibility to get a custom drawable
+            // that is not part of the framework but stores a bitmap.
+            // Therefore we check if a method named 'getBitmap' exists.
+            // and we return the value of it to initialize the original bitmap for
+            // proper image manipulation.
+            Method getBitmapMethod = drawableClass.getMethod("getBitmap");
+            return (Bitmap) getBitmapMethod.invoke(drawable);
+        } catch (NoSuchMethodException e) {
+            return null;
+        } catch (InvocationTargetException e) {
+            return null;
+        } catch (IllegalAccessException e) {
+            return null;
         }
     }
 
@@ -218,7 +217,7 @@ public class ProgressImageView extends ImageView implements OnPostExecuteListene
                     superSetImageBitmap(indicator.getCurrentBitmap());
                     break;
                 case ProgressIndicator.ASYNC:
-                    new ProgressImageAsyncTask(indicator, getProgressPercent(), true, this).execute(originalBitmap);
+                    new ProgressImageAsyncTask(indicator, getProgressPercent(), true, this::onPostExecute).execute(originalBitmap);
                     break;
             }
         }
@@ -234,16 +233,11 @@ public class ProgressImageView extends ImageView implements OnPostExecuteListene
                     superSetImageBitmap(indicator.getCurrentBitmap());
                     break;
                 case ProgressIndicator.ASYNC:
-                    new ProgressImageAsyncTask(indicator, getProgressPercent(), false, this).execute(originalBitmap);
+                    new ProgressImageAsyncTask(indicator, getProgressPercent(), false, this::onPostExecute).execute(originalBitmap);
                     break;
                 case ProgressIndicator.HYBRID:
                     ((HybridIndicator) indicator).onProgress(originalBitmap, getProgressPercent(),
-                            new HybridIndicator.OnProgressIndicationUpdatedListener() {
-                                @Override
-                                public void onProgressIndicationUpdated(final Bitmap bitmap) {
-                                    superSetImageBitmap(bitmap);
-                                }
-                            }
+                            this::superSetImageBitmap
                     );
                     break;
             }
@@ -302,10 +296,9 @@ public class ProgressImageView extends ImageView implements OnPostExecuteListene
 
     }
 
-
+    interface OnPostExecuteListener<T> extends eu.bakici.imageprogressbar.OnPostExecuteListener<T> {
+    }
 }
 
-interface OnPostExecuteListener<T> {
-    void onPostExecute(T param);
-}
+
 

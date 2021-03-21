@@ -25,6 +25,8 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -105,7 +107,7 @@ public class ProgressIndicator implements Parcelable {
     protected Bitmap preProgressBitmap;
 
     @SuppressWarnings("all")
-    protected ProgressIndicator(Parcel in) {
+    protected ProgressIndicator(@NotNull Parcel in) {
         this.currentBitmap = in.readParcelable(Bitmap.class.getClassLoader());
         this.indicationProcess = in.readInt();
         this.preProgressBitmap = in.readParcelable(Bitmap.class.getClassLoader());
@@ -188,7 +190,7 @@ public class ProgressIndicator implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void writeToParcel(@NotNull Parcel dest, int flags) {
         dest.writeParcelable(this.currentBitmap, flags);
         dest.writeInt(this.indicationProcess);
         dest.writeParcelable(this.preProgressBitmap, flags);
