@@ -36,7 +36,7 @@ public class AlphaIndicator extends ProgressIndicator {
 
 
     @Override
-    public Bitmap getPreProgressBitmap(Bitmap originalBitmap) {
+    public Bitmap getPreProgressBitmap(@NonNull Bitmap originalBitmap) {
         return IndicatorUtils.convertGrayscale(originalBitmap);
     }
 

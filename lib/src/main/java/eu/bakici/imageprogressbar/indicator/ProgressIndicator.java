@@ -120,7 +120,7 @@ public class ProgressIndicator implements Parcelable {
      * @param originalBitmap the original bitmap.
      * @return the manipulated bitmap that should be displayed, before the progress starts.
      */
-    public Bitmap getPreProgressBitmap(Bitmap originalBitmap) {
+    public Bitmap getPreProgressBitmap(@NonNull Bitmap originalBitmap) {
         throw new UnsupportedOperationException("onPreProgress is not implemented");
     }
 

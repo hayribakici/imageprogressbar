@@ -38,7 +38,7 @@ public class BlurIndicator extends ProgressIndicator {
     }
 
     @Override
-    public Bitmap getPreProgressBitmap(final Bitmap originalBitmap) {
+    public Bitmap getPreProgressBitmap(final @NonNull Bitmap originalBitmap) {
         return Blur.fastblur(context, originalBitmap, MAX_RADIUS);
     }
 

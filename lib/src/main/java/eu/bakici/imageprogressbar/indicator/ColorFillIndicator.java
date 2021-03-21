@@ -74,7 +74,7 @@ public class ColorFillIndicator extends ProgressIndicator {
 
 
     @Override
-    public Bitmap getPreProgressBitmap(final Bitmap originalBitmap) {
+    public Bitmap getPreProgressBitmap(final @NonNull Bitmap originalBitmap) {
         return IndicatorUtils.convertGrayscale(originalBitmap);
     }
 

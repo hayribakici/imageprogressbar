@@ -37,7 +37,7 @@ public class PixelizeIndicator extends ProgressIndicator {
     }
 
     @Override
-    public Bitmap getPreProgressBitmap(Bitmap originalBitmap) {
+    public Bitmap getPreProgressBitmap(@NonNull Bitmap originalBitmap) {
         return pixelizeImage(100 / PROGRESS_TO_PIXELIZATION_FACTOR, originalBitmap);
     }
 

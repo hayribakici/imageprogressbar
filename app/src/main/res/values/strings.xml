@@ -11,5 +11,6 @@
     <string name="action_circle">Circulator</string>
     <string name="action_alpha">Alpha</string>
     <string name="action_line">Random Stripes</string>
+    <string name="action_spiral">Spiral</string>
 
 </resources>

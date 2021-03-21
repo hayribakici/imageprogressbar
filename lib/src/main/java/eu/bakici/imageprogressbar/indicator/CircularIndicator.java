@@ -37,7 +37,8 @@ public class CircularIndicator extends ProgressIndicator {
 
     public static final int CLOCKWISE = 0;
     public static final int COUNTERCLOCKWISE = 1;
-    private static final int FULL_CIRCLE = 360;
+    protected static final int FULL_CIRCLE = 360;
+    private RectF arc;
 
     /**
      * Type of how the image will be processed.
@@ -65,8 +66,12 @@ public class CircularIndicator extends ProgressIndicator {
 
 
     @Override
-    public Bitmap getPreProgressBitmap(Bitmap originalBitmap) {
+    public Bitmap getPreProgressBitmap(@NonNull Bitmap originalBitmap) {
         shader = new BitmapShader(originalBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+        arc = new RectF(originalBitmap.getWidth() * -0.5f,
+                originalBitmap.getHeight() * -0.5f,
+                originalBitmap.getWidth() * 1.5f,
+                originalBitmap.getHeight() * 1.5f);
         return IndicatorUtils.convertGrayscale(originalBitmap);
     }
 
@@ -81,15 +86,9 @@ public class CircularIndicator extends ProgressIndicator {
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
         canvas.drawBitmap(preProgressBitmap, 0, 0, new Paint());
-        final RectF arc = new RectF(originalBitmap.getWidth() * -0.5f,
-                originalBitmap.getHeight() * -0.5f,
-                originalBitmap.getWidth() * 1.5f,
-                originalBitmap.getHeight() * 1.5f);
         paint.setShader(shader);
         canvas.drawArc(arc, 270, angle, true, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
-        canvas.drawBitmap(originalBitmap, 0, 0, paint);
         return bitmap;
-
     }
 }
