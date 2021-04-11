@@ -66,6 +66,9 @@ and updated with
 progressImageView.setProgress(50));
 ```
 
+### Seamless Intergration with Picasso or Glide
+Just add your imageview to Picasso or Glide as usual. 
+
 ### Build your own indicator
 
 The ProgressImageView is designed to bind various progress indicator representations. This is provided by the class ProgressIndicator.
