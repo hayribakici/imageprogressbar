@@ -25,8 +25,6 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -90,15 +88,15 @@ public class ProgressIndicator implements Parcelable {
      * The type of processing this indicator is running on.
      */
     @IndicationProcessingType
-    private final int indicationProcess;
+    private final int indicationType;
 
     /**
      * Standard constructor. Initializes a ProgressIndicator instance.
      *
-     * @param indicationProcess the type of processing this indicator should have.
+     * @param type the type of processing this indicator should have.
      */
-    public ProgressIndicator(@IndicationProcessingType int indicationProcess) {
-        this.indicationProcess = indicationProcess;
+    public ProgressIndicator(@IndicationProcessingType int type) {
+        this.indicationType = type;
     }
 
     /**
@@ -106,10 +104,9 @@ public class ProgressIndicator implements Parcelable {
      */
     protected Bitmap preProgressBitmap;
 
-    @SuppressWarnings("all")
-    protected ProgressIndicator(@NotNull Parcel in) {
+    protected ProgressIndicator(@NonNull Parcel in) {
         this.currentBitmap = in.readParcelable(Bitmap.class.getClassLoader());
-        this.indicationProcess = in.readInt();
+        this.indicationType = in.readInt();
         this.preProgressBitmap = in.readParcelable(Bitmap.class.getClassLoader());
     }
 
@@ -131,7 +128,7 @@ public class ProgressIndicator implements Parcelable {
      * @param progressPercent the values in percent. Goes from 0 to 100.
      * @return the manipulated bitmap that should be displayed based on the percentage of the progress bar.
      */
-    public Bitmap getBitmapOnProgress(@NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+    public Bitmap getBitmap(@NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
         return getCurrentBitmap();
     }
 
@@ -159,7 +156,7 @@ public class ProgressIndicator implements Parcelable {
      */
     @IndicationProcessingType
     public int getIndicationProcessingType() {
-        return indicationProcess;
+        return indicationType;
     }
 
     /**
@@ -181,7 +178,7 @@ public class ProgressIndicator implements Parcelable {
      * @param progressPercent the values in percent. Goes from 0 to 100
      */
     public final void onProgress(@NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
-        currentBitmap = getBitmapOnProgress(originalBitmap, progressPercent);
+        currentBitmap = getBitmap(originalBitmap, progressPercent);
     }
 
     @Override
@@ -190,9 +187,9 @@ public class ProgressIndicator implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(@NotNull Parcel dest, int flags) {
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeParcelable(this.currentBitmap, flags);
-        dest.writeInt(this.indicationProcess);
+        dest.writeInt(this.indicationType);
         dest.writeParcelable(this.preProgressBitmap, flags);
     }
 }

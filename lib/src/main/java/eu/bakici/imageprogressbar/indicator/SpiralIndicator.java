@@ -37,7 +37,7 @@ public class SpiralIndicator extends ProgressIndicator {
 
 
     @Override
-    public Bitmap getBitmapOnProgress(@NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+    public Bitmap getBitmap(@NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
         float angle = IndicatorUtils.getValueOfPercentFloat(MAX_DEGREE, progressPercent) % 360;
         Log.d("a", String.format("%s %%, angle %s", progressPercent, angle));
         Bitmap bitmap = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), Bitmap.Config.ARGB_8888);

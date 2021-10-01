@@ -41,7 +41,7 @@ public class AlphaIndicator extends ProgressIndicator {
     }
 
     @Override
-    public Bitmap getBitmapOnProgress(@NonNull Bitmap originalBitmap, int progressPercent) {
+    public Bitmap getBitmap(@NonNull Bitmap originalBitmap, int progressPercent) {
         final Bitmap output = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
 

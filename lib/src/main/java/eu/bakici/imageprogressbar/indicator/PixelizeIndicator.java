@@ -42,7 +42,7 @@ public class PixelizeIndicator extends ProgressIndicator {
     }
 
     @Override
-    public Bitmap getBitmapOnProgress(@NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+    public Bitmap getBitmap(@NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
         /*
          * Checks if enough time has elapsed since the last pixelization call was invoked.
          * This prevents too many pixelization processes from being invoked at the same time

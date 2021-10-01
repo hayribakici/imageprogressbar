@@ -79,7 +79,7 @@ public class ColorFillIndicator extends ProgressIndicator {
     }
 
     @Override
-    public Bitmap getBitmapOnProgress(final @NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+    public Bitmap getBitmap(final @NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
 
         final int bitmapHeight = originalBitmap.getHeight();
         final int bitmapWidth = originalBitmap.getWidth();

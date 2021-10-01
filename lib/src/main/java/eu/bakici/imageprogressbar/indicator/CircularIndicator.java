@@ -77,7 +77,7 @@ public class CircularIndicator extends ProgressIndicator {
 
 
     @Override
-    public Bitmap getBitmapOnProgress(@NonNull Bitmap originalBitmap, int progressPercent) {
+    public Bitmap getBitmap(@NonNull Bitmap originalBitmap, int progressPercent) {
         int angle = IndicatorUtils.getValueOfPercent(FULL_CIRCLE, progressPercent);
         if (turn == COUNTERCLOCKWISE) {
             angle = angle * (-1);
