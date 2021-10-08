@@ -295,9 +295,6 @@ public class ProgressImageView extends ImageView implements OnPostExecuteListene
 
 
     }
-
-    interface OnPostExecuteListener<T> extends eu.bakici.imageprogressbar.OnPostExecuteListener<T> {
-    }
 }
 
 
