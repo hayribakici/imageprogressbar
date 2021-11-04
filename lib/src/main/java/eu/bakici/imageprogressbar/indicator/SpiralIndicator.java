@@ -69,4 +69,28 @@ public class SpiralIndicator extends ProgressIndicator {
         canvas.drawPath(path, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
     }
+
+
+    private static double binom(int n, double a, double b) {
+        double result = 0.0;
+        for (int k = 0; k <= n; k++) {
+            result += nCr(n, k) * Math.pow(a, -k) * Math.pow(b, k);
+        }
+        return result;
+    }
+
+    private static double nCr(int n, int r) {
+        if (r > n || r < 0) {
+            return 0;
+        }
+        if (r == 0 || r == n) {
+            return 1;
+        }
+
+        double value = 1;
+        for (int i = 0; i < r; i++) {
+            value = value * (n - i) / (r - i);
+        }
+        return value;
+    }
 }
