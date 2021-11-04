@@ -20,7 +20,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -121,11 +120,7 @@ public class ProgressImageView extends ImageView implements OnPostExecuteListene
             // proper image manipulation.
             Method getBitmapMethod = drawableClass.getMethod("getBitmap");
             return (Bitmap) getBitmapMethod.invoke(drawable);
-        } catch (NoSuchMethodException e) {
-            return null;
-        } catch (InvocationTargetException e) {
-            return null;
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             return null;
         }
     }
@@ -171,10 +166,10 @@ public class ProgressImageView extends ImageView implements OnPostExecuteListene
         if (indicator == null) {
             return;
         }
-        this.progress = progress;
         if (originalBitmap == null) {
             return;
         }
+        this.progress = progress;
         if (silent) {
             fireOnProgress();
         }
@@ -217,7 +212,8 @@ public class ProgressImageView extends ImageView implements OnPostExecuteListene
                     superSetImageBitmap(indicator.getCurrentBitmap());
                     break;
                 case ProgressIndicator.ASYNC:
-                    new ProgressImageAsyncTask(indicator, getProgressPercent(), true, this::onPostExecute).execute(originalBitmap);
+                    new ProgressExecutor(originalBitmap, indicator, this).prepare();
+//                    new ProgressImageAsyncTask(indicator, getProgressPercent(), true, this).execute(originalBitmap);
                     break;
             }
         }
@@ -233,7 +229,8 @@ public class ProgressImageView extends ImageView implements OnPostExecuteListene
                     superSetImageBitmap(indicator.getCurrentBitmap());
                     break;
                 case ProgressIndicator.ASYNC:
-                    new ProgressImageAsyncTask(indicator, getProgressPercent(), false, this::onPostExecute).execute(originalBitmap);
+                    new ProgressExecutor(originalBitmap, indicator, this).start(getProgressPercent());
+//                    new ProgressImageAsyncTask(indicator, getProgressPercent(), false, this).execute(originalBitmap);
                     break;
                 case ProgressIndicator.HYBRID:
                     ((HybridIndicator) indicator).onProgress(originalBitmap, getProgressPercent(),
@@ -255,45 +252,7 @@ public class ProgressImageView extends ImageView implements OnPostExecuteListene
 
     @Override
     public void onPostExecute(Bitmap param) {
-        setImageBitmap(param);
-    }
-
-    static class ProgressImageAsyncTask extends AsyncTask<Bitmap, Void, Bitmap> {
-
-
-        private final ProgressIndicator indicator;
-        private final int progressPercent;
-        private final boolean isPreProgress;
-        private final OnPostExecuteListener<Bitmap> listener;
-
-        public ProgressImageAsyncTask(final ProgressIndicator indicator,
-                                      final int progressPercent,
-                                      boolean preProgress,
-                                      OnPostExecuteListener<Bitmap> listener) {
-            this.indicator = indicator;
-            this.progressPercent = progressPercent;
-            this.isPreProgress = preProgress;
-            this.listener = listener;
-
-        }
-
-        @Override
-        protected Bitmap doInBackground(final Bitmap... params) {
-            final Bitmap bitmap = params[0];
-            if (isPreProgress) {
-                indicator.onPreProgress(bitmap);
-            } else {
-                indicator.onProgress(bitmap, progressPercent);
-            }
-            return indicator.getCurrentBitmap();
-        }
-
-        @Override
-        protected final void onPostExecute(final Bitmap bitmap) {
-            listener.onPostExecute(bitmap);
-        }
-
-
+        superSetImageBitmap(param);
     }
 }
 

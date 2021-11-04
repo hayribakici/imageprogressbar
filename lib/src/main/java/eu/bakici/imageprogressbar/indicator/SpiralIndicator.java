@@ -40,6 +40,8 @@ public class SpiralIndicator extends ProgressIndicator {
     public Bitmap getBitmap(@NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
         float angle = IndicatorUtils.getValueOfPercentFloat(MAX_DEGREE, progressPercent) % 360;
         Log.d("a", String.format("%s %%, angle %s", progressPercent, angle));
+        int h = Math.max(originalBitmap.getWidth(), originalBitmap.getHeight());
+        float a = (float) h / 24f;
         Bitmap bitmap = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
@@ -50,7 +52,7 @@ public class SpiralIndicator extends ProgressIndicator {
                 (float) (centerY + (A * angle * Math.sin(angle))));
         paint.setShader(shader);
 //        canvas.drawLine(centerX, centerY, (float) (centerX + A * angle * Math.cos(angle)), (float) (centerY + A * angle * Math.sin(angle)), paint);
-        canvas.drawArc(arc, 0, angle, true, paint);
+        canvas.drawArc(arc, 270, angle, true, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
 //        canvas.drawBitmap(originalBitmap, 0, 0, paint);
         return bitmap;

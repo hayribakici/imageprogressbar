@@ -45,7 +45,6 @@ public class ProgressIndicatorDemoActivity extends Activity {
 
     private ProgressImageView progressImageView;
     private SeekBar seekBar;
-    private RadioGroup radioImageLoader;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,7 +67,7 @@ public class ProgressIndicatorDemoActivity extends Activity {
             public void onStopTrackingTouch(final SeekBar seekBar) {
             }
         });
-        radioImageLoader = findViewById(R.id.radio_image_loader);
+        RadioGroup radioImageLoader = findViewById(R.id.radio_image_loader);
         radioImageLoader.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {

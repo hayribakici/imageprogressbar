@@ -1,42 +1,48 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
-
-    <SeekBar
-        android:id="@+id/progress_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"/>
-
-    <eu.bakici.imageprogressbar.ProgressImageView
-        android:id="@+id/image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scaleType="fitCenter"/>
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <RadioGroup
         android:id="@+id/radio_image_loader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
+
         <RadioButton
             android:id="@+id/radio_asset"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Use local asset"
-            tools:ignore="HardcodedText"/>
+            tools:ignore="HardcodedText" />
+
         <RadioButton
             android:id="@+id/radio_glide"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Use Glide"
-            tools:ignore="HardcodedText"/>
+            tools:ignore="HardcodedText" />
+
         <RadioButton
             android:id="@+id/radio_picasso"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Use Picasso"
-            tools:ignore="HardcodedText"/>
+            tools:ignore="HardcodedText" />
     </RadioGroup>
+
+    <SeekBar
+        android:id="@+id/progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp" />
+
+    <eu.bakici.imageprogressbar.ProgressImageView
+        android:id="@+id/image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY" />
 
 </LinearLayout>

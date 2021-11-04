@@ -30,7 +30,7 @@ public class AlphaIndicator extends ProgressIndicator {
     private final Paint alphaPaint;
 
     public AlphaIndicator() {
-        super(SYNC);
+        super(ASYNC);
         alphaPaint = new Paint();
     }
 
