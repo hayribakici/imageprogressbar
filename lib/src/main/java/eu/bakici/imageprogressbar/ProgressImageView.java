@@ -22,6 +22,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -195,6 +196,11 @@ public class ProgressImageView extends ImageView implements OnPostExecuteListene
         return (int) Math.ceil((progressFloat / maxFloat) * MAX_PERCENT);
     }
 
+    @FloatRange(from = 0.0, to = 1.0)
+    private float getProgressP() {
+        return (float) progress / maximum;
+    }
+
     public void setProgressIndicator(final ProgressIndicator progressIndicator) {
         indicator = progressIndicator;
         fireOnPreProgress();
@@ -204,7 +210,7 @@ public class ProgressImageView extends ImageView implements OnPostExecuteListene
     private void fireOnPreProgress() {
         if (indicator != null) {
             new ProgressExecutor(originalBitmap, indicator, this).prepare();
-            final int process = indicator.getIndicationProcessingType();
+//            final int process = indicator.getIndicationProcessingType();
 //            switch (process) {
 //                case ProgressIndicator.HYBRID:
 //                case ProgressIndicator.SYNC:
@@ -222,7 +228,7 @@ public class ProgressImageView extends ImageView implements OnPostExecuteListene
     private void fireOnProgress() {
         if (indicator != null) {
 //            final int process = indicator.getIndicationProcessingType();
-            new ProgressExecutor(originalBitmap, indicator, this).start(getProgressPercent());
+            new ProgressExecutor(originalBitmap, indicator, this).start(getProgressP());
 //            switch (process) {
 //                case ProgressIndicator.ASYNC:
 //                    break;

@@ -38,6 +38,14 @@ public final class IndicatorUtils {
         return Math.round(getValueOfPercentFloat(value, percent));
     }
 
+    public static int getValueOfPercent(final int value, final float percent) {
+        return Math.round(value * percent);
+    }
+
+    public static float getValueOfPercentFloat(int value, float percent) {
+        return value * percent;
+    }
+
     /**
      * Calculates the amount of {@code value} based on on {@code percent}.
      *

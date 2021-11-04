@@ -17,7 +17,7 @@ package eu.bakici.imageprogressbar.indicator;
  */
 
 import android.graphics.Bitmap;
-import android.support.annotation.IntRange;
+import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 
 public class PixelizeIndicator extends ProgressIndicator {
@@ -38,7 +38,7 @@ public class PixelizeIndicator extends ProgressIndicator {
     }
 
     @Override
-    public Bitmap getBitmap(@NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+    public Bitmap getBitmap(@NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
         /*
          * Checks if enough time has elapsed since the last pixelization call was invoked.
          * This prevents too many pixelization processes from being invoked at the same time
@@ -46,7 +46,8 @@ public class PixelizeIndicator extends ProgressIndicator {
          */
         if ((System.currentTimeMillis() - lastTime) > TIME_BETWEEN_TASKS) {
             lastTime = System.currentTimeMillis();
-            int progress = 100 - progressPercent;
+
+            float progress = (1f - progressPercent) * 100f;
             return pixelizeImage(progress / PROGRESS_TO_PIXELIZATION_FACTOR, originalBitmap);
         }
         return currentBitmap;

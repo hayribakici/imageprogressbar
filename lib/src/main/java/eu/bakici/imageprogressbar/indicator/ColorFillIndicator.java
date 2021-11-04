@@ -20,8 +20,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.support.annotation.FloatRange;
 import android.support.annotation.IntDef;
-import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 
 import java.lang.annotation.Retention;
@@ -79,7 +79,7 @@ public class ColorFillIndicator extends ProgressIndicator {
     }
 
     @Override
-    public Bitmap getBitmap(final @NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+    public Bitmap getBitmap(final @NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
 
         final int bitmapHeight = originalBitmap.getHeight();
         final int bitmapWidth = originalBitmap.getWidth();

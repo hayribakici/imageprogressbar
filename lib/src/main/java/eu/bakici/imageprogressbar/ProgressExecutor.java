@@ -3,6 +3,7 @@ package eu.bakici.imageprogressbar;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 
 import java.util.concurrent.ExecutorService;
@@ -42,12 +43,12 @@ final class ProgressExecutor {
         start(false, (float) progress);
     }
 
-    void start(float progress) {
+    void start(@FloatRange(from = 0.0, to = 1.0) float progress) {
         start(false, progress);
     }
 
 
-    private void start(final boolean isPreProgress, float progress) {
+    private void start(final boolean isPreProgress, @FloatRange(from = 0.0, to = 1.0) float progress) {
         executor.execute(() -> {
             if (isPreProgress) {
                 indicator.onPreProgress(originalBitmap);
@@ -55,7 +56,7 @@ final class ProgressExecutor {
                 if (indicator.getIndicationProcessingType() == ProgressIndicator.HYBRID) {
 
                 } else {
-                    indicator.onProgress(originalBitmap, (int) progress);
+                    indicator.onProgress(originalBitmap, progress);
                 }
             }
             // post back to main thread

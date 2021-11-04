@@ -24,6 +24,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.Shader;
+import android.support.annotation.FloatRange;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 
@@ -77,7 +78,7 @@ public class CircularIndicator extends ProgressIndicator {
 
 
     @Override
-    public Bitmap getBitmap(@NonNull Bitmap originalBitmap, int progressPercent) {
+    public Bitmap getBitmap(@NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
         int angle = IndicatorUtils.getValueOfPercent(FULL_CIRCLE, progressPercent);
         if (turn == COUNTERCLOCKWISE) {
             angle = angle * (-1);

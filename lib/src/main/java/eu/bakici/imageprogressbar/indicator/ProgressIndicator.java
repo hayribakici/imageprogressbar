@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.CallSuper;
+import android.support.annotation.FloatRange;
 import android.support.annotation.IntDef;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
@@ -125,6 +126,10 @@ public class ProgressIndicator implements Parcelable {
         return getCurrentBitmap();
     }
 
+    public Bitmap getBitmap(@NonNull Bitmap originalBitmap, float progressPercent) {
+        return getCurrentBitmap();
+    }
+
     /**
      * The current displayed bitmap.
      *
@@ -171,6 +176,10 @@ public class ProgressIndicator implements Parcelable {
      * @param progressPercent the values in percent. Goes from 0 to 100
      */
     public final void onProgress(@NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+        currentBitmap = getBitmap(originalBitmap, progressPercent);
+    }
+
+    public final void onProgress(@NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
         currentBitmap = getBitmap(originalBitmap, progressPercent);
     }
 

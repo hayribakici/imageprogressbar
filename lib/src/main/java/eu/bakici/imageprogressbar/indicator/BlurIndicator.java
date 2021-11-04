@@ -18,7 +18,7 @@ package eu.bakici.imageprogressbar.indicator;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.support.annotation.IntRange;
+import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -43,7 +43,7 @@ public class BlurIndicator extends ProgressIndicator {
     }
 
     @Override
-    public synchronized Bitmap getBitmap(final @NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+    public synchronized Bitmap getBitmap(final @NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
 
         if (progressPercent == 100) {
             return originalBitmap;
