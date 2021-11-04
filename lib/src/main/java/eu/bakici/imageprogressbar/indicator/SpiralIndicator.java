@@ -24,7 +24,7 @@ public class SpiralIndicator extends ProgressIndicator {
     private float centerY;
 
     public SpiralIndicator() {
-        super(SYNC);
+        super(ASYNC);
     }
 
     @Override

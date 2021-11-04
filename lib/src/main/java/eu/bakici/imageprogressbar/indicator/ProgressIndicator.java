@@ -40,18 +40,11 @@ public class ProgressIndicator implements Parcelable {
      */
     @Retention(RetentionPolicy.SOURCE)
     @IntDef(value = {
-            SYNC,
             ASYNC,
             HYBRID
     })
     public @interface IndicationProcessingType {
     }
-
-    /**
-     * Synchronous processing, the image processing will be done
-     * on the main thread.
-     */
-    public static final int SYNC = 1;
 
     /**
      * Ansynchronous processing, the image processing will be done

@@ -29,11 +29,7 @@ public class PixelizeIndicator extends ProgressIndicator {
     private long lastTime;
 
     public PixelizeIndicator() {
-        this(ASYNC);
-    }
-
-    public PixelizeIndicator(@IntRange(from = SYNC, to = ASYNC) @IndicationProcessingType int processingType) {
-        super(processingType);
+        super(ASYNC);
     }
 
     @Override

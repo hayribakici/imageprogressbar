@@ -68,7 +68,7 @@ public class ColorFillIndicator extends ProgressIndicator {
     private int direction;
 
     public ColorFillIndicator(@ProgressDirection int direction) {
-        super(SYNC);
+        super(ASYNC);
         this.direction = direction;
     }
 
