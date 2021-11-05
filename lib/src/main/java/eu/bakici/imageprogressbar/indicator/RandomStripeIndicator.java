@@ -32,7 +32,7 @@ import java.util.List;
 import eu.bakici.imageprogressbar.utils.FlaggedRect;
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
-public class RandomStripeIndicator extends HybridIndicator {
+public class RandomStripeIndicator extends CatchUpIndicator {
 
     public final static int LEVEL_THIN = 4;
     public final static int LEVEL_MEDIUM = 8;
@@ -99,6 +99,12 @@ public class RandomStripeIndicator extends HybridIndicator {
         preProgressBitmap = output;
         callback.onProgressIndicationUpdated(output);
         return preProgressBitmap;
+    }
+
+
+    @Override
+    protected Integer getValuePercent(float progressPercent) {
+        return IndicatorUtils.getValueOfPercent(stripes.size(), progressPercent);
     }
 
     private void addColorStripeToBitmap(final Bitmap originalBitmap, final Canvas canvas, final int pos) {

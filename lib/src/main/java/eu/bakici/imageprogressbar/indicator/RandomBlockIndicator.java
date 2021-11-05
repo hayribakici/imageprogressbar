@@ -59,6 +59,17 @@ public class RandomBlockIndicator extends BlockIndicator {
 
         int blockPosOfPercent = IndicatorUtils.getValueOfPercent(blockSum, progressPercent) + 1;
 
+        /*
+        TODO The progress jump indicates with two cases:
+        1. it may happen, that during the progression, that some values (e.g. in the list) are skipped b/c
+            they depend on the value, that should been calculated by getValueOfPercent().
+            So, in order to catch up with the values in between (the difference between the
+            now and the previous), we update the bitmap.
+        2. it may happen, that we have a jumpy progression (1% -> 50%). Therefore we
+           calculate the difference (50% - 1% = 49%) and catch up with the percentage from 2,..,49.
+        I think, we need a mixture of both.
+         */
+
         if (blockPosOfPercent - currBlockPosOfPercent > 1) {
             // we need to cover all block positions
             // when blockSum is big, we might skip some positions,
@@ -95,6 +106,11 @@ public class RandomBlockIndicator extends BlockIndicator {
         final Paint paint = new Paint();
         canvas.drawBitmap(preProgressBitmap, 0, 0, paint);
         canvas.drawBitmap(originalBitmap, randomBlock, randomBlock, paint);
+    }
+
+    @Override
+    protected Comparable<? extends Number> getValuePercent(float progressPercent) {
+        return null;
     }
 
     private class ProgressJumpRunnable implements Runnable {

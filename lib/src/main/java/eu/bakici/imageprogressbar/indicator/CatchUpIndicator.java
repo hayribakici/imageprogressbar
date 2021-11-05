@@ -29,7 +29,7 @@ import android.support.annotation.NonNull;
  * increase of the progress. This indicator is there to 'fill the gaps' and let progression
  * catch on from where the progress jump started until its desired progression.
  */
-public class HybridIndicator extends ProgressIndicator {
+public abstract class CatchUpIndicator extends ProgressIndicator {
 
     protected Handler uIHandler;
 
@@ -39,8 +39,8 @@ public class HybridIndicator extends ProgressIndicator {
 
     private int currProgressPercent;
 
-    public HybridIndicator() {
-        super(HYBRID);
+    public CatchUpIndicator() {
+        super(CATCH_UP);
 
     }
 
@@ -66,6 +66,8 @@ public class HybridIndicator extends ProgressIndicator {
     protected Bitmap getBitmapOnProgress(Bitmap originalBitmap, int progressPercent, OnProgressIndicationUpdatedListener listener) {
         return getCurrentBitmap();
     }
+
+    protected abstract Comparable<? extends Number> getValuePercent(@FloatRange(from = 0.0, to = 1.0) float progressPercent);
 
     // TODO add method that queues Runnables
     // TODO add method that posts to main thread

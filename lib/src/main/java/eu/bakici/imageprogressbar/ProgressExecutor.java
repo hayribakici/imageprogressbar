@@ -52,7 +52,7 @@ final class ProgressExecutor {
             if (isPreProgress) {
                 indicator.onPreProgress(originalBitmap);
             } else {
-                if (indicator.getIndicationProcessingType() == ProgressIndicator.HYBRID) {
+                if (indicator.getIndicationProcessingType() == ProgressIndicator.CATCH_UP) {
 
                 } else {
                     indicator.onProgress(originalBitmap, progress);

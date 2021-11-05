@@ -36,28 +36,27 @@ public class ProgressIndicator implements Parcelable {
     static final String TAG = ProgressIndicator.class.getSimpleName();
 
     /**
-     * Type of how the image will be processed.
-     */
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef(value = {
-            ASYNC,
-            HYBRID
-    })
-    public @interface IndicationProcessingType {
-    }
-
-    /**
      * Ansynchronous processing, the image processing will be done
      * on a seperate thread (AsyncTask)
      */
-    public static final int ASYNC = 2;
-
+    public static final int DEFAULT = 2;
     /**
      * A mixture of synchronous and asynchronous. Which means, that
      * there are calculations that are done in a seperate thread while these
      * are push to the main thread.
      */
-    public static final int HYBRID = 3;
+    public static final int CATCH_UP = 3;
+
+    /**
+     * Called when the progress bat is moving.
+     *
+     * @param originalBitmap  the original bitmap.
+     * @param progressPercent the values in percent. Goes from 0.0 to 1.0.
+     * @return the manipulated bitmap that should be displayed based on the percentage of the progress bar.
+     */
+    public Bitmap getBitmap(@NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
+        return getCurrentBitmap();
+    }
 
     /**
      * The current bitmap the view is displaying.
@@ -115,14 +114,14 @@ public class ProgressIndicator implements Parcelable {
     }
 
     /**
-     * Called when the progress bat is moving.
-     *
-     * @param originalBitmap  the original bitmap.
-     * @param progressPercent the values in percent. Goes from 0.0 to 1.0.
-     * @return the manipulated bitmap that should be displayed based on the percentage of the progress bar.
+     * Type of how the image will be processed.
      */
-    public Bitmap getBitmap(@NonNull Bitmap originalBitmap, float progressPercent) {
-        return getCurrentBitmap();
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef(value = {
+            DEFAULT,
+            CATCH_UP
+    })
+    public @interface IndicationProcessingType {
     }
 
     /**

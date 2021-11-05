@@ -3,36 +3,28 @@ ImageProgressBar
 
 Android Library of a ProgressBar as an image representation. 
 
-#### Get it or [Download the latest aar.](./aar/imageprogressbar-1.2.aar)
-To get it with gradle, you need to add it in your root build.gradle at the end of repositories:
-```groovy
-	allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
-	}
-```
-And then the dependency
-```groovy
-dependencies {
-		compile 'com.github.hayribakici:imageprogressbar:1.2'
-	}
-```
+
 
 This is a simple extensible android library that allows you to use an image for a loading indication. There are a couple of build-in indicators such as
  * `BlurIndicator`
    * Indicator that lets the image blur and sharpens it when the progress is running.
  * `ColorFillerIndicator`
-   * Indicator that fills the image from black and white to color. The indication can be done from left to right, right to left, top to bottom and bottom to top.
+    * Indicator that fills the image from black and white to color. The indication can be done from
+      left to right, right to left, top to bottom and bottom to top.
  * `PixelizeIndicator`
-   * Indicator that pixelizes the image and sharpens when the progress is running.
+    * Indicator that pixelizes the image and sharpens when the progress is running.
  * `CircularIndicator`
-   * Indicator that fills the image from black and white to color with a circle animation.
+    * Indicator that fills the image from black and white to color with a circle animation.
  * `AlphaIndicator`
-   * Indicator that fades the image from black and white to color when the progress is running.
+    * Indicator that fades the image from black and white to color when the progress is running.
  * `RandomBlockIndicator`
-   * Indicator that fills the image from black and white to color by randomly adding block-slices of the image in color.
+    * Indicator that fills the image from black and white to color by randomly adding block-slices
+      of the image in color.
+ * `RandomStripeIndicator`
+    * Indicator that fills the image from black and white to color by randomly adding slices of the
+      image in color.
+ * `SpiralIndicator`
+    * Indicator that fills the image from black and white to color with a spiral animation.
 
 #### Examples
 
@@ -72,49 +64,58 @@ The ProgressImageView is designed to bind various progress indicator representat
 
 ```java
 public abstract class ProgressIndicator {
-	public ProgressIndicator(@IndicationProcessingType int indicationProcess) {
-	  mIndicationProcess = indicationProcess;
-  }
+   public ProgressIndicator(@IndicationProcessingType int indicationProcess) {
+      indicationProcess = indicationProcess;
+   }
 
+   /**
+    * This method is optional.
+    * Called once at the beginning before the action progress is called. This method
+    * allows for instance to do some Bitmap manipulation before the progress starts.
+    *
+    * @param originalBitmap the original bitmap.
+    */
+   public Bitmap getPreProgressBitmap(@NonNull Bitmap originalBitmap) {
+      // pre process your bitmap here first
+      // (e.g. make grayscale) and make sure to return the manipulated bitmap.
+   }
 
-/**
-* This method is optional.
-* Called once at the beginning before the action progress is called. This method
-* allows for instance to do some Bitmap manipulation before the progress starts.
-*
-* @param originalBitmap the original bitmap.
-*/
-public void onPreProgress(Bitmap originalBitmap) {
-	// pre process your bitmap here first
-	// (e.g. make grayscale)
+   /**
+    * Called when the progress bat is moving.
+    *
+    * @param originalBitmap  the original bitmap.
+    * @param progressPercent the values in percent. Goes from 0.0 to 1.0.
+    * @return the manipulated bitmap that should be displayed based on the percentage of the progress bar.
+    */
+   public Bitmap getBitmap(@NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
+      // process your bitmap here while the progress is running
+      // make sure to return the manipulated image here, too.
+   }
 }
-
-
-/**
-* Called when the progress bar is moving.
-*
-* @param originalBitmap  the original bitmap
-* @param progressPercent the values in percent. Goes from 0 to 100
-*/
-public abstract void onProgress(Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent);
-// process your bitmap here while the progress is running
 ```
 
-Inherit from this class and set how your indicator should be run. There are three types on how the ProgressImageView is processing the image manipulation:
-1. Synchronous (`SYNC`)
-2. Asynchronous (`ASYNC`)
-3. Hybrid (`HYBRID`)
+Inherit from this class and set how your indicator should be run. There are three types on how the
+ProgressImageView is processing the image manipulation:
 
-###### Synchronous:
-As the name implies, the image (pre) processing is done in the main thread. This is useful, if you don't have do to heavy computation with the image. As for the built-in indicators, `ColorFillerIndicator`, `CirculatorIndicator` and `AlphaIndicator` are using the main thread to manipulate the image.
+1. `DEFAULT`
+2. `CATCH_UP`
 
-###### Asynchronous:
-Also here, as the name implies, the image processing is done by a background thread. The processing is handled by a `AsyncTask`. The `BlurIndicator` and `PixelizeIndicator` are using an `AsyncTask`.
+###### `DEFAULT`:
 
-###### Hybrid:
-This is a tricky one. Basically it is a synchronous indicator, but with an asynchronous callback. When the progression of the progress becomes jumpy (meaning the progression is not linear), this indicator allows to 'fill the gaps' between the progress jump (e.g. the progress jumps from 1 to 10). It gives you special callback where you can do 'catching up' image manipulation to let the ImageView draw the missing gaps between e.g. 1 and 10. The processing indicator `RandomBlockIndicator` is a `HybridIndicator`.
+Should be used by default. If you don't need to consider jumpy progression, this is what should be
+used when calling `super()`.
+
+###### `CATCH_UP`:
+
+This is a tricky one. Basically it is a synchronous indicator, but with an asynchronous callback.
+When the progression of the progress becomes jumpy (meaning the progression is not linear), this
+indicator allows to 'fill the gaps' between the progress jump (e.g. the progress jumps from 1 to 10)
+. It gives you special callback where you can do 'catching up' image manipulation to let the
+ImageView draw the missing gaps between e.g. 1 and 10. The processing
+indicator `RandomBlockIndicator` is a `HybridIndicator`.
 
 You need to implement the following method:
+
 ```java
 /**
  * Same as {@link #onProgress(Bitmap, int)} but with a callback.
@@ -129,20 +130,41 @@ public void onProgress(final Bitmap originalBitmap, @IntRange(from = 0, to = 100
 ```
 
 With the callback interface:
+
 ```java
 /**
  * Callback interface when the indication has been updated.
  */
 public interface OnProgressIndicationUpdatedListener {
-    void onProgressIndicationUpdated(final Bitmap bitmap);
+   void onProgressIndicationUpdated(final Bitmap bitmap);
 }
 ```
 
+#### Get it or [Download the latest aar.](./aar/imageprogressbar-2.0.aar)
+
+To get it with gradle, you need to add it in your root build.gradle at the end of repositories:
+
+```groovy
+    allprojects {
+   repositories {
+      ...
+      maven { url 'https://jitpack.io' }
+   }
+}
+```
+
+And then the dependency
+
+```groovy
+dependencies {
+   compile 'com.github.hayribakici:imageprogressbar:2.0'
+}
+```
 
 ## Changelog
-- 1.2 adds counterclockwise turning in the `CircularIndicator`
-- 1.1 adds remote image loading with [picasso](https://github.com/square/picasso) or [glide](https://github.com/bumptech/glide)</br>
-- 1.0 initial release
+
+See [Changelog](Changelog.md)
 
 ## Licence
+
 Apache Licence

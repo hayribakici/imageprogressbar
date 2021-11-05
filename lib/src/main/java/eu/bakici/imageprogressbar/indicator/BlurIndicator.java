@@ -33,7 +33,7 @@ public class BlurIndicator extends ProgressIndicator {
     private final Context context;
 
     public BlurIndicator(final Context context) {
-        super(ASYNC);
+        super(DEFAULT);
         this.context = context;
     }
 

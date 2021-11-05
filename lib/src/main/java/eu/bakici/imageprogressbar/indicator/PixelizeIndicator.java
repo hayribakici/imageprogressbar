@@ -29,7 +29,7 @@ public class PixelizeIndicator extends ProgressIndicator {
     private long lastTime;
 
     public PixelizeIndicator() {
-        super(ASYNC);
+        super(DEFAULT);
     }
 
     @Override

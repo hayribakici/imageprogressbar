@@ -31,7 +31,7 @@ import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 /**
  * Helper class that slices the image into blocks.
  */
-public abstract class BlockIndicator extends HybridIndicator {
+public abstract class BlockIndicator extends CatchUpIndicator {
 
     @IntDef(value = {
             BLOCK_SIZE_BIG,
@@ -40,7 +40,8 @@ public abstract class BlockIndicator extends HybridIndicator {
             BLOCK_SIZE_EXTRA_SMALL
     })
     @Retention(RetentionPolicy.SOURCE)
-    public @interface BlockSize {}
+    public @interface BlockSize {
+    }
 
     public static final int BLOCK_SIZE_BIG = 60;
     public static final int BLOCK_SIZE_MEDIUM = 50;

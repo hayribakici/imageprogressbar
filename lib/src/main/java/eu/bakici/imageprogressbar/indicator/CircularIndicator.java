@@ -61,7 +61,7 @@ public class CircularIndicator extends ProgressIndicator {
     }
 
     public CircularIndicator(@Turn int turn) {
-        super(ASYNC);
+        super(DEFAULT);
         this.turn = turn;
     }
 
