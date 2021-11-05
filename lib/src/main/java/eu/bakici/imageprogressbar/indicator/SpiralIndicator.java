@@ -13,7 +13,7 @@ import android.support.annotation.NonNull;
 
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
-public class SpiralIndicator extends HybridIndicator {
+public class SpiralIndicator extends ProgressIndicator {
 
     private static final int MAX_DEGREE = 1440;
     public static final double PI8 = Math.PI / 180;
@@ -27,7 +27,7 @@ public class SpiralIndicator extends HybridIndicator {
     private float centerY;
 
     public SpiralIndicator() {
-        super();
+        super(ASYNC);
         path = new Path();
     }
 

@@ -24,6 +24,8 @@ import android.view.MenuItem;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 
+import androidx.annotation.NonNull;
+
 import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
@@ -42,16 +44,17 @@ import eu.bakici.imageprogressbar.indicator.SpiralIndicator;
 public class ProgressIndicatorDemoActivity extends Activity {
 
     public static final String TAG = "ImageProgress";
+    private static final String KEY_CHECKED = "checked";
 
     private ProgressImageView progressImageView;
     private SeekBar seekBar;
+    private RadioGroup radioImageLoader;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         progressImageView = findViewById(R.id.image);
-        progressImageView.setImageResource(R.drawable.sidney);
         seekBar = findViewById(R.id.progress_bar);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -67,25 +70,32 @@ public class ProgressIndicatorDemoActivity extends Activity {
             public void onStopTrackingTouch(final SeekBar seekBar) {
             }
         });
-        RadioGroup radioImageLoader = findViewById(R.id.radio_image_loader);
-        radioImageLoader.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                seekBar.setProgress(0);
-                if (checkedId == R.id.radio_asset) {
-                    progressImageView.setImageResource(R.drawable.sidney);
-                } else if (checkedId == R.id.radio_glide) {
-                    Glide.with(ProgressIndicatorDemoActivity.this)
-                            .load("https://upload.wikimedia.org/wikipedia/commons/f/f5/Western_BACE_Cobblebank.jpg")
-                            .into(progressImageView);
-                } else if (checkedId == R.id.radio_picasso) {
-                    Picasso.get()
-                            .load("https://upload.wikimedia.org/wikipedia/commons/f/f5/Western_BACE_Cobblebank.jpg")
-                            .into(progressImageView);
-                }
+        radioImageLoader = findViewById(R.id.radio_image_loader);
+        radioImageLoader.setOnCheckedChangeListener((group, checkedId) -> {
+            seekBar.setProgress(0);
+            if (checkedId == R.id.radio_asset) {
+                progressImageView.setImageResource(R.drawable.sidney);
+            } else if (checkedId == R.id.radio_glide) {
+                Glide.with(ProgressIndicatorDemoActivity.this)
+                        .load("https://upload.wikimedia.org/wikipedia/commons/f/f5/Western_BACE_Cobblebank.jpg")
+                        .into(progressImageView);
+            } else if (checkedId == R.id.radio_picasso) {
+                Picasso.get()
+                        .load("https://upload.wikimedia.org/wikipedia/commons/f/f5/Western_BACE_Cobblebank.jpg")
+                        .into(progressImageView);
             }
         });
-        radioImageLoader.check(R.id.radio_asset);
+        int checkId = R.id.radio_asset;
+        if (savedInstanceState != null) {
+            checkId = savedInstanceState.getInt(KEY_CHECKED, R.id.radio_asset);
+        }
+        radioImageLoader.check(checkId);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("checked", radioImageLoader.getCheckedRadioButtonId());
     }
 
     @Override
@@ -141,7 +151,7 @@ public class ProgressIndicatorDemoActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         reset();
-        Picasso.get().shutdown();
+//        Picasso.get().shutdown();
         Glide.get(this).clearMemory();
     }
 }

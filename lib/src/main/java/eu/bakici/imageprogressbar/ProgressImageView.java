@@ -33,9 +33,7 @@ import java.lang.reflect.Method;
 
 import eu.bakici.imageprogressbar.indicator.ProgressIndicator;
 
-public class ProgressImageView extends ImageView implements OnPostExecuteListener<Bitmap> {
-
-    private static final int MAX_PERCENT = 100;
+public class ProgressImageView extends ImageView implements ProgressExecutor.OnPostExecuteListener<Bitmap> {
 
     private final static String TAG = ProgressImageView.class.getSimpleName();
 
@@ -190,14 +188,8 @@ public class ProgressImageView extends ImageView implements OnPostExecuteListene
     }
 
 
-    private int getProgressPercent() {
-        final float progressFloat = (float) progress;
-        final float maxFloat = (float) maximum;
-        return (int) Math.ceil((progressFloat / maxFloat) * MAX_PERCENT);
-    }
-
     @FloatRange(from = 0.0, to = 1.0)
-    private float getProgressP() {
+    private float getProgressPercent() {
         return (float) progress / maximum;
     }
 
@@ -210,34 +202,13 @@ public class ProgressImageView extends ImageView implements OnPostExecuteListene
     private void fireOnPreProgress() {
         if (indicator != null) {
             new ProgressExecutor(originalBitmap, indicator, this).prepare();
-//            final int process = indicator.getIndicationProcessingType();
-//            switch (process) {
-//                case ProgressIndicator.HYBRID:
-//                case ProgressIndicator.SYNC:
-//                    indicator.onPreProgress(originalBitmap);
-//                    superSetImageBitmap(indicator.getCurrentBitmap());
-//                    break;
-//                case ProgressIndicator.ASYNC:
-////                    new ProgressImageAsyncTask(indicator, getProgressPercent(), true, this).execute(originalBitmap);
-//                    break;
-//            }
         }
     }
 
 
     private void fireOnProgress() {
         if (indicator != null) {
-//            final int process = indicator.getIndicationProcessingType();
-            new ProgressExecutor(originalBitmap, indicator, this).start(getProgressP());
-//            switch (process) {
-//                case ProgressIndicator.ASYNC:
-//                    break;
-//                case ProgressIndicator.HYBRID:
-//                    ((HybridIndicator) indicator).onProgress(originalBitmap, getProgressPercent(),
-//                            this::superSetImageBitmap
-//                    );
-//                    break;
-//            }
+            new ProgressExecutor(originalBitmap, indicator, this).start(getProgressPercent());
         }
     }
 

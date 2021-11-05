@@ -11,6 +11,9 @@ import java.util.concurrent.Executors;
 
 import eu.bakici.imageprogressbar.indicator.ProgressIndicator;
 
+/**
+ * Helper class.
+ */
 final class ProgressExecutor {
 
 
@@ -39,10 +42,6 @@ final class ProgressExecutor {
         start(true, 0f);
     }
 
-    void start(int progress) {
-        start(false, (float) progress);
-    }
-
     void start(@FloatRange(from = 0.0, to = 1.0) float progress) {
         start(false, progress);
     }
@@ -64,4 +63,11 @@ final class ProgressExecutor {
         });
     }
 
+    private void catchUp(@FloatRange(from = 0.0, to = 1.0) float progress) {
+
+    }
+
+    interface OnPostExecuteListener<T> {
+        void onPostExecute(T param);
+    }
 }

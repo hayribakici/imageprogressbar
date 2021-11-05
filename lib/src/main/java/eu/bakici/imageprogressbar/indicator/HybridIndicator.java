@@ -19,6 +19,7 @@ package eu.bakici.imageprogressbar.indicator;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 
@@ -44,14 +45,14 @@ public class HybridIndicator extends ProgressIndicator {
     }
 
     @Override
-    public final Bitmap getBitmap(final @NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
+    public Bitmap getBitmap(final @NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
         throw new UnsupportedOperationException("onProgress is not implemented");
         // onProgress(Bitmap, progressPercent, listener) is used
     }
 
 
     /**
-     * Same as {@link ProgressIndicator#onProgress(Bitmap, int)} but with a callback.
+     * Same as {@link ProgressIndicator#onProgress(Bitmap, float)} but with a callback.
      *
      * @param originalBitmap  the original bitmap.
      * @param progressPercent the percentage of the current progress.

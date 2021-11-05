@@ -22,7 +22,6 @@ import android.os.Parcelable;
 import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IntDef;
-import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -119,13 +118,9 @@ public class ProgressIndicator implements Parcelable {
      * Called when the progress bat is moving.
      *
      * @param originalBitmap  the original bitmap.
-     * @param progressPercent the values in percent. Goes from 0 to 100.
+     * @param progressPercent the values in percent. Goes from 0.0 to 1.0.
      * @return the manipulated bitmap that should be displayed based on the percentage of the progress bar.
      */
-    public Bitmap getBitmap(@NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
-        return getCurrentBitmap();
-    }
-
     public Bitmap getBitmap(@NonNull Bitmap originalBitmap, float progressPercent) {
         return getCurrentBitmap();
     }
@@ -167,16 +162,6 @@ public class ProgressIndicator implements Parcelable {
     public final void onPreProgress(@NonNull Bitmap originalBitmap) {
         preProgressBitmap = getPreProgressBitmap(originalBitmap);
         currentBitmap = preProgressBitmap;
-    }
-
-    /**
-     * Called when the progress bar is moving.
-     *
-     * @param originalBitmap  the original bitmap
-     * @param progressPercent the values in percent. Goes from 0 to 100
-     */
-    public final void onProgress(@NonNull Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent) {
-        currentBitmap = getBitmap(originalBitmap, progressPercent);
     }
 
     public final void onProgress(@NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
