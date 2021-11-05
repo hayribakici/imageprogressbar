@@ -42,12 +42,8 @@ public final class IndicatorUtils {
         return Math.round(value * percent);
     }
 
-    public static float getValueOfPercentFloat(int value, float percent) {
-        return (float) value * percent;
-    }
-
-    public static double getValueOfPercentD(int value, float percent) {
-        return (double) value * percent;
+    public static double getValueOfPercentD(double value, float percent) {
+        return value * percent;
     }
 
     /**

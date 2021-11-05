@@ -7,28 +7,27 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
-import android.graphics.RectF;
 import android.graphics.Shader;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 
-import eu.bakici.imageprogressbar.utils.Complex;
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
-public class SpiralIndicator extends ProgressIndicator {
+public class SpiralIndicator extends HybridIndicator {
 
     private static final int MAX_DEGREE = 1440;
-    private static final float A = 1.1f;
-    // see http://oeis.org/A072895
-    private static final int B = 2030;
+    public static final double PI8 = Math.PI / 180;
+    // Distance between spines
+    private static final float A = 30f;
     private final Path path;
+
 
     private BitmapShader shader;
     private float centerX;
     private float centerY;
 
     public SpiralIndicator() {
-        super(ASYNC);
+        super();
         path = new Path();
     }
 
@@ -41,69 +40,28 @@ public class SpiralIndicator extends ProgressIndicator {
         return IndicatorUtils.convertGrayscale(originalBitmap);
     }
 
-
     @Override
     public Bitmap getBitmap(@NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
-        int step = IndicatorUtils.getValueOfPercent(B, progressPercent);
-        Paint paint = new Paint();
-
         Bitmap bitmap = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         canvas.drawBitmap(preProgressBitmap, 0, 0, new Paint());
-        Complex c = calculateStep(step);
-        paint.setShader(shader);
-        path.lineTo(centerX + c.real().floatValue(), centerY + c.imag().floatValue());
-        canvas.drawPath(path, paint);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
+        archimedeanSpiral(canvas, progressPercent);
 
         return bitmap;
     }
 
-    private Complex calculateStep(int step) {
-        Complex c = new Complex(1);
-        for (int i = 1; i <= step; i += 1) {
-            c = c.multiply(new Complex(1, 1 / Math.sqrt(i)));
-        }
-        return c;
-    }
-
-    private void archimedeanSpiral(Canvas canvas, float progressPercent) {
-        float angle = IndicatorUtils.getValueOfPercent(MAX_DEGREE, progressPercent);
+    private void archimedeanSpiral(Canvas canvas, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
+        double angle = IndicatorUtils.getValueOfPercentD(MAX_DEGREE * PI8, progressPercent);
         Paint paint = new Paint();
 
         canvas.drawBitmap(preProgressBitmap, 0, 0, new Paint());
 
-        float x = (float) ((A * angle * Math.cos(angle)));
-        float y = (float) ((A * angle * Math.sin(angle)));
-        final RectF arc = new RectF(centerX - x, centerY - y,
-                centerX + x, centerY + y);
+        float x = (float) (A * angle * Math.cos(angle));
+        float y = (float) (A * angle * Math.sin(angle));
+
         paint.setShader(shader);
         path.lineTo(centerX + x, centerY + y);
         canvas.drawPath(path, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
-    }
-
-
-    private static double binom(int n, double a, double b) {
-        double result = 0.0;
-        for (int k = 0; k <= n; k++) {
-            result += nCr(n, k) * Math.pow(a, -k) * Math.pow(b, k);
-        }
-        return result;
-    }
-
-    private static double nCr(int n, int r) {
-        if (r > n || r < 0) {
-            return 0;
-        }
-        if (r == 0 || r == n) {
-            return 1;
-        }
-
-        double value = 1;
-        for (int i = 0; i < r; i++) {
-            value = value * (n - i) / (r - i);
-        }
-        return value;
     }
 }
