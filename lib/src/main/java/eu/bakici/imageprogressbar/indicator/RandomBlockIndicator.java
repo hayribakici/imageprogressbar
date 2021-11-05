@@ -1,7 +1,7 @@
 package eu.bakici.imageprogressbar.indicator;
 
 /*
- * Copyright (C) 2016 Hayri Bakici
+ * Copyright (C) 2016, 2021 hayribakici
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,6 +111,11 @@ public class RandomBlockIndicator extends BlockIndicator {
     @Override
     protected Comparable<? extends Number> getValuePercent(float progressPercent) {
         return null;
+    }
+
+    @Override
+    protected Integer next() {
+        return 1;
     }
 
     private class ProgressJumpRunnable implements Runnable {

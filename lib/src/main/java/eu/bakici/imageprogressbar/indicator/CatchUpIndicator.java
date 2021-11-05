@@ -20,7 +20,6 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.FloatRange;
-import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 
 /**
@@ -39,33 +38,18 @@ public abstract class CatchUpIndicator extends ProgressIndicator {
 
     private int currProgressPercent;
 
+//    private Comparable<? extends Number>
+
     public CatchUpIndicator() {
-        super(CATCH_UP);
+        super();
 
     }
 
     @Override
     public Bitmap getBitmap(final @NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
-        throw new UnsupportedOperationException("onProgress is not implemented");
-        // onProgress(Bitmap, progressPercent, listener) is used
+        return null;
     }
 
-
-    /**
-     * Same as {@link ProgressIndicator#onProgress(Bitmap, float)} but with a callback.
-     *
-     * @param originalBitmap  the original bitmap.
-     * @param progressPercent the percentage of the current progress.
-     * @param listener        a callback listener for filling the gaps between progress jumps.
-     */
-    public final void onProgress(@NonNull final Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent, final OnProgressIndicationUpdatedListener listener) {
-        currentBitmap = getBitmapOnProgress(originalBitmap, progressPercent, listener);
-    }
-
-
-    protected Bitmap getBitmapOnProgress(Bitmap originalBitmap, int progressPercent, OnProgressIndicationUpdatedListener listener) {
-        return getCurrentBitmap();
-    }
 
     protected abstract Comparable<? extends Number> getValuePercent(@FloatRange(from = 0.0, to = 1.0) float progressPercent);
 
@@ -76,6 +60,7 @@ public abstract class CatchUpIndicator extends ProgressIndicator {
 //
 //    }
 
+    protected abstract Comparable<? extends Number> next();
 
     /**
      * Callback interface when the indication has been updated.

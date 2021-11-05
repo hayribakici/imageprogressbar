@@ -1,7 +1,7 @@
 package eu.bakici.imageprogressbar.indicator;
 
 /*
- * Copyright (C) 2016 Hayri Bakici
+ * Copyright (C) 2016, 2021 hayribakici
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 
 /**
  * Adapter class for Progress indication.
@@ -35,17 +31,7 @@ public class ProgressIndicator implements Parcelable {
 
     static final String TAG = ProgressIndicator.class.getSimpleName();
 
-    /**
-     * Ansynchronous processing, the image processing will be done
-     * on a seperate thread (AsyncTask)
-     */
-    public static final int DEFAULT = 2;
-    /**
-     * A mixture of synchronous and asynchronous. Which means, that
-     * there are calculations that are done in a seperate thread while these
-     * are push to the main thread.
-     */
-    public static final int CATCH_UP = 3;
+    protected float currentProgressPercent;
 
     /**
      * Called when the progress bat is moving.
@@ -77,28 +63,20 @@ public class ProgressIndicator implements Parcelable {
     };
 
     /**
-     * The type of processing this indicator is running on.
-     */
-    @IndicationProcessingType
-    private final int indicationType;
-
-    /**
-     * Standard constructor. Initializes a ProgressIndicator instance.
-     *
-     * @param type the type of processing this indicator should have.
-     */
-    public ProgressIndicator(@IndicationProcessingType int type) {
-        this.indicationType = type;
-    }
-
-    /**
      * The bitmap when onPreProgress is called
      */
     protected Bitmap preProgressBitmap;
 
+
+    /**
+     * Standard constructor.
+     */
+    public ProgressIndicator() {
+    }
+
     protected ProgressIndicator(@NonNull Parcel in) {
         this.currentBitmap = in.readParcelable(Bitmap.class.getClassLoader());
-        this.indicationType = in.readInt();
+        this.currentProgressPercent = in.readFloat();
         this.preProgressBitmap = in.readParcelable(Bitmap.class.getClassLoader());
     }
 
@@ -113,16 +91,6 @@ public class ProgressIndicator implements Parcelable {
         throw new UnsupportedOperationException("onPreProgress is not implemented");
     }
 
-    /**
-     * Type of how the image will be processed.
-     */
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef(value = {
-            DEFAULT,
-            CATCH_UP
-    })
-    public @interface IndicationProcessingType {
-    }
 
     /**
      * The current displayed bitmap.
@@ -135,20 +103,18 @@ public class ProgressIndicator implements Parcelable {
     }
 
     /**
+     * @return the current progression.
+     */
+    public float getCurrentProgressPercent() {
+        return currentProgressPercent;
+    }
+
+    /**
      * Should be called when the indication is done.
      */
     @CallSuper
     public void cleanUp() {
         currentBitmap = null;
-    }
-
-    /**
-     * @return The indicator processing type this indicator is running on.
-     * @see IndicationProcessingType
-     */
-    @IndicationProcessingType
-    public int getIndicationProcessingType() {
-        return indicationType;
     }
 
     /**
@@ -165,6 +131,7 @@ public class ProgressIndicator implements Parcelable {
 
     public final void onProgress(@NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
         currentBitmap = getBitmap(originalBitmap, progressPercent);
+        currentProgressPercent = progressPercent;
     }
 
     @Override
@@ -175,7 +142,7 @@ public class ProgressIndicator implements Parcelable {
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeParcelable(this.currentBitmap, flags);
-        dest.writeInt(this.indicationType);
+        dest.writeFloat(this.currentProgressPercent);
         dest.writeParcelable(this.preProgressBitmap, flags);
     }
 }

@@ -1,7 +1,7 @@
 package eu.bakici.imageprogressbar.indicator;
 
 /*
- * Copyright (C) 2016 Hayri Bakici
+ * Copyright (C) 2016 hayribakici
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ public class BlurIndicator extends ProgressIndicator {
     private final Context context;
 
     public BlurIndicator(final Context context) {
-        super(DEFAULT);
+        super();
         this.context = context;
     }
 

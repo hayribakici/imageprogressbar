@@ -1,7 +1,7 @@
 package eu.bakici.imageprogressbar.indicator;
 
 /*
- * Copyright (C) 2021 Hayri Bakici
+ * Copyright (C) 2021 hayribakici
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ public class RandomStripeIndicator extends CatchUpIndicator {
         return IndicatorUtils.convertGrayscale(originalBitmap);
     }
 
-    @Override
+
     public Bitmap getBitmapOnProgress(@NonNull Bitmap originalBitmap, int progressPercent, final OnProgressIndicationUpdatedListener callback) {
 
         int stripeCount = stripes.size();
@@ -105,6 +105,11 @@ public class RandomStripeIndicator extends CatchUpIndicator {
     @Override
     protected Integer getValuePercent(float progressPercent) {
         return IndicatorUtils.getValueOfPercent(stripes.size(), progressPercent);
+    }
+
+    @Override
+    protected Integer next() {
+        return 1;
     }
 
     private void addColorStripeToBitmap(final Bitmap originalBitmap, final Canvas canvas, final int pos) {

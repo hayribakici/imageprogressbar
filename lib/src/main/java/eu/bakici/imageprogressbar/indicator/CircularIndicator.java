@@ -1,7 +1,7 @@
 package eu.bakici.imageprogressbar.indicator;
 
 /*
- * Copyright (C) 2016 Hayri Bakici
+ * Copyright (C) 2016 hayribakici
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ public class CircularIndicator extends ProgressIndicator {
     }
 
     public CircularIndicator(@Turn int turn) {
-        super(DEFAULT);
+        super();
         this.turn = turn;
     }
 

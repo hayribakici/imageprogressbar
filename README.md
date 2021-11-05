@@ -64,8 +64,8 @@ The ProgressImageView is designed to bind various progress indicator representat
 
 ```java
 public abstract class ProgressIndicator {
-   public ProgressIndicator(@IndicationProcessingType int indicationProcess) {
-      indicationProcess = indicationProcess;
+   public ProgressIndicator(@ProgressionType int progression) {
+      this.progression = progression;
    }
 
    /**

@@ -1,7 +1,7 @@
 package eu.bakici.imageprogressbar.indicator;
 
 /*
- * Copyright (C) 2016 Hayri Bakici
+ * Copyright (C) 2016 hayribakici
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,10 +65,10 @@ public class ColorFillIndicator extends ProgressIndicator {
     public final static int PROGRESS_DIRECTION_VERTICAL_BOTTOM_UP = 3;
 
     @ProgressDirection
-    private int direction;
+    private final int direction;
 
     public ColorFillIndicator(@ProgressDirection int direction) {
-        super(DEFAULT);
+        super();
         this.direction = direction;
     }
 
