@@ -35,6 +35,7 @@ import eu.bakici.imageprogressbar.indicator.BlockIndicator;
 import eu.bakici.imageprogressbar.indicator.BlurIndicator;
 import eu.bakici.imageprogressbar.indicator.CircularIndicator;
 import eu.bakici.imageprogressbar.indicator.ColorFillIndicator;
+import eu.bakici.imageprogressbar.indicator.DiagonalIndicator;
 import eu.bakici.imageprogressbar.indicator.PixelizeIndicator;
 import eu.bakici.imageprogressbar.indicator.RandomBlockIndicator;
 import eu.bakici.imageprogressbar.indicator.RandomStripeIndicator;
@@ -136,6 +137,9 @@ public class ProgressIndicatorDemoActivity extends Activity {
                 return true;
             case R.id.action_indicator_spiral:
                 progressImageView.setProgressIndicator(new SpiralIndicator());
+                return true;
+            case R.id.action_indicator_diagonal:
+                progressImageView.setProgressIndicator(new DiagonalIndicator());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

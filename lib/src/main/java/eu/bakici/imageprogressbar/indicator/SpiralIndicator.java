@@ -44,7 +44,7 @@ public class SpiralIndicator extends ProgressIndicator {
     private float centerY;
 
     public SpiralIndicator() {
-        super(DEFAULT);
+        super();
         path = new Path();
     }
 

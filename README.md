@@ -23,8 +23,11 @@ This is a simple extensible android library that allows you to use an image for 
  * `RandomStripeIndicator`
     * Indicator that fills the image from black and white to color by randomly adding slices of the
       image in color.
- * `SpiralIndicator`
-    * Indicator that fills the image from black and white to color with a spiral animation.
+* `SpiralIndicator`
+   * Indicator that fills the image from black and white to color with a spiral animation.
+* `DiagonalIndicator`
+   * Indicator that fills the image from black and white to color going diagonal. From left to
+     right, right to left, top to bottom and bottom to top.
 
 #### Examples
 
@@ -54,28 +57,27 @@ progressImageView.setProgressIndicator(new CircularIndicator());
 ```
 
 and updated with
+
 ```java
 progressImageView.setProgress(50));
 ```
 
 ### Build your own indicator
 
-The ProgressImageView is designed to bind various progress indicator representations. This is provided by the class ProgressIndicator.
+The ProgressImageView is designed to bind various progress indicator representations. This is
+provided by the class ProgressIndicator.
+
+Inherit from this class and implement the following methods:
 
 ```java
-public abstract class ProgressIndicator {
-   public ProgressIndicator(@ProgressionType int progression) {
-      this.progression = progression;
-   }
-
    /**
-    * This method is optional.
-    * Called once at the beginning before the action progress is called. This method
-    * allows for instance to do some Bitmap manipulation before the progress starts.
-    *
-    * @param originalBitmap the original bitmap.
-    */
-   public Bitmap getPreProgressBitmap(@NonNull Bitmap originalBitmap) {
+ * This method is optional.
+ * Called once at the beginning before the action progress is called. This method
+ * allows for instance to do some Bitmap manipulation before the progress starts.
+ *
+ * @param originalBitmap the original bitmap.
+ */
+public Bitmap getPreProgressBitmap(@NonNull Bitmap originalBitmap){
       // pre process your bitmap here first
       // (e.g. make grayscale) and make sure to return the manipulated bitmap.
    }
@@ -91,53 +93,6 @@ public abstract class ProgressIndicator {
       // process your bitmap here while the progress is running
       // make sure to return the manipulated image here, too.
    }
-}
-```
-
-Inherit from this class and set how your indicator should be run. There are three types on how the
-ProgressImageView is processing the image manipulation:
-
-1. `DEFAULT`
-2. `CATCH_UP`
-
-###### `DEFAULT`:
-
-Should be used by default. If you don't need to consider jumpy progression, this is what should be
-used when calling `super()`.
-
-###### `CATCH_UP`:
-
-This is a tricky one. Basically it is a synchronous indicator, but with an asynchronous callback.
-When the progression of the progress becomes jumpy (meaning the progression is not linear), this
-indicator allows to 'fill the gaps' between the progress jump (e.g. the progress jumps from 1 to 10)
-. It gives you special callback where you can do 'catching up' image manipulation to let the
-ImageView draw the missing gaps between e.g. 1 and 10. The processing
-indicator `RandomBlockIndicator` is a `HybridIndicator`.
-
-You need to implement the following method:
-
-```java
-/**
- * Same as {@link #onProgress(Bitmap, int)} but with a callback.
- * @param originalBitmap the original bitmap.
- * @param progressPercent the percentage of the current progress.
- * @param listener a callback listener for filling the gaps between progress jumps.
- */
-public void onProgress(final Bitmap originalBitmap, @IntRange(from = 0, to = 100) int progressPercent, final OnProgressIndicationUpdatedListener listener) {
-    // do you image manipulation here
-	// you also get a callback for 'catching up' the progression.
-}
-```
-
-With the callback interface:
-
-```java
-/**
- * Callback interface when the indication has been updated.
- */
-public interface OnProgressIndicationUpdatedListener {
-   void onProgressIndicationUpdated(final Bitmap bitmap);
-}
 ```
 
 #### Get it or [Download the latest aar.](./aar/imageprogressbar-2.0.aar)

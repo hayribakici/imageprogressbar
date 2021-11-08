@@ -21,6 +21,7 @@ import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
+import android.support.annotation.FloatRange;
 
 /**
  * Helper class with Util functions.
@@ -54,6 +55,10 @@ public final class IndicatorUtils {
     public static float getValueOfPercentFloat(final int value, final int percent) {
         final float p100 = (float) percent * 0.01f;
         return value * p100;
+    }
+
+    public static int integerizePercent(@FloatRange(from = 0.0, to = 1.0) float percent) {
+        return (int) percent * 100;
     }
 
     /**

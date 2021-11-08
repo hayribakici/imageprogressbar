@@ -28,6 +28,8 @@ import java.util.concurrent.Executors;
 import eu.bakici.imageprogressbar.indicator.CatchUpIndicator;
 import eu.bakici.imageprogressbar.indicator.ProgressIndicator;
 
+import static eu.bakici.imageprogressbar.utils.IndicatorUtils.integerizePercent;
+
 /**
  * Helper class.
  */
@@ -35,13 +37,13 @@ final class ProgressExecutor {
 
 
     @NonNull
-    private final Bitmap originalBitmap;
-    @NonNull
     private final OnPostExecuteListener<Bitmap> listener;
     @NonNull
     private final ExecutorService executor;
     @NonNull
     private final Handler mainThreadHandler;
+    @NonNull
+    private final Bitmap originalBitmap;
     @NonNull
     ProgressIndicator indicator;
 
@@ -70,7 +72,7 @@ final class ProgressExecutor {
                 indicator.onPreProgress(originalBitmap);
             } else {
                 if (indicator instanceof CatchUpIndicator) {
-
+                    catchUp(progress);
                 } else {
                     indicator.onProgress(originalBitmap, progress);
                 }
@@ -81,7 +83,16 @@ final class ProgressExecutor {
     }
 
     private void catchUp(@FloatRange(from = 0.0, to = 1.0) float progress) {
-
+        int currProgress = integerizePercent(indicator.getCurrentProgressPercent());
+        int p = integerizePercent(progress);
+        if (currProgress < p - 1) {
+            // large progressbar jump
+            final int diff = p - currProgress;
+            for (int i = 1; i <= diff; i++) {
+                final int missingProgressPercent = currProgress + i;
+//                Comparable percent = indicator.getValuePercent(progress);
+            }
+        }
     }
 
     interface OnPostExecuteListener<T> {
