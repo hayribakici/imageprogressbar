@@ -19,8 +19,9 @@ package eu.bakici.imageprogressbar;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.FloatRange;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

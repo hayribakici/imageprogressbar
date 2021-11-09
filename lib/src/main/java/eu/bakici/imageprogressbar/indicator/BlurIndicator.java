@@ -18,9 +18,10 @@ package eu.bakici.imageprogressbar.indicator;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.support.annotation.FloatRange;
-import android.support.annotation.NonNull;
 import android.util.Log;
+
+import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
 
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 

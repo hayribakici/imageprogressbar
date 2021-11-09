@@ -21,7 +21,8 @@ import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
-import android.support.annotation.FloatRange;
+
+import androidx.annotation.FloatRange;
 
 /**
  * Helper class with Util functions.

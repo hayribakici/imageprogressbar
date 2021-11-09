@@ -24,9 +24,10 @@ import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Shader;
-import android.support.annotation.FloatRange;
-import android.support.annotation.NonNull;
 import android.util.Log;
+
+import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
 
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 

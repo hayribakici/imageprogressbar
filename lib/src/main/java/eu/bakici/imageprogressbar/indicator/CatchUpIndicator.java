@@ -19,8 +19,9 @@ package eu.bakici.imageprogressbar.indicator;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.annotation.FloatRange;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
 
 /**
  * An indicator that is a synchronous indicator at its core, but does now and then gives asynchronous
