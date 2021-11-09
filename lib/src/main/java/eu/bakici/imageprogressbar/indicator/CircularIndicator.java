@@ -40,7 +40,6 @@ public class CircularIndicator extends ProgressIndicator {
     public static final int CLOCKWISE = 0;
     public static final int COUNTERCLOCKWISE = 1;
     protected static final int FULL_CIRCLE = 360;
-    private RectF arc;
 
     /**
      * Type of how the image will be processed.
@@ -54,7 +53,11 @@ public class CircularIndicator extends ProgressIndicator {
 
     }
 
-    private BitmapShader shader;
+    private final Paint paint;
+    private BitmapShader coloredShader;
+    private BitmapShader bwShader;
+    private RectF arc;
+
     private final int turn;
 
     public CircularIndicator() {
@@ -64,17 +67,21 @@ public class CircularIndicator extends ProgressIndicator {
     public CircularIndicator(@Turn int turn) {
         super();
         this.turn = turn;
+        paint = new Paint();
     }
 
 
     @Override
     public Bitmap getPreProgressBitmap(@NonNull Bitmap originalBitmap) {
-        shader = new BitmapShader(originalBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+        coloredShader = new BitmapShader(originalBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
         arc = new RectF(originalBitmap.getWidth() * -0.5f,
                 originalBitmap.getHeight() * -0.5f,
                 originalBitmap.getWidth() * 1.5f,
                 originalBitmap.getHeight() * 1.5f);
-        return IndicatorUtils.convertGrayscale(originalBitmap);
+        Bitmap bwBitmap = IndicatorUtils.convertGrayscale(originalBitmap);
+        bwShader = new BitmapShader(bwBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+
+        return bwBitmap;
     }
 
 
@@ -86,11 +93,16 @@ public class CircularIndicator extends ProgressIndicator {
         }
         Bitmap bitmap = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
-        Paint paint = new Paint();
-        canvas.drawBitmap(preProgressBitmap, 0, 0, new Paint());
-        paint.setShader(shader);
-        canvas.drawArc(arc, 270, angle, true, paint);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
+        // drawing the colored arc with its counter arc
+        drawArc(canvas, 270, (FULL_CIRCLE - angle) * (-1), bwShader);
+        drawArc(canvas, 270, angle, coloredShader);
         return bitmap;
+    }
+
+    private void drawArc(@NonNull Canvas canvas, int startAngle, int angle, BitmapShader shader) {
+        Paint paint = new Paint();
+        paint.setShader(shader);
+        canvas.drawArc(arc, startAngle, angle, true, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
     }
 }

@@ -59,7 +59,7 @@ public final class IndicatorUtils {
     }
 
     public static int integerizePercent(@FloatRange(from = 0.0, to = 1.0) float percent) {
-        return (int) percent * 100;
+        return (int) (percent * 100);
     }
 
     /**

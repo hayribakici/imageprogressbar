@@ -52,9 +52,9 @@ final class ProgressExecutor {
                             @NonNull ProgressIndicator indicator,
                             @NonNull OnPostExecuteListener<Bitmap> listener) {
         this.originalBitmap = originalBitmap;
+        this.indicator = indicator;
         this.listener = listener;
         this.executor = Executors.newSingleThreadExecutor();
-        this.indicator = indicator;
         this.mainThreadHandler = new Handler(Looper.getMainLooper());
     }
 
@@ -91,7 +91,8 @@ final class ProgressExecutor {
             final int diff = p - currProgress;
             for (int i = 1; i <= diff; i++) {
                 final int missingProgressPercent = currProgress + i;
-//                Comparable percent = indicator.getValuePercent(progress);
+                Number percent = indicator.getProgressValue(progress);
+                indicator.onProgress(originalBitmap, i);
             }
         }
     }

@@ -38,6 +38,7 @@ public class SpiralIndicator extends ProgressIndicator {
     // Distance between spines
     private static final float A = 30f;
     private final Path path;
+    private final Paint paint;
 
 
     private BitmapShader shader;
@@ -47,6 +48,7 @@ public class SpiralIndicator extends ProgressIndicator {
     public SpiralIndicator() {
         super();
         path = new Path();
+        paint = new Paint();
     }
 
     @Override
@@ -62,17 +64,15 @@ public class SpiralIndicator extends ProgressIndicator {
     public Bitmap getBitmap(@NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
         Bitmap bitmap = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
-        canvas.drawBitmap(preProgressBitmap, 0, 0, new Paint());
-        archimedeanSpiral(canvas, progressPercent);
-
+        canvas.drawBitmap(preProgressBitmap, 0, 0, paint);
+        drawArchimedeanSpiral(canvas, progressPercent);
         return bitmap;
     }
 
-    private void archimedeanSpiral(Canvas canvas, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
+    private void drawArchimedeanSpiral(@NonNull Canvas canvas, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
+        Log.d("SpiralIndicator", String.format("%s %%, %s %%", progressPercent, IndicatorUtils.integerizePercent(progressPercent)));
         double angle = IndicatorUtils.getValueOfPercentD(MAX_DEGREE * PI8, progressPercent);
         Paint paint = new Paint();
-        Log.d("spiral", "angle = " + angle);
-        canvas.drawBitmap(preProgressBitmap, 0, 0, new Paint());
 
         float x = (float) (A * angle * Math.cos(angle));
         float y = (float) (A * angle * Math.sin(angle));

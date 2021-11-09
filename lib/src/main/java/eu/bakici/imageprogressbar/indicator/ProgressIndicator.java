@@ -110,6 +110,10 @@ public class ProgressIndicator implements Parcelable {
         return currentProgressPercent;
     }
 
+    public final Number getProgressValue(float progress) {
+        return 0;
+    }
+
     /**
      * Should be called when the indication is done.
      */

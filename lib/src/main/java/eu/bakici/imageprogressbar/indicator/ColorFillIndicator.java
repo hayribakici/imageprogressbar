@@ -32,6 +32,8 @@ import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
 public class ColorFillIndicator extends ProgressIndicator {
 
+    private final Paint normalPaint;
+
     /**
      * Type of how the image will be filled.
      */
@@ -71,6 +73,7 @@ public class ColorFillIndicator extends ProgressIndicator {
     public ColorFillIndicator(@ProgressDirection int direction) {
         super();
         this.direction = direction;
+        this.normalPaint = new Paint();
     }
 
 
@@ -116,7 +119,6 @@ public class ColorFillIndicator extends ProgressIndicator {
         final Bitmap output = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), Bitmap.Config.ARGB_8888);
 
         final Canvas canvas = new Canvas(output);
-        final Paint normalPaint = new Paint();
 
         canvas.drawBitmap(preProgressBitmap, bitmapBWRect, bitmapBWRect, normalPaint);
         canvas.drawBitmap(originalBitmap, bitmapSourceRect, bitmapSourceRect, normalPaint);
