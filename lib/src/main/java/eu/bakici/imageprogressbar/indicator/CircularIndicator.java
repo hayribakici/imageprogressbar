@@ -94,15 +94,15 @@ public class CircularIndicator extends ProgressIndicator {
         Bitmap bitmap = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         // drawing the colored arc with its counter arc
-        drawArc(canvas, 270, (FULL_CIRCLE - angle) * (-1), bwShader);
-        drawArc(canvas, 270, angle, coloredShader);
+        drawArc(canvas, (FULL_CIRCLE - angle) * (-1), bwShader);
+        drawArc(canvas, angle, coloredShader);
         return bitmap;
     }
 
-    private void drawArc(@NonNull Canvas canvas, int startAngle, int angle, BitmapShader shader) {
+    private void drawArc(@NonNull Canvas canvas, int angle, @NonNull BitmapShader shader) {
         Paint paint = new Paint();
         paint.setShader(shader);
-        canvas.drawArc(arc, startAngle, angle, true, paint);
+        canvas.drawArc(arc, 270, angle, true, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
     }
 }
