@@ -23,6 +23,7 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 
 import androidx.annotation.FloatRange;
+import androidx.annotation.IntRange;
 
 /**
  * Helper class with Util functions.
@@ -60,6 +61,10 @@ public final class IndicatorUtils {
 
     public static int integerizePercent(@FloatRange(from = 0.0, to = 1.0) float percent) {
         return (int) (percent * 100);
+    }
+
+    public static float floatPercent(@IntRange(from = 0, to = 100) int percent) {
+        return ((float) percent / 100);
     }
 
     /**

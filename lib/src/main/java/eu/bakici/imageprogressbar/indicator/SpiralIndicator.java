@@ -69,6 +69,7 @@ public class SpiralIndicator extends ProgressIndicator {
         return bitmap;
     }
 
+
     private void drawArchimedeanSpiral(@NonNull Canvas canvas, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
         Log.d("SpiralIndicator", String.format("%s %%, %s %%", progressPercent, IndicatorUtils.integerizePercent(progressPercent)));
         double angle = IndicatorUtils.getValueOfPercentD(MAX_DEGREE * PI8, progressPercent);
@@ -82,4 +83,6 @@ public class SpiralIndicator extends ProgressIndicator {
         canvas.drawPath(path, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
     }
+
+
 }

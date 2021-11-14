@@ -106,11 +106,11 @@ public class ProgressIndicator implements Parcelable {
     /**
      * @return the current progression.
      */
-    public float getCurrentProgressPercent() {
+    public final float getCurrentProgressPercent() {
         return currentProgressPercent;
     }
 
-    public final Number getProgressValue(float progress) {
+    public Number getProgressValue(float progress) {
         return 0;
     }
 

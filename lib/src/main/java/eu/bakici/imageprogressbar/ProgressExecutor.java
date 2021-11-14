@@ -28,6 +28,7 @@ import java.util.concurrent.Executors;
 
 import eu.bakici.imageprogressbar.indicator.CatchUpIndicator;
 import eu.bakici.imageprogressbar.indicator.ProgressIndicator;
+import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
 import static eu.bakici.imageprogressbar.utils.IndicatorUtils.integerizePercent;
 
@@ -59,27 +60,21 @@ final class ProgressExecutor {
     }
 
     void prepare() {
-        start(true, 0f);
+        executor.execute(() -> {
+            indicator.onPreProgress(originalBitmap);
+            callback();
+        });
     }
 
     void start(@FloatRange(from = 0.0, to = 1.0) float progress) {
-        start(false, progress);
-    }
-
-
-    private void start(final boolean isPreProgress, @FloatRange(from = 0.0, to = 1.0) float progress) {
         executor.execute(() -> {
-            if (isPreProgress) {
-                indicator.onPreProgress(originalBitmap);
+            if (indicator instanceof CatchUpIndicator) {
+                catchUp(progress);
             } else {
-                if (indicator instanceof CatchUpIndicator) {
-                    catchUp(progress);
-                } else {
-                    indicator.onProgress(originalBitmap, progress);
-                }
+                indicator.onProgress(originalBitmap, progress);
             }
             // post back to main thread
-            mainThreadHandler.post(() -> listener.onPostExecute(indicator.getCurrentBitmap()));
+            callback();
         });
     }
 
@@ -92,9 +87,14 @@ final class ProgressExecutor {
             for (int i = 1; i <= diff; i++) {
                 final int missingProgressPercent = currProgress + i;
                 Number percent = indicator.getProgressValue(progress);
-                indicator.onProgress(originalBitmap, i);
+                indicator.onProgress(originalBitmap, IndicatorUtils.floatPercent(percent.intValue()));
+                callback();
             }
         }
+    }
+
+    private void callback() {
+        mainThreadHandler.post(() -> listener.onPostExecute(indicator.getCurrentBitmap()));
     }
 
     interface OnPostExecuteListener<T> {
