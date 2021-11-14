@@ -86,8 +86,7 @@ final class ProgressExecutor {
             final int diff = p - currProgress;
             for (int i = 1; i <= diff; i++) {
                 final int missingProgressPercent = currProgress + i;
-                Number percent = indicator.getProgressValue(progress);
-                indicator.onProgress(originalBitmap, IndicatorUtils.floatPercent(percent.intValue()));
+                indicator.onProgress(originalBitmap, IndicatorUtils.floatPercent(missingProgressPercent));
                 callback();
             }
         }

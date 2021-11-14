@@ -124,4 +124,6 @@ public class ColorFillIndicator extends ProgressIndicator {
         canvas.drawBitmap(originalBitmap, bitmapSourceRect, bitmapSourceRect, normalPaint);
         return output;
     }
+
+
 }

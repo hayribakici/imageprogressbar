@@ -49,7 +49,7 @@ public class BlurIndicator extends ProgressIndicator {
         if (progressPercent == 100) {
             return originalBitmap;
         }
-        final int radius = MAX_RADIUS - IndicatorUtils.getValueOfPercent(MAX_RADIUS, progressPercent);
+        final int radius = MAX_RADIUS - getProgressValue(progressPercent);
         if (radius <= 0) {
             // insanity check
             return originalBitmap;
@@ -58,4 +58,8 @@ public class BlurIndicator extends ProgressIndicator {
         return Blur.fastblur(context, originalBitmap, radius);
     }
 
+    @Override
+    public Integer getProgressValue(@FloatRange(from = 0.0, to = 1.0) float progress) {
+        return IndicatorUtils.getValueOfPercent(MAX_RADIUS, progress);
+    }
 }

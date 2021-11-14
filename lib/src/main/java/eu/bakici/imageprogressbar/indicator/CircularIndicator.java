@@ -87,7 +87,7 @@ public class CircularIndicator extends ProgressIndicator {
 
     @Override
     public Bitmap getBitmap(@NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
-        int angle = IndicatorUtils.getValueOfPercent(FULL_CIRCLE, progressPercent);
+        int angle = getProgressValue(progressPercent);
         if (turn == COUNTERCLOCKWISE) {
             angle = angle * (-1);
         }
@@ -104,5 +104,10 @@ public class CircularIndicator extends ProgressIndicator {
         paint.setShader(shader);
         canvas.drawArc(arc, 270, angle, true, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
+    }
+
+    @Override
+    public Integer getProgressValue(@FloatRange(from = 0.0, to = 1.0) float progress) {
+        return IndicatorUtils.getValueOfPercent(FULL_CIRCLE, progress);
     }
 }

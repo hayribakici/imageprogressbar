@@ -31,7 +31,7 @@ import androidx.annotation.NonNull;
 
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
-public class SpiralIndicator extends ProgressIndicator {
+public class SpiralIndicator extends CatchUpIndicator {
 
     private static final int MAX_DEGREE = 1440;
     public static final double PI8 = Math.PI / 180;
@@ -69,10 +69,20 @@ public class SpiralIndicator extends ProgressIndicator {
         return bitmap;
     }
 
+    @Override
+    protected Comparable<? extends Number> getValuePercent(float progressPercent) {
+        return null;
+    }
+
+    @Override
+    protected Comparable<? extends Number> next() {
+        return null;
+    }
+
 
     private void drawArchimedeanSpiral(@NonNull Canvas canvas, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
         Log.d("SpiralIndicator", String.format("%s %%, %s %%", progressPercent, IndicatorUtils.integerizePercent(progressPercent)));
-        double angle = IndicatorUtils.getValueOfPercentD(MAX_DEGREE * PI8, progressPercent);
+        double angle = getProgressValue(progressPercent).doubleValue();
         Paint paint = new Paint();
 
         float x = (float) (A * angle * Math.cos(angle));
@@ -85,4 +95,8 @@ public class SpiralIndicator extends ProgressIndicator {
     }
 
 
+    @Override
+    public Number getProgressValue(float progress) {
+        return IndicatorUtils.getValueOfPercentD(MAX_DEGREE * PI8, progress);
+    }
 }
