@@ -1,5 +1,3 @@
-package eu.bakici.imageprogressbar.indicator;
-
 /*
  * Copyright (C) 2016 hayribakici
  *
@@ -16,98 +14,65 @@ package eu.bakici.imageprogressbar.indicator;
  * limitations under the License.
  */
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.RectF;
-import android.graphics.Shader;
+package eu.bakici.imageprogressbar.indicator
 
-import androidx.annotation.FloatRange;
-import androidx.annotation.IntDef;
-import androidx.annotation.NonNull;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-import eu.bakici.imageprogressbar.utils.IndicatorUtils;
-
-public class CircularIndicator extends ProgressIndicator {
+import android.graphics.*
+import androidx.annotation.FloatRange
+import androidx.annotation.IntDef
+import eu.bakici.imageprogressbar.utils.IndicatorUtils
 
 
-    public static final int CLOCKWISE = 0;
-    public static final int COUNTERCLOCKWISE = 1;
-    protected static final int FULL_CIRCLE = 360;
+class CircularIndicator(@Turn private val turn: Int = CLOCKWISE) : Indicator() {
 
-    /**
-     * Type of how the image will be processed.
-     */
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef(value = {
-            CLOCKWISE,
-            COUNTERCLOCKWISE
-    })
-    public @interface Turn {
-
+    companion object {
+        const val CLOCKWISE = 0
+        const val COUNTERCLOCKWISE = 1
+        private const val FULL_CIRCLE = 360
     }
 
-    private final Paint paint;
-    private BitmapShader coloredShader;
-    private BitmapShader bwShader;
-    private RectF arc;
+    @Retention(AnnotationRetention.SOURCE)
+    @IntDef(value = [CLOCKWISE, COUNTERCLOCKWISE])
+    annotation class Turn
 
-    private final int turn;
+    private var coloredShader: BitmapShader? = null
+    private var bwShader: BitmapShader? = null
+    private var arc: RectF? = null
 
-    public CircularIndicator() {
-        this(CLOCKWISE);
+    override fun getPreProgressBitmap(originalBitmap: Bitmap): Bitmap {
+        coloredShader = BitmapShader(originalBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
+        // stretching the canvas of the arc
+        arc = RectF(originalBitmap.width * -0.5f,
+                originalBitmap.height * -0.5f,
+                originalBitmap.width * 1.5f,
+                originalBitmap.height * 1.5f)
+        val bwBitmap = IndicatorUtils.convertGrayscale(originalBitmap)
+        bwShader = BitmapShader(bwBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
+        return bwBitmap
     }
 
-    public CircularIndicator(@Turn int turn) {
-        super();
-        this.turn = turn;
-        paint = new Paint();
-    }
-
-
-    @Override
-    public Bitmap getPreProgressBitmap(@NonNull Bitmap originalBitmap) {
-        coloredShader = new BitmapShader(originalBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-        arc = new RectF(originalBitmap.getWidth() * -0.5f,
-                originalBitmap.getHeight() * -0.5f,
-                originalBitmap.getWidth() * 1.5f,
-                originalBitmap.getHeight() * 1.5f);
-        Bitmap bwBitmap = IndicatorUtils.convertGrayscale(originalBitmap);
-        bwShader = new BitmapShader(bwBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-
-        return bwBitmap;
-    }
-
-
-    @Override
-    public Bitmap getBitmap(@NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
-        int angle = getProgressValue(progressPercent);
+    override fun getBitmap(originalBitmap: Bitmap, @FloatRange(from = 0.0, to = 1.0) progress: Float): Bitmap {
+        var angle = getProgressValue(progress)
         if (turn == COUNTERCLOCKWISE) {
-            angle = angle * (-1);
+            angle = -angle
         }
-        Bitmap bitmap = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
+        val bitmap = Bitmap.createBitmap(originalBitmap.width, originalBitmap.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
         // drawing the colored arc with its counter arc
-        drawArc(canvas, (FULL_CIRCLE - angle) * (-1), bwShader);
-        drawArc(canvas, angle, coloredShader);
-        return bitmap;
+        drawArc(canvas, -(FULL_CIRCLE - angle), bwShader!!)
+        drawArc(canvas, angle, coloredShader!!)
+        return bitmap
     }
 
-    private void drawArc(@NonNull Canvas canvas, int angle, @NonNull BitmapShader shader) {
-        Paint paint = new Paint();
-        paint.setShader(shader);
-        canvas.drawArc(arc, 270, angle, true, paint);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
+    private fun drawArc(canvas: Canvas, angle: Int, shader: BitmapShader) {
+        val paint = Paint()
+        paint.shader = shader
+        canvas.drawArc(arc!!, 270f, angle.toFloat(), true, paint)
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_ATOP)
     }
 
-    @Override
-    public Integer getProgressValue(@FloatRange(from = 0.0, to = 1.0) float progress) {
-        return IndicatorUtils.getValueOfPercent(FULL_CIRCLE, progress);
+    override fun getProgressValue(@FloatRange(from = 0.0, to = 1.0) progress: Float): Int {
+        return IndicatorUtils.getValueOfPercent(FULL_CIRCLE, progress)
     }
+
+
 }

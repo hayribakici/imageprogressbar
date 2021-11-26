@@ -18,10 +18,14 @@ package eu.bakici.imageprogressbar.indicator;
 
 import android.graphics.Bitmap;
 import android.os.Handler;
-import android.os.HandlerThread;
+import android.util.Log;
 
 import androidx.annotation.FloatRange;
 import androidx.annotation.NonNull;
+
+import eu.bakici.imageprogressbar.utils.IndicatorUtils;
+
+import static eu.bakici.imageprogressbar.utils.IndicatorUtils.integerizePercent;
 
 /**
  * An indicator that is a synchronous indicator at its core, but does now and then gives asynchronous
@@ -29,15 +33,12 @@ import androidx.annotation.NonNull;
  * increase of the progress. This indicator is there to 'fill the gaps' and let progression
  * catch on from where the progress jump started until its desired progression.
  */
-public abstract class CatchUpIndicator extends ProgressIndicator {
+public abstract class CatchUpIndicator extends Indicator {
 
     protected Handler uIHandler;
 
-    protected HandlerThread handlerThread;
 
     protected Handler blockUpdatedHandler;
-
-    private int currProgressPercent;
 
 //    private Comparable<? extends Number>
 
@@ -47,21 +48,25 @@ public abstract class CatchUpIndicator extends ProgressIndicator {
     }
 
     @Override
-    public Bitmap getBitmap(final @NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
+    public Bitmap getBitmap(final @NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progress) {
         return null;
     }
 
-
-    protected abstract Comparable<? extends Number> getValuePercent(@FloatRange(from = 0.0, to = 1.0) float progressPercent);
-
-    // TODO add method that queues Runnables
-    // TODO add method that posts to main thread
-    // TODO add custom Runnable class
-//    protected void queue() {
-//
-//    }
-
-    protected abstract Comparable<? extends Number> next();
+    @Override
+    public void onProgress(@NonNull Bitmap originalBitmap, float progressPercent) {
+        int currProgress = integerizePercent(currentProgressPercent);
+        int p = integerizePercent(progressPercent);
+        if (currProgress < p - 1) {
+            // large progressbar jump
+            final int diff = p - currProgress;
+            Log.d("Ketchup", "diff: " + diff);
+            for (int i = 1; i <= diff; i++) {
+                final int missingProgressPercent = currProgress + i;
+                currentBitmap = getBitmap(originalBitmap, IndicatorUtils.floatPercent(missingProgressPercent));
+            }
+        }
+        currentProgressPercent = progressPercent;
+    }
 
     /**
      * Callback interface when the indication has been updated.

@@ -26,8 +26,7 @@ import androidx.annotation.NonNull;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import eu.bakici.imageprogressbar.indicator.CatchUpIndicator;
-import eu.bakici.imageprogressbar.indicator.ProgressIndicator;
+import eu.bakici.imageprogressbar.indicator.Indicator;
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
 import static eu.bakici.imageprogressbar.utils.IndicatorUtils.integerizePercent;
@@ -47,10 +46,10 @@ final class ProgressExecutor {
     @NonNull
     private final Bitmap originalBitmap;
     @NonNull
-    ProgressIndicator indicator;
+    Indicator indicator;
 
     public ProgressExecutor(@NonNull Bitmap originalBitmap,
-                            @NonNull ProgressIndicator indicator,
+                            @NonNull Indicator indicator,
                             @NonNull OnPostExecuteListener<Bitmap> listener) {
         this.originalBitmap = originalBitmap;
         this.indicator = indicator;
@@ -68,11 +67,11 @@ final class ProgressExecutor {
 
     void start(@FloatRange(from = 0.0, to = 1.0) float progress) {
         executor.execute(() -> {
-            if (indicator instanceof CatchUpIndicator) {
-                catchUp(progress);
-            } else {
-                indicator.onProgress(originalBitmap, progress);
-            }
+//            if (indicator instanceof CatchUpIndicator) {
+//                catchUp(progress);
+//            } else {
+            indicator.onProgress(originalBitmap, progress);
+//            }
             // post back to main thread
             callback();
         });

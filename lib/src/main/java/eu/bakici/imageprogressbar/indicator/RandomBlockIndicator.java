@@ -109,16 +109,6 @@ public class RandomBlockIndicator extends BlockIndicator {
         canvas.drawBitmap(originalBitmap, randomBlock, randomBlock, paint);
     }
 
-    @Override
-    protected Comparable<? extends Number> getValuePercent(float progressPercent) {
-        return null;
-    }
-
-    @Override
-    protected Integer next() {
-        return 1;
-    }
-
     private class ProgressJumpRunnable implements Runnable {
 
         private final int mDiff;

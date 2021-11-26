@@ -32,7 +32,8 @@ import androidx.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import eu.bakici.imageprogressbar.indicator.ProgressIndicator;
+import eu.bakici.imageprogressbar.indicator.Indicator;
+import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
 public class ProgressImageView extends ImageView implements ProgressExecutor.OnPostExecuteListener<Bitmap> {
 
@@ -50,7 +51,7 @@ public class ProgressImageView extends ImageView implements ProgressExecutor.OnP
     private int maximum = 100;
 
     private int progress;
-    private ProgressIndicator indicator;
+    private Indicator indicator;
     private boolean fromSuper = false;
 
     public ProgressImageView(final Context context) {
@@ -128,12 +129,18 @@ public class ProgressImageView extends ImageView implements ProgressExecutor.OnP
     protected void onRestoreInstanceState(final Parcelable state) {
         if (state instanceof Bundle) {
             Bundle bundle = (Bundle) state;
-            final int progressPercent = bundle.getInt(BUNDLE_CURRENT_PROGRESS, 0);
-            setProgress(progressPercent, false);
-            final Bitmap bitmap = bundle.getParcelable(BUNDLE_CURRENT_BITMAP);
-            if (bitmap != null) {
-                superSetImageBitmap(bitmap);
+            Indicator indicator = bundle.getParcelable(INDICATOR);
+            if (indicator != null) {
+                this.indicator = indicator;
+                setProgress(IndicatorUtils.integerizePercent(indicator.getCurrentProgressPercent()));
+                superSetImageBitmap(indicator.getCurrentBitmap());
             }
+//            final int progressPercent = bundle.getInt(BUNDLE_CURRENT_PROGRESS, 0);
+//            setProgress(progressPercent, false);
+//            final Bitmap bitmap = bundle.getParcelable(BUNDLE_CURRENT_BITMAP);
+//            if (bitmap != null) {
+//                superSetImageBitmap(bitmap);
+//            }
             super.onRestoreInstanceState(bundle.getParcelable("super_state"));
             return;
         }
@@ -144,9 +151,8 @@ public class ProgressImageView extends ImageView implements ProgressExecutor.OnP
     protected Parcelable onSaveInstanceState() {
         final Bundle bundle = new Bundle();
         bundle.putParcelable("super_state", super.onSaveInstanceState());
-        bundle.putInt(BUNDLE_CURRENT_PROGRESS, progress);
         if (indicator != null) {
-            bundle.putParcelable(BUNDLE_CURRENT_BITMAP, indicator.getCurrentBitmap());
+            bundle.putParcelable(INDICATOR, indicator);
         }
         return bundle;
     }
@@ -194,8 +200,8 @@ public class ProgressImageView extends ImageView implements ProgressExecutor.OnP
         return (float) progress / maximum;
     }
 
-    public void setProgressIndicator(final ProgressIndicator progressIndicator) {
-        indicator = progressIndicator;
+    public void setProgressIndicator(final Indicator indicator) {
+        this.indicator = indicator;
         fireOnPreProgress();
     }
 

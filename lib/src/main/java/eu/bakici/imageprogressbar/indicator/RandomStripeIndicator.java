@@ -103,16 +103,6 @@ public class RandomStripeIndicator extends CatchUpIndicator {
     }
 
 
-    @Override
-    protected Integer getValuePercent(float progressPercent) {
-        return IndicatorUtils.getValueOfPercent(stripes.size(), progressPercent);
-    }
-
-    @Override
-    protected Integer next() {
-        return 1;
-    }
-
     private void addColorStripeToBitmap(final Bitmap originalBitmap, final Canvas canvas, final int pos) {
         if (pos >= stripes.size()) {
             // insanity check

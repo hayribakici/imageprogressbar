@@ -1,5 +1,3 @@
-package eu.bakici.imageprogressbar.indicator;
-
 /*
  * Copyright (C) 2016 hayribakici
  *
@@ -16,113 +14,87 @@ package eu.bakici.imageprogressbar.indicator;
  * limitations under the License.
  */
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Rect;
+package eu.bakici.imageprogressbar.indicator
 
-import androidx.annotation.FloatRange;
-import androidx.annotation.IntDef;
-import androidx.annotation.NonNull;
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Rect
+import androidx.annotation.FloatRange
+import androidx.annotation.IntDef
+import eu.bakici.imageprogressbar.utils.IndicatorUtils
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 
-import eu.bakici.imageprogressbar.utils.IndicatorUtils;
+class ColorFillIndicator(@ProgressDirection private val direction: Int) : Indicator() {
 
-public class ColorFillIndicator extends ProgressIndicator {
+    companion object {
+        /**
+         * Lets the progress indication go from left to right.
+         */
+        const val PROGRESS_DIRECTION_HORIZONTAL_LEFT_RIGHT = 0
 
-    private final Paint normalPaint;
+        /**
+         * Lets the progress indication go from right to left.
+         */
+        const val PROGRESS_DIRECTION_HORIZONTAL_RIGHT_LEFT = 1
+
+        /**
+         * Lets the progress indication go from top to bottom.
+         */
+        const val PROGRESS_DIRECTION_VERTICAL_TOP_DOWN = 2
+
+        /**
+         * Lets the progress indication go from bottom to top.
+         */
+        const val PROGRESS_DIRECTION_VERTICAL_BOTTOM_UP = 3
+    }
 
     /**
      * Type of how the image will be filled.
      */
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef(value = {
-            PROGRESS_DIRECTION_HORIZONTAL_LEFT_RIGHT,
-            PROGRESS_DIRECTION_HORIZONTAL_RIGHT_LEFT,
-            PROGRESS_DIRECTION_VERTICAL_BOTTOM_UP,
-            PROGRESS_DIRECTION_VERTICAL_TOP_DOWN
-    })
-    public @interface ProgressDirection {
+    @Retention(AnnotationRetention.SOURCE)
+    @IntDef(value = [PROGRESS_DIRECTION_HORIZONTAL_LEFT_RIGHT, PROGRESS_DIRECTION_HORIZONTAL_RIGHT_LEFT, PROGRESS_DIRECTION_VERTICAL_BOTTOM_UP, PROGRESS_DIRECTION_VERTICAL_TOP_DOWN])
+    annotation class ProgressDirection
+
+    private val normalPaint: Paint = Paint()
+
+    override fun getPreProgressBitmap(originalBitmap: Bitmap): Bitmap {
+        return IndicatorUtils.convertGrayscale(originalBitmap)
     }
 
-    /**
-     * Lets the progress indication go from left to right.
-     */
-    public final static int PROGRESS_DIRECTION_HORIZONTAL_LEFT_RIGHT = 0;
-
-    /**
-     * Lets the progress indication go from right to left.
-     */
-    public final static int PROGRESS_DIRECTION_HORIZONTAL_RIGHT_LEFT = 1;
-
-    /**
-     * Lets the progress indication go from top to bottom.
-     */
-    public final static int PROGRESS_DIRECTION_VERTICAL_TOP_DOWN = 2;
-
-    /**
-     * Lets the progress indication go from bottom to top.
-     */
-    public final static int PROGRESS_DIRECTION_VERTICAL_BOTTOM_UP = 3;
-
-    @ProgressDirection
-    private final int direction;
-
-    public ColorFillIndicator(@ProgressDirection int direction) {
-        super();
-        this.direction = direction;
-        this.normalPaint = new Paint();
-    }
-
-
-    @Override
-    public Bitmap getPreProgressBitmap(final @NonNull Bitmap originalBitmap) {
-        return IndicatorUtils.convertGrayscale(originalBitmap);
-    }
-
-    @Override
-    public Bitmap getBitmap(final @NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
-
-        final int bitmapHeight = originalBitmap.getHeight();
-        final int bitmapWidth = originalBitmap.getWidth();
-        final int heightPercent = IndicatorUtils.getValueOfPercent(bitmapHeight, progressPercent);
-        final int widthPercent = IndicatorUtils.getValueOfPercent(bitmapWidth, progressPercent);
-
-
-        Rect bitmapBWRect;
-        Rect bitmapSourceRect;
-        switch (direction) {
-            case PROGRESS_DIRECTION_HORIZONTAL_LEFT_RIGHT:
-                bitmapSourceRect = new Rect(0, 0, widthPercent, bitmapHeight);
-                bitmapBWRect = new Rect(widthPercent, 0, bitmapWidth, bitmapHeight);
-                break;
-            case PROGRESS_DIRECTION_HORIZONTAL_RIGHT_LEFT:
-                final int complementWidthPercent = bitmapWidth - widthPercent;
-                bitmapSourceRect = new Rect(complementWidthPercent, 0, bitmapWidth, bitmapHeight);
-                bitmapBWRect = new Rect(0, 0, complementWidthPercent, bitmapHeight);
-                break;
-            case PROGRESS_DIRECTION_VERTICAL_TOP_DOWN:
-                bitmapSourceRect = new Rect(0, 0, bitmapWidth, heightPercent);
-                bitmapBWRect = new Rect(0, heightPercent, bitmapWidth, bitmapHeight);
-                break;
-            case PROGRESS_DIRECTION_VERTICAL_BOTTOM_UP:
-                final int complementHeightPercent = bitmapHeight - heightPercent;
-                bitmapSourceRect = new Rect(0, complementHeightPercent, bitmapWidth, bitmapHeight);
-                bitmapBWRect = new Rect(0, 0, bitmapWidth, complementHeightPercent);
-                break;
-            default:
-                throw new IllegalArgumentException("no valid progress direction specified");
+    override fun getBitmap(originalBitmap: Bitmap, @FloatRange(from = 0.0, to = 1.0) progress: Float): Bitmap {
+        val bitmapHeight = originalBitmap.height
+        val bitmapWidth = originalBitmap.width
+        val heightPercent = IndicatorUtils.getValueOfPercent(bitmapHeight, progress)
+        val widthPercent = IndicatorUtils.getValueOfPercent(bitmapWidth, progress)
+        val bitmapBWRect: Rect
+        val bitmapSourceRect: Rect
+        when (direction) {
+            PROGRESS_DIRECTION_HORIZONTAL_LEFT_RIGHT -> {
+                bitmapSourceRect = Rect(0, 0, widthPercent, bitmapHeight)
+                bitmapBWRect = Rect(widthPercent, 0, bitmapWidth, bitmapHeight)
+            }
+            PROGRESS_DIRECTION_HORIZONTAL_RIGHT_LEFT -> {
+                val complementWidthPercent = bitmapWidth - widthPercent
+                bitmapSourceRect = Rect(complementWidthPercent, 0, bitmapWidth, bitmapHeight)
+                bitmapBWRect = Rect(0, 0, complementWidthPercent, bitmapHeight)
+            }
+            PROGRESS_DIRECTION_VERTICAL_TOP_DOWN -> {
+                bitmapSourceRect = Rect(0, 0, bitmapWidth, heightPercent)
+                bitmapBWRect = Rect(0, heightPercent, bitmapWidth, bitmapHeight)
+            }
+            PROGRESS_DIRECTION_VERTICAL_BOTTOM_UP -> {
+                val complementHeightPercent = bitmapHeight - heightPercent
+                bitmapSourceRect = Rect(0, complementHeightPercent, bitmapWidth, bitmapHeight)
+                bitmapBWRect = Rect(0, 0, bitmapWidth, complementHeightPercent)
+            }
+            else -> throw IllegalArgumentException("no valid progress direction specified")
         }
-
-        final Bitmap output = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), Bitmap.Config.ARGB_8888);
-
-        final Canvas canvas = new Canvas(output);
-
-        canvas.drawBitmap(preProgressBitmap, bitmapBWRect, bitmapBWRect, normalPaint);
-        canvas.drawBitmap(originalBitmap, bitmapSourceRect, bitmapSourceRect, normalPaint);
-        return output;
+        val output = Bitmap.createBitmap(originalBitmap.width, originalBitmap.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(output)
+        canvas.drawBitmap(preProgressBitmap, bitmapBWRect, bitmapBWRect, normalPaint)
+        canvas.drawBitmap(originalBitmap, bitmapSourceRect, bitmapSourceRect, normalPaint)
+        return output
     }
 
 

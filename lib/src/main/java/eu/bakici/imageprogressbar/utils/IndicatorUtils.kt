@@ -1,5 +1,3 @@
-package eu.bakici.imageprogressbar.utils;
-
 /*
  * Copyright (C) 2016 Hayri Bakici
  *
@@ -16,78 +14,79 @@ package eu.bakici.imageprogressbar.utils;
  * limitations under the License.
  */
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.Paint;
+package eu.bakici.imageprogressbar.utils
 
-import androidx.annotation.FloatRange;
-import androidx.annotation.IntRange;
+import android.graphics.*
+import androidx.annotation.FloatRange
+import androidx.annotation.IntRange
+import kotlin.math.roundToInt
+
 
 /**
  * Helper class with Util functions.
  */
-public final class IndicatorUtils {
-
-    public static String HYBRID_THREAD_NAME = "jumper";
+object IndicatorUtils {
 
     /**
-     * Calculates the amount of {@code value} based on {@code percent}.
+     * Calculates the amount of `value` based on `percent`.
      *
-     * @return the value between [0, value] that is calculated from {@code percent}.
+     * @return the value between [0, value] that is calculated from `percent`.
      */
-    public static int getValueOfPercent(final int value, final int percent) {
-        return Math.round(getValueOfPercentFloat(value, percent));
+    fun getValueOfPercent(value: Int, percent: Int): Int {
+        return getValueOfPercentFloat(value, percent).roundToInt()
     }
 
-    public static int getValueOfPercent(final int value, final float percent) {
-        return Math.round(value * percent);
+    @JvmStatic
+    fun getValueOfPercent(value: Int, percent: Float): Int {
+        return (value * percent).roundToInt()
     }
 
-    public static double getValueOfPercentD(double value, float percent) {
-        return value * percent;
+    fun getValueOfPercentD(value: Double, percent: Float): Double {
+        return value * percent
     }
 
     /**
-     * Calculates the amount of {@code value} based on on {@code percent}.
+     * Calculates the amount of `value` based on on `percent`.
      *
-     * @return the value between [0, value] that is calculated from {@code percent}.
+     * @return the value between [0, value] that is calculated from `percent`.
      */
-    public static float getValueOfPercentFloat(final int value, final int percent) {
-        final float p100 = (float) percent * 0.01f;
-        return value * p100;
+    fun getValueOfPercentFloat(value: Int, percent: Int): Float {
+        val p100 = percent.toFloat() * 0.01f
+        return value * p100
     }
 
-    public static int integerizePercent(@FloatRange(from = 0.0, to = 1.0) float percent) {
-        return (int) (percent * 100);
+    @JvmStatic
+    fun integerizePercent(@FloatRange(from = 0.0, to = 1.0) percent: Float): Int {
+        return (percent * 100).toInt()
     }
 
-    public static float floatPercent(@IntRange(from = 0, to = 100) int percent) {
-        return ((float) percent / 100);
+    @JvmStatic
+    fun floatPercent(@IntRange(from = 0, to = 100) percent: Int): Float {
+        return percent.toFloat() / 100
     }
 
     /**
-     * Converts a given {@code source} bitmap into grayscale.
+     * Converts a given `source` bitmap into grayscale.
      *
      * @param source the original (colored) bitmap to convert.
      * @return a bitmap in grayscale.
      */
-    public static Bitmap convertGrayscale(final Bitmap source) {
-        final int width = source.getWidth();
-        final int height = source.getHeight();
-        final Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        final Canvas canvas = new Canvas(output);
-        final Paint paint = new Paint();
-        final ColorMatrix matrix = new ColorMatrix();
-        matrix.setSaturation(0f);
-        paint.setColorFilter(new ColorMatrixColorFilter(matrix));
-        canvas.drawBitmap(source, 0, 0, paint);
-        return output;
+    @JvmStatic
+    fun convertGrayscale(source: Bitmap): Bitmap {
+        val width = source.width
+        val height = source.height
+        val output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(output)
+        val paint = Paint()
+        val matrix = ColorMatrix()
+        matrix.setSaturation(0f)
+        paint.colorFilter = ColorMatrixColorFilter(matrix)
+        canvas.drawBitmap(source, 0f, 0f, paint)
+        return output
     }
 
-    public static Canvas createCanvasFromBitmap(Bitmap source) {
-        Bitmap bitmap = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
-        return new Canvas(bitmap);
+    fun createCanvasFromBitmap(source: Bitmap): Canvas {
+        val bitmap = Bitmap.createBitmap(source.width, source.height, Bitmap.Config.ARGB_8888)
+        return Canvas(bitmap)
     }
 }

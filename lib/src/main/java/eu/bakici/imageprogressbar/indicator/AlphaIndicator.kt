@@ -1,5 +1,3 @@
-package eu.bakici.imageprogressbar.indicator;
-
 /*
  * Copyright (C) 2016 hayribakici
  *
@@ -15,47 +13,39 @@ package eu.bakici.imageprogressbar.indicator;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package eu.bakici.imageprogressbar.indicator
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import androidx.annotation.FloatRange
+import eu.bakici.imageprogressbar.utils.IndicatorUtils.convertGrayscale
+import eu.bakici.imageprogressbar.utils.IndicatorUtils.getValueOfPercent
 
-import androidx.annotation.FloatRange;
-import androidx.annotation.NonNull;
 
-import eu.bakici.imageprogressbar.utils.IndicatorUtils;
+class AlphaIndicator : Indicator() {
+    companion object {
+        private const val MAX_ALPHA = 255
+    }
 
-public class AlphaIndicator extends ProgressIndicator {
+    private val alphaPaint: Paint = Paint()
 
-    private static final int MAX_ALPHA = 255;
+    override fun getPreProgressBitmap(originalBitmap: Bitmap): Bitmap {
+        return convertGrayscale(originalBitmap)
+    }
 
-    private final Paint alphaPaint;
+    override fun getBitmap(originalBitmap: Bitmap, @FloatRange(from = 0.0, to = 1.0) progress: Float): Bitmap {
+        val output = Bitmap.createBitmap(originalBitmap.width, originalBitmap.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(output)
+        alphaPaint.alpha = getProgressValue(progress)
+        canvas.drawBitmap(preProgressBitmap, 0f, 0f, Paint())
+        canvas.drawBitmap(originalBitmap, 0f, 0f, alphaPaint)
+        return output
+    }
 
-    public AlphaIndicator() {
-        super();
-        alphaPaint = new Paint();
+    override fun getProgressValue(progress: Float): Int {
+        return getValueOfPercent(MAX_ALPHA, progress)
     }
 
 
-    @Override
-    public Bitmap getPreProgressBitmap(@NonNull Bitmap originalBitmap) {
-        return IndicatorUtils.convertGrayscale(originalBitmap);
-    }
-
-    @Override
-    public Bitmap getBitmap(@NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
-        final Bitmap output = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
-
-        alphaPaint.setAlpha(getProgressValue(progressPercent));
-
-        canvas.drawBitmap(preProgressBitmap, 0, 0, new Paint());
-        canvas.drawBitmap(originalBitmap, 0, 0, alphaPaint);
-        return output;
-    }
-
-    @Override
-    public Integer getProgressValue(float progress) {
-        return IndicatorUtils.getValueOfPercent(MAX_ALPHA, progress);
-    }
 }

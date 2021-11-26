@@ -1,5 +1,3 @@
-package eu.bakici.imageprogressbar.indicator;
-
 /*
  * Copyright (C) 2016 hayribakici
  *
@@ -16,50 +14,40 @@ package eu.bakici.imageprogressbar.indicator;
  * limitations under the License.
  */
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.util.Log;
+package eu.bakici.imageprogressbar.indicator
 
-import androidx.annotation.FloatRange;
-import androidx.annotation.NonNull;
+import android.content.Context
+import android.graphics.Bitmap
+import androidx.annotation.FloatRange
+import eu.bakici.imageprogressbar.utils.IndicatorUtils.getValueOfPercent
 
-import eu.bakici.imageprogressbar.utils.IndicatorUtils;
+class BlurIndicator(private val context: Context) : Indicator() {
 
-public class BlurIndicator extends ProgressIndicator {
-
-    private static final String TAG = BlurIndicator.class.getSimpleName();
-
-    private static final int MAX_RADIUS = 25;
-
-    private final Context context;
-
-    public BlurIndicator(final Context context) {
-        super();
-        this.context = context;
+    companion object {
+        private const val MAX_RADIUS = 25
     }
 
-    @Override
-    public Bitmap getPreProgressBitmap(final @NonNull Bitmap originalBitmap) {
-        return Blur.fastblur(context, originalBitmap, MAX_RADIUS);
+    override fun getPreProgressBitmap(originalBitmap: Bitmap): Bitmap {
+        return Blur.fastblur(context, originalBitmap, MAX_RADIUS)
     }
 
-    @Override
-    public synchronized Bitmap getBitmap(final @NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
-
-        if (progressPercent == 100) {
-            return originalBitmap;
+    @Synchronized
+    override fun getBitmap(originalBitmap: Bitmap, @FloatRange(from = 0.0, to = 1.0) progress: Float): Bitmap {
+        if (progress == 100f) {
+            return originalBitmap
         }
-        final int radius = MAX_RADIUS - getProgressValue(progressPercent);
+        val radius = MAX_RADIUS - getProgressValue(progress)
         if (radius <= 0) {
             // insanity check
-            return originalBitmap;
+            return originalBitmap
         }
-        Log.d(TAG, "snapshot = " + radius);
-        return Blur.fastblur(context, originalBitmap, radius);
+
+        return Blur.fastblur(context, originalBitmap, radius)
     }
 
-    @Override
-    public Integer getProgressValue(@FloatRange(from = 0.0, to = 1.0) float progress) {
-        return IndicatorUtils.getValueOfPercent(MAX_RADIUS, progress);
+    override fun getProgressValue(@FloatRange(from = 0.0, to = 1.0) progress: Float): Int {
+        return getValueOfPercent(MAX_RADIUS, progress)
     }
+
+
 }

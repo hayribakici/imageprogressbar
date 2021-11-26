@@ -1,102 +1,76 @@
-package eu.bakici.imageprogressbar.indicator;
-
 /*
- * Copyright (C) 2021 hayribakici
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright (C) 2021 hayribakici
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Shader;
-import android.util.Log;
+package eu.bakici.imageprogressbar.indicator
 
-import androidx.annotation.FloatRange;
-import androidx.annotation.NonNull;
-
-import eu.bakici.imageprogressbar.utils.IndicatorUtils;
-
-public class SpiralIndicator extends CatchUpIndicator {
-
-    private static final int MAX_DEGREE = 1440;
-    public static final double PI8 = Math.PI / 180;
-    // Distance between spines
-    private static final float A = 30f;
-    private final Path path;
-    private final Paint paint;
+import android.graphics.*
+import android.util.Log
+import androidx.annotation.FloatRange
+import eu.bakici.imageprogressbar.utils.IndicatorUtils
+import kotlin.math.cos
+import kotlin.math.sin
 
 
-    private BitmapShader shader;
-    private float centerX;
-    private float centerY;
+class SpiralIndicator : Indicator() {
 
-    public SpiralIndicator() {
-        super();
-        path = new Path();
-        paint = new Paint();
+    companion object {
+        private const val MAX_DEGREE = 1440
+        private const val PI8 = Math.PI / 180
+
+        // Distance between spines
+        private const val A = 30f
     }
 
-    @Override
-    public Bitmap getPreProgressBitmap(@NonNull Bitmap originalBitmap) {
-        shader = new BitmapShader(originalBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-        centerX = originalBitmap.getWidth() * 0.5f;
-        centerY = originalBitmap.getHeight() * 0.5f;
-        path.moveTo(centerX, centerY);
-        return IndicatorUtils.convertGrayscale(originalBitmap);
+    private val path: Path = Path()
+    private val paint: Paint = Paint()
+    private var shader: BitmapShader? = null
+    private var centerX = 0f
+    private var centerY = 0f
+
+    override fun getPreProgressBitmap(originalBitmap: Bitmap): Bitmap {
+        shader = BitmapShader(originalBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
+        centerX = originalBitmap.width * 0.5f
+        centerY = originalBitmap.height * 0.5f
+        path.moveTo(centerX, centerY)
+        return IndicatorUtils.convertGrayscale(originalBitmap)
     }
 
-    @Override
-    public Bitmap getBitmap(@NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
-        Bitmap bitmap = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        canvas.drawBitmap(preProgressBitmap, 0, 0, paint);
-        drawArchimedeanSpiral(canvas, progressPercent);
-        return bitmap;
+    override fun getBitmap(originalBitmap: Bitmap, @FloatRange(from = 0.0, to = 1.0) progress: Float): Bitmap {
+        val bitmap = Bitmap.createBitmap(originalBitmap.width, originalBitmap.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        canvas.drawBitmap(preProgressBitmap, 0f, 0f, paint)
+        drawArchimedeanSpiral(canvas, progress)
+        return bitmap
     }
 
-    @Override
-    protected Comparable<? extends Number> getValuePercent(float progressPercent) {
-        return null;
+    private fun drawArchimedeanSpiral(canvas: Canvas, @FloatRange(from = 0.0, to = 1.0) progressPercent: Float) {
+        Log.d("SpiralIndicator", String.format("%s %%, %s %%", progressPercent, IndicatorUtils.integerizePercent(progressPercent)))
+        val angle = getProgressValue(progressPercent).toDouble()
+        val paint = Paint()
+        val x = (A * angle * cos(angle)).toFloat()
+        val y = (A * angle * sin(angle)).toFloat()
+        paint.shader = shader
+        path.lineTo(centerX + x, centerY + y)
+        canvas.drawPath(path, paint)
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_ATOP)
     }
 
-    @Override
-    protected Comparable<? extends Number> next() {
-        return null;
+    override fun getProgressValue(progress: Float): Number {
+        return IndicatorUtils.getValueOfPercentD(MAX_DEGREE * PI8, progress)
     }
 
 
-    private void drawArchimedeanSpiral(@NonNull Canvas canvas, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
-        Log.d("SpiralIndicator", String.format("%s %%, %s %%", progressPercent, IndicatorUtils.integerizePercent(progressPercent)));
-        double angle = getProgressValue(progressPercent).doubleValue();
-        Paint paint = new Paint();
-
-        float x = (float) (A * angle * Math.cos(angle));
-        float y = (float) (A * angle * Math.sin(angle));
-
-        paint.setShader(shader);
-        path.lineTo(centerX + x, centerY + y);
-        canvas.drawPath(path, paint);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
-    }
-
-
-    @Override
-    public Number getProgressValue(float progress) {
-        return IndicatorUtils.getValueOfPercentD(MAX_DEGREE * PI8, progress);
-    }
 }

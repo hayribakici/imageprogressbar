@@ -28,22 +28,22 @@ import androidx.annotation.Nullable;
 /**
  * Adapter class for Progress indication.
  */
-public class ProgressIndicator implements Parcelable {
+public class Indicator implements Parcelable {
 
-    static final String TAG = ProgressIndicator.class.getSimpleName();
+    public static final Creator<Indicator> CREATOR = new Creator<Indicator>() {
+        @Override
+        public Indicator createFromParcel(Parcel source) {
+            return new Indicator(source);
+        }
+
+        @Override
+        public Indicator[] newArray(int size) {
+            return new Indicator[size];
+        }
+    };
 
     protected float currentProgressPercent;
-
-    /**
-     * Called when the progress bat is moving.
-     *
-     * @param originalBitmap  the original bitmap.
-     * @param progressPercent the values in percent. Goes from 0.0 to 1.0.
-     * @return the manipulated bitmap that should be displayed based on the percentage of the progress bar.
-     */
-    public Bitmap getBitmap(@NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
-        return getCurrentBitmap();
-    }
+    static final String TAG = Indicator.class.getSimpleName();
 
     /**
      * The current bitmap the view is displaying.
@@ -51,17 +51,11 @@ public class ProgressIndicator implements Parcelable {
     @Nullable
     protected Bitmap currentBitmap;
 
-    public static final Creator<ProgressIndicator> CREATOR = new Creator<ProgressIndicator>() {
-        @Override
-        public ProgressIndicator createFromParcel(Parcel source) {
-            return new ProgressIndicator(source);
-        }
-
-        @Override
-        public ProgressIndicator[] newArray(int size) {
-            return new ProgressIndicator[size];
-        }
-    };
+    /**
+     * Standard constructor.
+     */
+    public Indicator() {
+    }
 
     /**
      * The bitmap when onPreProgress is called
@@ -69,16 +63,22 @@ public class ProgressIndicator implements Parcelable {
     protected Bitmap preProgressBitmap;
 
 
-    /**
-     * Standard constructor.
-     */
-    public ProgressIndicator() {
-    }
-
-    protected ProgressIndicator(@NonNull Parcel in) {
+    protected Indicator(@NonNull Parcel in) {
         this.currentBitmap = in.readParcelable(Bitmap.class.getClassLoader());
         this.currentProgressPercent = in.readFloat();
         this.preProgressBitmap = in.readParcelable(Bitmap.class.getClassLoader());
+    }
+
+    /**
+     * Called when the progress bat is moving.
+     *
+     * @param originalBitmap the original bitmap.
+     * @param progress       the values in percent. Goes from 0.0 to 1.0.
+     * @return the manipulated bitmap that should be displayed based on the percentage of the progress bar.
+     */
+    @Nullable
+    public Bitmap getBitmap(@NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progress) {
+        return getCurrentBitmap();
     }
 
     /**
@@ -134,7 +134,7 @@ public class ProgressIndicator implements Parcelable {
         currentBitmap = preProgressBitmap;
     }
 
-    public final void onProgress(@NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
+    public void onProgress(@NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progressPercent) {
         currentBitmap = getBitmap(originalBitmap, progressPercent);
         currentProgressPercent = progressPercent;
     }
