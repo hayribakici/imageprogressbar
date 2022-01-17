@@ -20,11 +20,12 @@ import android.graphics.*
 import android.util.Log
 import androidx.annotation.FloatRange
 import eu.bakici.imageprogressbar.utils.IndicatorUtils
-import kotlin.math.cos
-import kotlin.math.sin
+import java.lang.StrictMath.cos
+import java.lang.StrictMath.sin
+import java.lang.String.format
 
 
-class SpiralIndicator : Indicator() {
+class SpiralIndicator : CatchUpIndicator() {
 
     companion object {
         private const val MAX_DEGREE = 1440
@@ -48,17 +49,18 @@ class SpiralIndicator : Indicator() {
         return IndicatorUtils.convertGrayscale(originalBitmap)
     }
 
-    override fun getBitmap(originalBitmap: Bitmap, @FloatRange(from = 0.0, to = 1.0) progress: Float): Bitmap {
+    override fun getBitmap(bitmaps: BitmapState, @FloatRange(from = 0.0, to = 1.0) progress: Float): Bitmap {
+        val originalBitmap = bitmaps.originalBitmap
         val bitmap = Bitmap.createBitmap(originalBitmap.width, originalBitmap.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
-        canvas.drawBitmap(preProgressBitmap, 0f, 0f, paint)
+        canvas.drawBitmap(preProgressBitmap!!, 0f, 0f, paint)
         drawArchimedeanSpiral(canvas, progress)
         return bitmap
     }
 
-    private fun drawArchimedeanSpiral(canvas: Canvas, @FloatRange(from = 0.0, to = 1.0) progressPercent: Float) {
-        Log.d("SpiralIndicator", String.format("%s %%, %s %%", progressPercent, IndicatorUtils.integerizePercent(progressPercent)))
-        val angle = getProgressValue(progressPercent).toDouble()
+    private fun drawArchimedeanSpiral(canvas: Canvas, @FloatRange(from = 0.0, to = 1.0) progress: Float) {
+        Log.d("SpiralIndicator", format("%s %%, %s %%", progress, IndicatorUtils.integerizePercent(progress)))
+        val angle = IndicatorUtils.getValueOfPercentD(MAX_DEGREE * PI8, progress)
         val paint = Paint()
         val x = (A * angle * cos(angle)).toFloat()
         val y = (A * angle * sin(angle)).toFloat()
@@ -67,10 +69,5 @@ class SpiralIndicator : Indicator() {
         canvas.drawPath(path, paint)
         paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_ATOP)
     }
-
-    override fun getProgressValue(progress: Float): Number {
-        return IndicatorUtils.getValueOfPercentD(MAX_DEGREE * PI8, progress)
-    }
-
 
 }

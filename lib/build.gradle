@@ -2,11 +2,11 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
 
     defaultConfig {
         minSdkVersion 26
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 2
         versionName "1.2"
         setProperty("archivesBaseName", "imageprogressbar-$versionName")
@@ -22,4 +22,5 @@ dependencies {
     implementation 'com.android.support:support-annotations:30.0.0'
     implementation "androidx.core:core-ktx:1.7.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9'
 }

@@ -32,6 +32,7 @@ object IndicatorUtils {
      *
      * @return the value between [0, value] that is calculated from `percent`.
      */
+    @JvmStatic
     fun getValueOfPercent(value: Int, percent: Int): Int {
         return getValueOfPercentFloat(value, percent).roundToInt()
     }

@@ -32,21 +32,17 @@ class BlurIndicator(private val context: Context) : Indicator() {
     }
 
     @Synchronized
-    override fun getBitmap(originalBitmap: Bitmap, @FloatRange(from = 0.0, to = 1.0) progress: Float): Bitmap {
+    override fun getBitmap(bitmaps: BitmapState, @FloatRange(from = 0.0, to = 1.0) progress: Float): Bitmap {
         if (progress == 100f) {
-            return originalBitmap
+            return bitmaps.originalBitmap
         }
-        val radius = MAX_RADIUS - getProgressValue(progress)
+        val radius = MAX_RADIUS - getValueOfPercent(MAX_RADIUS, progress)
         if (radius <= 0) {
             // insanity check
-            return originalBitmap
+            return bitmaps.originalBitmap
         }
 
-        return Blur.fastblur(context, originalBitmap, radius)
-    }
-
-    override fun getProgressValue(@FloatRange(from = 0.0, to = 1.0) progress: Float): Int {
-        return getValueOfPercent(MAX_RADIUS, progress)
+        return Blur.fastblur(context, bitmaps.originalBitmap, radius)
     }
 
 

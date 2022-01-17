@@ -53,6 +53,7 @@ public class ProgressImageView extends ImageView implements ProgressExecutor.OnP
     private int progress;
     private Indicator indicator;
     private boolean fromSuper = false;
+    private ProgressExecutor executor;
 
     public ProgressImageView(final Context context) {
         this(context, null);
@@ -208,14 +209,20 @@ public class ProgressImageView extends ImageView implements ProgressExecutor.OnP
 
     private void fireOnPreProgress() {
         if (indicator != null) {
-            new ProgressExecutor(originalBitmap, indicator, this).prepare();
+            if (executor == null) {
+                executor = new ProgressExecutor(originalBitmap, indicator, this);
+            }
+            executor.prepare();
         }
     }
 
 
     private void fireOnProgress() {
         if (indicator != null) {
-            new ProgressExecutor(originalBitmap, indicator, this).start(getProgressPercent());
+            if (executor == null) {
+                executor = new ProgressExecutor(originalBitmap, indicator, this);
+            }
+            executor.start(getProgressPercent());
         }
     }
 

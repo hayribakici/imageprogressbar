@@ -23,6 +23,9 @@ import android.graphics.Rect;
 
 import androidx.annotation.NonNull;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collections;
 
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
@@ -53,50 +56,70 @@ public class RandomBlockIndicator extends BlockIndicator {
 
     public Bitmap getBitmapOnProgress(final @NonNull Bitmap originalBitmap, final int progressPercent, final OnProgressIndicationUpdatedListener callback) {
 
+//        final int height = this.height;
+//        final int width = this.width;
+//        final Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+//        final Canvas canvas = new Canvas(output);
+//
+//        int blockPosOfPercent = IndicatorUtils.getValueOfPercent(blockSum, progressPercent) + 1;
+//
+//        /*
+//        TODO The progress jump indicates with two cases:
+//        1. it may happen, that during the progression, that some values (e.g. in the list) are skipped b/c
+//            they depend on the value, that should been calculated by getValueOfPercent().
+//            So, in order to catch up with the values in between (the difference between the
+//            now and the previous), we update the bitmap.
+//        2. it may happen, that we have a jumpy progression (1% -> 50%). Therefore we
+//           calculate the difference (50% - 1% = 49%) and catch up with the percentage from 2,..,49.
+//        I think, we need a mixture of both.
+//         */
+//
+//        if (blockPosOfPercent - currBlockPosOfPercent > 1) {
+//            // we need to cover all block positions
+//            // when blockSum is big, we might skip some positions,
+//            // therefore we are catching up.
+//            int diffPercent = blockPosOfPercent - currBlockPosOfPercent;
+//            blockUpdatedHandler.post(new CatchUpBlocksRunnable(diffPercent, originalBitmap, output, canvas, currBlockPosOfPercent, callback));
+//            currBlockPosOfPercent = blockPosOfPercent;
+//            return null;
+//        }
+//
+//        currBlockPosOfPercent = blockPosOfPercent;
+//
+//        if (currProgressPercent < progressPercent - 1) {
+//            // we have a rather large progressbar jump
+//            final int diffPercent = progressPercent - currProgressPercent;
+//            uIHandler.post(new ProgressJumpRunnable(diffPercent, originalBitmap, output, canvas, currProgressPercent, callback));
+//            currProgressPercent = progressPercent;
+//            return null;
+//        }
+//        currProgressPercent = progressPercent;
+//
+//        addColorBlockToBitmap(originalBitmap, canvas, blockPosOfPercent - 1);
+//        preProgressBitmap.recycle();
+//        preProgressBitmap = output;
+//        callback.onProgressIndicationUpdated(output);
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public Bitmap getBitmap(@NotNull BitmapState bitmaps, float progress) {
         final int height = this.height;
         final int width = this.width;
         final Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(output);
-
-        int blockPosOfPercent = IndicatorUtils.getValueOfPercent(blockSum, progressPercent) + 1;
-
-        /*
-        TODO The progress jump indicates with two cases:
-        1. it may happen, that during the progression, that some values (e.g. in the list) are skipped b/c
-            they depend on the value, that should been calculated by getValueOfPercent().
-            So, in order to catch up with the values in between (the difference between the
-            now and the previous), we update the bitmap.
-        2. it may happen, that we have a jumpy progression (1% -> 50%). Therefore we
-           calculate the difference (50% - 1% = 49%) and catch up with the percentage from 2,..,49.
-        I think, we need a mixture of both.
-         */
-
-        if (blockPosOfPercent - currBlockPosOfPercent > 1) {
-            // we need to cover all block positions
-            // when blockSum is big, we might skip some positions,
-            // therefore we are catching up.
-            int diffPercent = blockPosOfPercent - currBlockPosOfPercent;
-            blockUpdatedHandler.post(new CatchUpBlocksRunnable(diffPercent, originalBitmap, output, canvas, currBlockPosOfPercent, callback));
-            currBlockPosOfPercent = blockPosOfPercent;
-            return null;
+//
+        int blockPos = IndicatorUtils.getValueOfPercent(blockSum, progress) + 1;
+        if (blockPos >= blocks.size()) {
+            return output;
         }
-
-        currBlockPosOfPercent = blockPosOfPercent;
-
-        if (currProgressPercent < progressPercent - 1) {
-            // we have a rather large progressbar jump
-            final int diffPercent = progressPercent - currProgressPercent;
-            uIHandler.post(new ProgressJumpRunnable(diffPercent, originalBitmap, output, canvas, currProgressPercent, callback));
-            currProgressPercent = progressPercent;
-            return null;
-        }
-        currProgressPercent = progressPercent;
-
-        addColorBlockToBitmap(originalBitmap, canvas, blockPosOfPercent - 1);
-        preProgressBitmap.recycle();
-        preProgressBitmap = output;
-        callback.onProgressIndicationUpdated(output);
-        return null;
+        final Rect randomBlock = blocks.get(blockPos);
+        final Paint paint = new Paint();
+        canvas.drawBitmap(bitmaps.getCurrentBitmap(), 0, 0, paint);
+        canvas.drawBitmap(bitmaps.getOriginalBitmap(), randomBlock, randomBlock, paint);
+        return output;
+//        addColorBlockToBitmap(output, canvas, percent - 1);
     }
 
     private void addColorBlockToBitmap(final Bitmap originalBitmap, final Canvas canvas, final int blockPos) {
@@ -140,7 +163,7 @@ public class RandomBlockIndicator extends BlockIndicator {
                     int percent = IndicatorUtils.getValueOfPercent(blockSum, missingProgressPercent);
                     addColorBlockToBitmap(mBitmap, mCanvas, percent - 1);
                     preProgressBitmap = mOutput;
-                    uIHandler.post(() -> mListener.onProgressIndicationUpdated(mOutput));
+//                    uIHandler.post(() -> mListener.onProgressIndicationUpdated(mOutput));
 
                 }
             }
@@ -179,7 +202,7 @@ public class RandomBlockIndicator extends BlockIndicator {
                     addColorBlockToBitmap(mBitmap, mCanvas, missingProgressPercent - 1);
 
                     preProgressBitmap = mOutput;
-                    uIHandler.post(() -> mListener.onProgressIndicationUpdated(mOutput));
+//                    uIHandler.post(() -> mListener.onProgressIndicationUpdated(mOutput));
 
                 }
             }

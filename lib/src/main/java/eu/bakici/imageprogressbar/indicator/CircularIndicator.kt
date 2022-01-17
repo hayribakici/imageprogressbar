@@ -19,6 +19,7 @@ package eu.bakici.imageprogressbar.indicator
 import android.graphics.*
 import androidx.annotation.FloatRange
 import androidx.annotation.IntDef
+import androidx.annotation.NonNull
 import eu.bakici.imageprogressbar.utils.IndicatorUtils
 
 
@@ -50,11 +51,12 @@ class CircularIndicator(@Turn private val turn: Int = CLOCKWISE) : Indicator() {
         return bwBitmap
     }
 
-    override fun getBitmap(originalBitmap: Bitmap, @FloatRange(from = 0.0, to = 1.0) progress: Float): Bitmap {
-        var angle = getProgressValue(progress)
+    override fun getBitmap(bitmaps: BitmapState, @FloatRange(from = 0.0, to = 1.0) progress: Float): Bitmap {
+        var angle = IndicatorUtils.getValueOfPercent(FULL_CIRCLE, progress)
         if (turn == COUNTERCLOCKWISE) {
             angle = -angle
         }
+        val originalBitmap = bitmaps.originalBitmap
         val bitmap = Bitmap.createBitmap(originalBitmap.width, originalBitmap.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         // drawing the colored arc with its counter arc
@@ -63,16 +65,11 @@ class CircularIndicator(@Turn private val turn: Int = CLOCKWISE) : Indicator() {
         return bitmap
     }
 
-    private fun drawArc(canvas: Canvas, angle: Int, shader: BitmapShader) {
+    private fun drawArc(@NonNull canvas: Canvas, angle: Int, @NonNull shader: BitmapShader) {
         val paint = Paint()
         paint.shader = shader
         canvas.drawArc(arc!!, 270f, angle.toFloat(), true, paint)
         paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_ATOP)
     }
-
-    override fun getProgressValue(@FloatRange(from = 0.0, to = 1.0) progress: Float): Int {
-        return IndicatorUtils.getValueOfPercent(FULL_CIRCLE, progress)
-    }
-
 
 }

@@ -78,7 +78,7 @@ public class RandomStripeIndicator extends CatchUpIndicator {
 
             int prevValue = IndicatorUtils.getValueOfPercent(stripeCount, prevProgressPercent);
 //            Log.d("Stripe", "diffPercent " + IndicatorUtils.getValueOfPercent(stripeCount, diffPercent));
-            blockUpdatedHandler.post(new CatchUpStripesRunnable(originalBitmap, output, canvas, value, prevValue, callback));
+//            blockUpdatedHandler.post(new CatchUpStripesRunnable(originalBitmap, output, canvas, value, prevValue, callback));
 
             prevProgressPercent = progressPercent;
             return output;
@@ -159,12 +159,12 @@ public class RandomStripeIndicator extends CatchUpIndicator {
                     int percent = IndicatorUtils.getValueOfPercent(stripes.size(), missingProgressPercent);
                     addColorStripeToBitmap(bitmap, canvas, percent - 1);
                     preProgressBitmap = output;
-                    uIHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.onProgressIndicationUpdated(output);
-                        }
-                    });
+//                    uIHandler.post(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            listener.onProgressIndicationUpdated(output);
+//                        }
+//                    });
 
                 }
             }
@@ -197,7 +197,7 @@ public class RandomStripeIndicator extends CatchUpIndicator {
                     addColorStripeToBitmap(bitmap, canvas, i);
 
                     preProgressBitmap = output;
-                    uIHandler.post(() -> listener.onProgressIndicationUpdated(output));
+//                    uIHandler.post(() -> listener.onProgressIndicationUpdated(output));
 
                 }
             }

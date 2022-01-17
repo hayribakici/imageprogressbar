@@ -14,6 +14,9 @@ import android.graphics.Shader;
 import androidx.annotation.FloatRange;
 import androidx.annotation.NonNull;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
 public class DiagonalIndicator extends Indicator {
@@ -37,9 +40,10 @@ public class DiagonalIndicator extends Indicator {
         return IndicatorUtils.convertGrayscale(originalBitmap);
     }
 
+    @Nullable
     @Override
-    public Bitmap getBitmap(@NonNull Bitmap originalBitmap, @FloatRange(from = 0.0, to = 1.0) float progress) {
-
+    public Bitmap getBitmap(@NotNull BitmapState bitmaps, @FloatRange(from = 0.0, to = 1.0) float progress) {
+        final Bitmap originalBitmap = bitmaps.getOriginalBitmap();
         final int bitmapHeight = originalBitmap.getHeight();
         final int bitmapWidth = originalBitmap.getWidth();
         final int heightPercent = IndicatorUtils.getValueOfPercent(bitmapHeight, progress);
@@ -89,7 +93,7 @@ public class DiagonalIndicator extends Indicator {
         path.close();
 
 
-        canvas.drawBitmap(preProgressBitmap, 0, 0, new Paint());
+        canvas.drawBitmap(this.preProgressBitmap, 0, 0, new Paint());
         canvas.drawPath(path, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
         return output;

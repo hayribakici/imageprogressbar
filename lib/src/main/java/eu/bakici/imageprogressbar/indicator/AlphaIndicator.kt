@@ -34,17 +34,14 @@ class AlphaIndicator : Indicator() {
         return convertGrayscale(originalBitmap)
     }
 
-    override fun getBitmap(originalBitmap: Bitmap, @FloatRange(from = 0.0, to = 1.0) progress: Float): Bitmap {
+    override fun getBitmap(bitmaps: BitmapState, @FloatRange(from = 0.0, to = 1.0) progress: Float): Bitmap {
+        val originalBitmap = bitmaps.originalBitmap
         val output = Bitmap.createBitmap(originalBitmap.width, originalBitmap.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(output)
-        alphaPaint.alpha = getProgressValue(progress)
-        canvas.drawBitmap(preProgressBitmap, 0f, 0f, Paint())
+        alphaPaint.alpha = getValueOfPercent(MAX_ALPHA, progress)
+        canvas.drawBitmap(bitmaps.preProgressBitmap, 0f, 0f, Paint())
         canvas.drawBitmap(originalBitmap, 0f, 0f, alphaPaint)
         return output
-    }
-
-    override fun getProgressValue(progress: Float): Int {
-        return getValueOfPercent(MAX_ALPHA, progress)
     }
 
 

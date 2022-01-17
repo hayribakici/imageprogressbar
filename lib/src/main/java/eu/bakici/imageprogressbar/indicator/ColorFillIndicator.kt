@@ -62,7 +62,8 @@ class ColorFillIndicator(@ProgressDirection private val direction: Int) : Indica
         return IndicatorUtils.convertGrayscale(originalBitmap)
     }
 
-    override fun getBitmap(originalBitmap: Bitmap, @FloatRange(from = 0.0, to = 1.0) progress: Float): Bitmap {
+    override fun getBitmap(bitmaps: BitmapState, @FloatRange(from = 0.0, to = 1.0) progress: Float): Bitmap {
+        val originalBitmap = bitmaps.originalBitmap
         val bitmapHeight = originalBitmap.height
         val bitmapWidth = originalBitmap.width
         val heightPercent = IndicatorUtils.getValueOfPercent(bitmapHeight, progress)
@@ -92,7 +93,7 @@ class ColorFillIndicator(@ProgressDirection private val direction: Int) : Indica
         }
         val output = Bitmap.createBitmap(originalBitmap.width, originalBitmap.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(output)
-        canvas.drawBitmap(preProgressBitmap, bitmapBWRect, bitmapBWRect, normalPaint)
+        canvas.drawBitmap(bitmaps.preProgressBitmap, bitmapBWRect, bitmapBWRect, normalPaint)
         canvas.drawBitmap(originalBitmap, bitmapSourceRect, bitmapSourceRect, normalPaint)
         return output
     }
