@@ -11,7 +11,6 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.Shader;
 
-import androidx.annotation.FloatRange;
 import androidx.annotation.NonNull;
 
 import org.jetbrains.annotations.NotNull;
@@ -42,8 +41,9 @@ public class DiagonalIndicator extends Indicator {
 
     @Nullable
     @Override
-    public Bitmap getBitmap(@NotNull BitmapState bitmaps, @FloatRange(from = 0.0, to = 1.0) float progress) {
-        final Bitmap originalBitmap = bitmaps.getOriginalBitmap();
+    public Bitmap getBitmap(@NotNull ProgressState state) {
+        final Bitmap originalBitmap = state.getOriginalBitmap();
+        final float progress = state.getProgress();
         final int bitmapHeight = originalBitmap.getHeight();
         final int bitmapWidth = originalBitmap.getWidth();
         final int heightPercent = IndicatorUtils.getValueOfPercent(bitmapHeight, progress);

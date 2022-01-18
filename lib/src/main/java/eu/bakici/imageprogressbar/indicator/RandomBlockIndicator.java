@@ -104,7 +104,8 @@ public class RandomBlockIndicator extends BlockIndicator {
 
     @Nullable
     @Override
-    public Bitmap getBitmap(@NotNull BitmapState bitmaps, float progress) {
+    public Bitmap getBitmap(@NotNull ProgressState state) {
+        final float progress = state.getProgress();
         final int height = this.height;
         final int width = this.width;
         final Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
@@ -116,8 +117,8 @@ public class RandomBlockIndicator extends BlockIndicator {
         }
         final Rect randomBlock = blocks.get(blockPos);
         final Paint paint = new Paint();
-        canvas.drawBitmap(bitmaps.getCurrentBitmap(), 0, 0, paint);
-        canvas.drawBitmap(bitmaps.getOriginalBitmap(), randomBlock, randomBlock, paint);
+        canvas.drawBitmap(state.getCurrentBitmap(), 0, 0, paint);
+        canvas.drawBitmap(state.getOriginalBitmap(), randomBlock, randomBlock, paint);
         return output;
 //        addColorBlockToBitmap(output, canvas, percent - 1);
     }

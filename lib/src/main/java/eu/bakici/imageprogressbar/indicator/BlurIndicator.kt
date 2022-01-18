@@ -18,7 +18,6 @@ package eu.bakici.imageprogressbar.indicator
 
 import android.content.Context
 import android.graphics.Bitmap
-import androidx.annotation.FloatRange
 import eu.bakici.imageprogressbar.utils.IndicatorUtils.getValueOfPercent
 
 class BlurIndicator(private val context: Context) : Indicator() {
@@ -32,17 +31,18 @@ class BlurIndicator(private val context: Context) : Indicator() {
     }
 
     @Synchronized
-    override fun getBitmap(bitmaps: BitmapState, @FloatRange(from = 0.0, to = 1.0) progress: Float): Bitmap {
-        if (progress == 100f) {
-            return bitmaps.originalBitmap
+    override fun getBitmap(state: ProgressState): Bitmap {
+        val originalBitmap = state.originalBitmap!!
+        if (state.progress == 1f) {
+            return originalBitmap
         }
-        val radius = MAX_RADIUS - getValueOfPercent(MAX_RADIUS, progress)
+        val radius = MAX_RADIUS - getValueOfPercent(MAX_RADIUS, state.progress)
         if (radius <= 0) {
             // insanity check
-            return bitmaps.originalBitmap
+            return originalBitmap
         }
 
-        return Blur.fastblur(context, bitmaps.originalBitmap, radius)
+        return Blur.fastblur(context, originalBitmap, radius)
     }
 
 

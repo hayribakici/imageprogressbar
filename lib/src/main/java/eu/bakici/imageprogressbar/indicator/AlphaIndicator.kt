@@ -18,7 +18,6 @@ package eu.bakici.imageprogressbar.indicator
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
-import androidx.annotation.FloatRange
 import eu.bakici.imageprogressbar.utils.IndicatorUtils.convertGrayscale
 import eu.bakici.imageprogressbar.utils.IndicatorUtils.getValueOfPercent
 
@@ -34,12 +33,12 @@ class AlphaIndicator : Indicator() {
         return convertGrayscale(originalBitmap)
     }
 
-    override fun getBitmap(bitmaps: BitmapState, @FloatRange(from = 0.0, to = 1.0) progress: Float): Bitmap {
-        val originalBitmap = bitmaps.originalBitmap
+    override fun getBitmap(state: ProgressState): Bitmap {
+        val originalBitmap = state.originalBitmap!!
         val output = Bitmap.createBitmap(originalBitmap.width, originalBitmap.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(output)
-        alphaPaint.alpha = getValueOfPercent(MAX_ALPHA, progress)
-        canvas.drawBitmap(bitmaps.preProgressBitmap, 0f, 0f, Paint())
+        alphaPaint.alpha = getValueOfPercent(MAX_ALPHA, state.progress)
+        canvas.drawBitmap(state.preProgressBitmap!!, 0f, 0f, Paint())
         canvas.drawBitmap(originalBitmap, 0f, 0f, alphaPaint)
         return output
     }

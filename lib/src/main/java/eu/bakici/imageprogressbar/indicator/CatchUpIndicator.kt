@@ -29,21 +29,22 @@ import kotlinx.coroutines.flow.flow
  */
 abstract class CatchUpIndicator : Indicator() {
 
-    override fun progressBitmap(preProgressBitmap: Bitmap, originalBitmap: Bitmap, progress: Float): Flow<Bitmap?> {
+    override fun progressBitmap(state: ProgressState): Flow<Bitmap?> {
         return flow {
             val currProgress = integerizePercent(currentProgressPercent)
-            val p = integerizePercent(progress)
+            val p = integerizePercent(state.progress)
             if (currProgress < p - 1) {
                 // large progressbar jump
                 val diff = p - currProgress
                 Log.d("Ketchup", "diff: $diff")
                 for (i in 1..diff) {
                     val missingProgressPercent = currProgress + i
-                    emit(getBitmap(BitmapState(preProgressBitmap, currentBitmap, originalBitmap), floatPercent(missingProgressPercent)))
+                    val newState = ProgressState(state.preProgressBitmap, state.currentBitmap, state.originalBitmap, floatPercent(missingProgressPercent))
+                    emit(getBitmap(newState))
                 }
-                currentProgressPercent = progress
+                currentProgressPercent = state.progress
             }
-            emit(getBitmap(BitmapState(preProgressBitmap, currentBitmap, originalBitmap), progress))
+            emit(getBitmap(state))
         }
     }
 

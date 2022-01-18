@@ -19,7 +19,6 @@ import android.graphics.Bitmap
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.annotation.CallSuper
-import androidx.annotation.FloatRange
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -83,8 +82,8 @@ open class Indicator : Parcelable {
         emit(currentBitmap)
     }
 
-    open fun progressBitmap(preProgressBitmap: Bitmap, originalBitmap: Bitmap, @FloatRange(from = 0.0, to = 1.0) progress: Float): Flow<Bitmap?> = flow {
-        currentBitmap = getBitmap(BitmapState(preProgressBitmap, currentBitmap, originalBitmap), progress)
+    open fun progressBitmap(state: ProgressState): Flow<Bitmap?> = flow {
+        currentBitmap = getBitmap(state)
         emit(currentBitmap)
     }
 
@@ -96,7 +95,7 @@ open class Indicator : Parcelable {
      * @param progress       the values in percent. Goes from 0.0 to 1.0.
      * @return the manipulated bitmap that should be displayed based on the percentage of the progress bar.
      */
-    open fun getBitmap(bitmaps: BitmapState, @FloatRange(from = 0.0, to = 1.0) progress: Float): Bitmap? {
+    open fun getBitmap(state: ProgressState): Bitmap? {
         return currentBitmap
     }
 

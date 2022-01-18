@@ -49,12 +49,12 @@ class SpiralIndicator : CatchUpIndicator() {
         return IndicatorUtils.convertGrayscale(originalBitmap)
     }
 
-    override fun getBitmap(bitmaps: BitmapState, @FloatRange(from = 0.0, to = 1.0) progress: Float): Bitmap {
-        val originalBitmap = bitmaps.originalBitmap
+    override fun getBitmap(state: ProgressState): Bitmap {
+        val originalBitmap = state.originalBitmap!!
         val bitmap = Bitmap.createBitmap(originalBitmap.width, originalBitmap.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
-        canvas.drawBitmap(preProgressBitmap!!, 0f, 0f, paint)
-        drawArchimedeanSpiral(canvas, progress)
+        canvas.drawBitmap(state.preProgressBitmap!!, 0f, 0f, paint)
+        drawArchimedeanSpiral(canvas, state.progress)
         return bitmap
     }
 
