@@ -16,7 +16,6 @@ package eu.bakici.imageprogressbar.demo;
  * limitations under the License.
  */
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -24,6 +23,7 @@ import android.view.MenuItem;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
@@ -46,10 +46,12 @@ public class ProgressIndicatorDemoActivity extends Activity {
 
     public static final String TAG = "ImageProgress";
     private static final String KEY_CHECKED = "checked";
+    private static final String KEY_ITEM_ID = "item_id";
 
     private ProgressImageView progressImageView;
     private SeekBar seekBar;
     private RadioGroup radioImageLoader;
+    private int optionId = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,6 +91,7 @@ public class ProgressIndicatorDemoActivity extends Activity {
         int checkId = R.id.radio_asset;
         if (savedInstanceState != null) {
             checkId = savedInstanceState.getInt(KEY_CHECKED, R.id.radio_asset);
+            optionId = savedInstanceState.getInt(KEY_ITEM_ID, -1);
         }
         radioImageLoader.check(checkId);
     }
@@ -96,56 +99,65 @@ public class ProgressIndicatorDemoActivity extends Activity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("checked", radioImageLoader.getCheckedRadioButtonId());
+        outState.putInt(KEY_CHECKED, radioImageLoader.getCheckedRadioButtonId());
+        outState.putInt(KEY_ITEM_ID, optionId);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        if (optionId == -1) {
+            return true;
+        }
+        selectOption(optionId);
         return true;
     }
 
-    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         super.onOptionsItemSelected(item);
         reset();
-        final int itemId = item.getItemId();
+        optionId = item.getItemId();
         item.setChecked(!item.isChecked());
-        switch (itemId) {
-            case R.id.action_indicator_blur:
-                progressImageView.setProgressIndicator(new BlurIndicator(this));
-                return true;
-            case R.id.action_indicator_colorfill:
-                progressImageView.setProgressIndicator(new ColorFillIndicator(ColorFillIndicator.PROGRESS_DIRECTION_HORIZONTAL_LEFT_RIGHT));
-                return true;
-            case R.id.action_indicator_random_block:
-                progressImageView.setProgressIndicator(new RandomBlockIndicator(BlockIndicator.BLOCK_SIZE_SMALL));
-                return true;
-            case R.id.action_indicator_pixelize:
-                progressImageView.setProgressIndicator(new PixelizeIndicator());
-                return true;
-            case R.id.action_indicator_ciculator:
-                progressImageView.setProgressIndicator(new CircularIndicator());
-                return true;
-            case R.id.action_indicator_alpha:
-                progressImageView.setProgressIndicator(new ColorizeIndicator());
-                return true;
-            case R.id.action_indicator_stripe:
-                progressImageView.setProgressIndicator(new RandomStripeIndicator(RandomStripeIndicator.LEVEL_THIN));
-                return true;
-            case R.id.action_indicator_spiral:
-                progressImageView.setProgressIndicator(new SpiralIndicator());
-                return true;
-            case R.id.action_indicator_diagonal:
-                progressImageView.setProgressIndicator(new DiagonalIndicator());
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        boolean optionSelected = selectOption(optionId);
+        if (!optionSelected) {
+            return super.onOptionsItemSelected(item);
         }
+        return true;
     }
 
+    private boolean selectOption(@IdRes final int itemId) {
+        if (itemId == R.id.action_indicator_blur) {
+            progressImageView.setProgressIndicator(new BlurIndicator(this));
+            return true;
+        } else if (itemId == R.id.action_indicator_colorfill) {
+            progressImageView.setProgressIndicator(new ColorFillIndicator(ColorFillIndicator.PROGRESS_DIRECTION_HORIZONTAL_LEFT_RIGHT));
+            return true;
+        } else if (itemId == R.id.action_indicator_random_block) {
+            progressImageView.setProgressIndicator(new RandomBlockIndicator(BlockIndicator.BLOCK_SIZE_SMALL));
+            return true;
+        } else if (itemId == R.id.action_indicator_pixelize) {
+            progressImageView.setProgressIndicator(new PixelizeIndicator());
+            return true;
+        } else if (itemId == R.id.action_indicator_ciculator) {
+            progressImageView.setProgressIndicator(new CircularIndicator());
+            return true;
+        } else if (itemId == R.id.action_indicator_alpha) {
+            progressImageView.setProgressIndicator(new ColorizeIndicator());
+            return true;
+        } else if (itemId == R.id.action_indicator_stripe) {
+            progressImageView.setProgressIndicator(new RandomStripeIndicator(RandomStripeIndicator.LEVEL_THIN));
+            return true;
+        } else if (itemId == R.id.action_indicator_spiral) {
+            progressImageView.setProgressIndicator(new SpiralIndicator());
+            return true;
+        } else if (itemId == R.id.action_indicator_diagonal) {
+            progressImageView.setProgressIndicator(new DiagonalIndicator());
+            return true;
+        }
+        return false;
+    }
 
     private void reset() {
         seekBar.setProgress(0);

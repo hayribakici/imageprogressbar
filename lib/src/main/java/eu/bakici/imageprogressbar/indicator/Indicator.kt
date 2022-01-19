@@ -16,13 +16,17 @@
 package eu.bakici.imageprogressbar.indicator
 
 import android.graphics.Bitmap
+import android.os.Parcelable
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
+import kotlinx.parcelize.Parcelize
 
 /**
  * Adapter class for Progress indication.
  */
-open class Indicator {
+@Parcelize
+open class Indicator : Parcelable {
 
     companion object {
         val TAG = Indicator::class.java.simpleName
@@ -36,6 +40,13 @@ open class Indicator {
         emit(getBitmap(state))
     }
 
+    internal fun restore(state: ProgressState): Flow<Bitmap?> =
+            flow {
+                preProgressBitmap(state.originalBitmap!!)
+
+                        .combine(progressBitmap(state)) { _, _ ->
+                        }
+            }
 
     /**
      * Called when the progress bat is moving.

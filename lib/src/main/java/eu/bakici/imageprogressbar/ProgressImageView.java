@@ -33,23 +33,22 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import eu.bakici.imageprogressbar.indicator.Indicator;
-import eu.bakici.imageprogressbar.utils.IndicatorUtils;
+import eu.bakici.imageprogressbar.indicator.ProgressState;
 
-public class ProgressImageView extends ImageView implements ImageProgressBarViewModel.OnPostExecuteListener<Bitmap> {
+public class ProgressImageView extends ImageView implements ProgressViewModel.OnPostExecuteListener<Bitmap> {
 
     private final static String TAG = ProgressImageView.class.getSimpleName();
 
-    private final static String PROGRESS_STATE = TAG + "progressState";
+    private final static String INDICATOR = TAG + ".indicator";
+    private final static String STATE = TAG + ".state";
 
-
-    private Bitmap originalBitmap;
 
     private int maximum = 100;
 
     private int progress;
-    private Indicator indicator;
+
     private boolean fromSuper = false;
-    private ImageProgressBarViewModel executor;
+    private final ProgressViewModel viewModel;
 
     public ProgressImageView(final Context context) {
         this(context, null);
@@ -61,6 +60,7 @@ public class ProgressImageView extends ImageView implements ImageProgressBarView
 
     public ProgressImageView(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
+        viewModel = new ProgressViewModel(this);
     }
 
     /**
@@ -89,7 +89,7 @@ public class ProgressImageView extends ImageView implements ImageProgressBarView
         if (bitmap != null) {
             // it is important to store the bitmap that should be displayed to enable the
             // proper image manipulation
-            originalBitmap = bitmap;
+            viewModel.setOriginalBitmap(bitmap);
             fireOnPreProgress();
         } else {
             throw new IllegalArgumentException("Drawable does not contain bitmap");
@@ -99,7 +99,7 @@ public class ProgressImageView extends ImageView implements ImageProgressBarView
     @Override
     public void setImageResource(int resId) {
         super.setImageResource(resId);
-        originalBitmap = ((BitmapDrawable) getDrawable()).getBitmap();
+        viewModel.setOriginalBitmap(((BitmapDrawable) getDrawable()).getBitmap());
         fireOnPreProgress();
     }
 
@@ -126,18 +126,17 @@ public class ProgressImageView extends ImageView implements ImageProgressBarView
     protected void onRestoreInstanceState(final Parcelable state) {
         if (state instanceof Bundle) {
             Bundle bundle = (Bundle) state;
-            Indicator indicator = bundle.getParcelable(PROGRESS_STATE);
+            Indicator indicator = bundle.getParcelable(INDICATOR);
             if (indicator != null) {
-                this.indicator = indicator;
-                setProgress(IndicatorUtils.integerizePercent(indicator.getCurrentProgressPercent()));
-                superSetImageBitmap(indicator.getCurrentBitmap());
+                viewModel.setIndicator(indicator);
             }
-//            final int progressPercent = bundle.getInt(BUNDLE_CURRENT_PROGRESS, 0);
-//            setProgress(progressPercent, false);
-//            final Bitmap bitmap = bundle.getParcelable(BUNDLE_CURRENT_BITMAP);
-//            if (bitmap != null) {
-//                superSetImageBitmap(bitmap);
-//            }
+            ProgressState progressState = bundle.getParcelable(STATE);
+            if (progressState != null) {
+                viewModel.restore(progressState);
+//                setProgress(IndicatorUtils.integerizePercent(progressState.getProgress()));
+//                superSetImageBitmap(progressState.getCurrentBitmap());
+
+            }
             super.onRestoreInstanceState(bundle.getParcelable("super_state"));
             return;
         }
@@ -148,9 +147,8 @@ public class ProgressImageView extends ImageView implements ImageProgressBarView
     protected Parcelable onSaveInstanceState() {
         final Bundle bundle = new Bundle();
         bundle.putParcelable("super_state", super.onSaveInstanceState());
-        if (indicator != null) {
-            bundle.putParcelable(PROGRESS_STATE, indicator);
-        }
+        bundle.putParcelable(INDICATOR, viewModel.getIndicator());
+        bundle.putParcelable(STATE, viewModel.getState());
         return bundle;
     }
 
@@ -165,12 +163,6 @@ public class ProgressImageView extends ImageView implements ImageProgressBarView
     }
 
     private void setProgress(final int progress, final boolean silent) {
-        if (indicator == null) {
-            return;
-        }
-        if (originalBitmap == null) {
-            return;
-        }
         this.progress = progress;
         if (silent) {
             fireOnProgress();
@@ -198,28 +190,18 @@ public class ProgressImageView extends ImageView implements ImageProgressBarView
     }
 
     public void setProgressIndicator(final Indicator indicator) {
-
+        viewModel.setIndicator(indicator);
         fireOnPreProgress();
     }
 
 
     private void fireOnPreProgress() {
-        if (indicator != null) {
-            if (executor == null) {
-                executor = new ImageProgressBarViewModel(originalBitmap, indicator, this);
-            }
-            executor.prepare();
-        }
+        viewModel.prepare();
     }
 
 
     private void fireOnProgress() {
-        if (indicator != null) {
-            if (executor == null) {
-                executor = new ImageProgressBarViewModel(originalBitmap, indicator, this);
-            }
-            executor.start(getProgressPercent());
-        }
+        viewModel.start(getProgressPercent());
     }
 
     /**

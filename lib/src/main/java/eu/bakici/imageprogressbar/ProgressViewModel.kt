@@ -27,15 +27,12 @@ import kotlinx.coroutines.flow.onEach
 /**
  * Helper class.
  */
-internal class ImageProgressBarViewModel(val indicator: Indicator,
-                                         private val listener: OnPostExecuteListener<Bitmap?>) {
+internal class ProgressViewModel(private val listener: OnPostExecuteListener<Bitmap?>) {
 
 
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
+
     private val scope: CoroutineScope = MainScope()
-
-
-    var state: ProgressState = ProgressState();
 
     var originalBitmap: Bitmap?
         get() = state.originalBitmap
@@ -43,6 +40,9 @@ internal class ImageProgressBarViewModel(val indicator: Indicator,
             state = newProgressState(originalBitmap = value)
         }
 
+    var indicator: Indicator = Indicator()
+
+    var state: ProgressState = ProgressState()
 
     fun prepare() {
         ensureOriginalBitmapExists()
@@ -63,6 +63,18 @@ internal class ImageProgressBarViewModel(val indicator: Indicator,
             indicator.progressBitmap(state)
                     .flowOn(defaultDispatcher)
                     .onEach { bitmap -> listener.onPostExecute(bitmap) }
+                    .collect { bitmap ->
+                        state = newProgressState(currentBitmap = bitmap)
+                        listener.onPostExecute(bitmap)
+                    }
+        }
+    }
+
+    fun restore(newState: ProgressState) {
+        this.state = newState
+        scope.launch {
+            indicator.restore(state)
+                    .flowOn(defaultDispatcher)
                     .collect { bitmap ->
                         state = newProgressState(currentBitmap = bitmap)
                         listener.onPostExecute(bitmap)
