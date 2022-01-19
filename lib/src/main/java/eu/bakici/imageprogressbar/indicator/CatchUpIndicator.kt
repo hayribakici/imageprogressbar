@@ -1,14 +1,5 @@
-package eu.bakici.imageprogressbar.indicator
-
-import android.graphics.Bitmap
-import android.util.Log
-import eu.bakici.imageprogressbar.utils.IndicatorUtils.floatPercent
-import eu.bakici.imageprogressbar.utils.IndicatorUtils.integerizePercent
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-
 /*
- * Copyright (C) 2016 Hayri Bakici
+ * Copyright (C) 2016,2022 hayribakici
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,17 +12,31 @@ import kotlinx.coroutines.flow.flow
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ /**
- * An indicator that is a synchronous indicator at its core, but does now and then gives asynchronous
- * callbacks. This is good, if the progress percents becomes jumpy, meaning there is not linear
- * increase of the progress. This indicator is there to 'fill the gaps' and let progression
- * catch on from where the progress jump started until its desired progression.
+ */
+package eu.bakici.imageprogressbar.indicator
+
+import android.graphics.Bitmap
+import android.util.Log
+import eu.bakici.imageprogressbar.utils.IndicatorUtils.floatPercent
+import eu.bakici.imageprogressbar.utils.IndicatorUtils.integerizePercent
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+
+
+/**
+ * An indicator that is used when the progression should respect 'progress jumps' (e.g. from 4 to 89).
+ * This indicator then 'catches up' the progress values in between (emits the values 5, 6,...,88).
  */
 abstract class CatchUpIndicator : Indicator() {
 
+    /**
+     * Helper
+     */
+    private var currentProgress = 0f
+
     override fun progressBitmap(state: ProgressState): Flow<Bitmap?> {
         return flow {
-            val currProgress = integerizePercent(currentProgressPercent)
+            val currProgress = integerizePercent(currentProgress)
             val p = integerizePercent(state.progress)
             if (currProgress < p - 1) {
                 // large progressbar jump
@@ -42,7 +47,7 @@ abstract class CatchUpIndicator : Indicator() {
                     val newState = ProgressState(state.preProgressBitmap, state.currentBitmap, state.originalBitmap, floatPercent(missingProgressPercent))
                     emit(getBitmap(newState))
                 }
-                currentProgressPercent = state.progress
+                currentProgress = state.progress
             }
             emit(getBitmap(state))
         }

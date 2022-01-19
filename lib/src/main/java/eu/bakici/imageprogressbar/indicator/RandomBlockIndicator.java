@@ -129,7 +129,7 @@ public class RandomBlockIndicator extends BlockIndicator {
         }
         final Rect randomBlock = blocks.get(blockPos);
         final Paint paint = new Paint();
-        canvas.drawBitmap(preProgressBitmap, 0, 0, paint);
+        canvas.drawBitmap(originalBitmap, 0, 0, paint);
         canvas.drawBitmap(originalBitmap, randomBlock, randomBlock, paint);
     }
 
@@ -163,7 +163,7 @@ public class RandomBlockIndicator extends BlockIndicator {
                     final int missingProgressPercent = mCurr + i;
                     int percent = IndicatorUtils.getValueOfPercent(blockSum, missingProgressPercent);
                     addColorBlockToBitmap(mBitmap, mCanvas, percent - 1);
-                    preProgressBitmap = mOutput;
+//                    preProgressBitmap = mOutput;
 //                    uIHandler.post(() -> mListener.onProgressIndicationUpdated(mOutput));
 
                 }
@@ -202,7 +202,7 @@ public class RandomBlockIndicator extends BlockIndicator {
                     final int missingProgressPercent = mCurr + i;
                     addColorBlockToBitmap(mBitmap, mCanvas, missingProgressPercent - 1);
 
-                    preProgressBitmap = mOutput;
+//                    preProgressBitmap = mOutput;
 //                    uIHandler.post(() -> mListener.onProgressIndicationUpdated(mOutput));
 
                 }

@@ -1,7 +1,5 @@
-package eu.bakici.imageprogressbar;
-
 /*
- * Copyright (C) 2016, 2021 hayribakici
+ * Copyright (C) 2016, 2022 hayribakici
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +13,8 @@ package eu.bakici.imageprogressbar;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package eu.bakici.imageprogressbar;
+
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -35,15 +35,11 @@ import java.lang.reflect.Method;
 import eu.bakici.imageprogressbar.indicator.Indicator;
 import eu.bakici.imageprogressbar.utils.IndicatorUtils;
 
-public class ProgressImageView extends ImageView implements ProgressExecutor.OnPostExecuteListener<Bitmap> {
+public class ProgressImageView extends ImageView implements ImageProgressBarViewModel.OnPostExecuteListener<Bitmap> {
 
     private final static String TAG = ProgressImageView.class.getSimpleName();
 
-    private final static String BUNDLE_CURRENT_PROGRESS = TAG + ".bundle.progress";
-
-    private final static String BUNDLE_CURRENT_BITMAP = TAG + ".bundle.bitmap";
-
-    private final static String INDICATOR = TAG + "indicator";
+    private final static String PROGRESS_STATE = TAG + "progressState";
 
 
     private Bitmap originalBitmap;
@@ -53,7 +49,7 @@ public class ProgressImageView extends ImageView implements ProgressExecutor.OnP
     private int progress;
     private Indicator indicator;
     private boolean fromSuper = false;
-    private ProgressExecutor executor;
+    private ImageProgressBarViewModel executor;
 
     public ProgressImageView(final Context context) {
         this(context, null);
@@ -130,7 +126,7 @@ public class ProgressImageView extends ImageView implements ProgressExecutor.OnP
     protected void onRestoreInstanceState(final Parcelable state) {
         if (state instanceof Bundle) {
             Bundle bundle = (Bundle) state;
-            Indicator indicator = bundle.getParcelable(INDICATOR);
+            Indicator indicator = bundle.getParcelable(PROGRESS_STATE);
             if (indicator != null) {
                 this.indicator = indicator;
                 setProgress(IndicatorUtils.integerizePercent(indicator.getCurrentProgressPercent()));
@@ -153,7 +149,7 @@ public class ProgressImageView extends ImageView implements ProgressExecutor.OnP
         final Bundle bundle = new Bundle();
         bundle.putParcelable("super_state", super.onSaveInstanceState());
         if (indicator != null) {
-            bundle.putParcelable(INDICATOR, indicator);
+            bundle.putParcelable(PROGRESS_STATE, indicator);
         }
         return bundle;
     }
@@ -202,7 +198,7 @@ public class ProgressImageView extends ImageView implements ProgressExecutor.OnP
     }
 
     public void setProgressIndicator(final Indicator indicator) {
-        this.indicator = indicator;
+
         fireOnPreProgress();
     }
 
@@ -210,7 +206,7 @@ public class ProgressImageView extends ImageView implements ProgressExecutor.OnP
     private void fireOnPreProgress() {
         if (indicator != null) {
             if (executor == null) {
-                executor = new ProgressExecutor(originalBitmap, indicator, this);
+                executor = new ImageProgressBarViewModel(originalBitmap, indicator, this);
             }
             executor.prepare();
         }
@@ -220,7 +216,7 @@ public class ProgressImageView extends ImageView implements ProgressExecutor.OnP
     private void fireOnProgress() {
         if (indicator != null) {
             if (executor == null) {
-                executor = new ProgressExecutor(originalBitmap, indicator, this);
+                executor = new ImageProgressBarViewModel(originalBitmap, indicator, this);
             }
             executor.start(getProgressPercent());
         }
@@ -230,9 +226,7 @@ public class ProgressImageView extends ImageView implements ProgressExecutor.OnP
      * Frees memory. Needs to be called when
      */
     private void destroy() {
-        if (indicator != null) {
-            indicator.cleanUp();
-        }
+
     }
 
     @Override

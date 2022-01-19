@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 hayribakici
+ * Copyright (C) 2022 hayribakici
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@ import kotlinx.coroutines.flow.onEach
 /**
  * Helper class.
  */
-internal class ProgressExecutor(val indicator: Indicator,
-                                private val listener: OnPostExecuteListener<Bitmap?>) {
+internal class ImageProgressBarViewModel(val indicator: Indicator,
+                                         private val listener: OnPostExecuteListener<Bitmap?>) {
 
 
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
@@ -40,7 +40,7 @@ internal class ProgressExecutor(val indicator: Indicator,
     var originalBitmap: Bitmap?
         get() = state.originalBitmap
         set(value) {
-            state = ProgressState(originalBitmap = value)
+            state = newProgressState(originalBitmap = value)
         }
 
 
@@ -50,20 +50,23 @@ internal class ProgressExecutor(val indicator: Indicator,
             indicator.preProgressBitmap(state.originalBitmap!!)
                     .flowOn(defaultDispatcher)
                     .collect { bitmap ->
-                        state = ProgressState(preProgressBitmap = bitmap, originalBitmap)
+                        state = newProgressState(preProgressBitmap = bitmap, currentBitmap = bitmap)
                         listener.onPostExecute(bitmap)
                     }
         }
-
     }
 
     fun start(@FloatRange(from = 0.0, to = 1.0) progress: Float) {
         ensureOriginalBitmapExists()
+        state = newProgressState(progress = progress)
         scope.launch {
-            indicator.progressBitmap(null)
+            indicator.progressBitmap(state)
                     .flowOn(defaultDispatcher)
                     .onEach { bitmap -> listener.onPostExecute(bitmap) }
-                    .collect { bitmap -> listener.onPostExecute(bitmap) }
+                    .collect { bitmap ->
+                        state = newProgressState(currentBitmap = bitmap)
+                        listener.onPostExecute(bitmap)
+                    }
         }
     }
 
@@ -73,6 +76,13 @@ internal class ProgressExecutor(val indicator: Indicator,
         }
     }
 
+
+    private fun newProgressState(preProgressBitmap: Bitmap? = state.preProgressBitmap,
+                                 currentBitmap: Bitmap? = state.currentBitmap,
+                                 originalBitmap: Bitmap? = state.originalBitmap,
+                                 @FloatRange(from = 0.0, to = 1.0) progress: Float = state.progress): ProgressState {
+        return ProgressState(preProgressBitmap, currentBitmap, originalBitmap, progress)
+    }
 
     internal interface OnPostExecuteListener<T> {
         fun onPostExecute(param: T)

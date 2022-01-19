@@ -30,11 +30,11 @@ import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import eu.bakici.imageprogressbar.ProgressImageView;
-import eu.bakici.imageprogressbar.indicator.AlphaIndicator;
 import eu.bakici.imageprogressbar.indicator.BlockIndicator;
 import eu.bakici.imageprogressbar.indicator.BlurIndicator;
 import eu.bakici.imageprogressbar.indicator.CircularIndicator;
 import eu.bakici.imageprogressbar.indicator.ColorFillIndicator;
+import eu.bakici.imageprogressbar.indicator.ColorizeIndicator;
 import eu.bakici.imageprogressbar.indicator.DiagonalIndicator;
 import eu.bakici.imageprogressbar.indicator.PixelizeIndicator;
 import eu.bakici.imageprogressbar.indicator.RandomBlockIndicator;
@@ -130,7 +130,7 @@ public class ProgressIndicatorDemoActivity extends Activity {
                 progressImageView.setProgressIndicator(new CircularIndicator());
                 return true;
             case R.id.action_indicator_alpha:
-                progressImageView.setProgressIndicator(new AlphaIndicator());
+                progressImageView.setProgressIndicator(new ColorizeIndicator());
                 return true;
             case R.id.action_indicator_stripe:
                 progressImageView.setProgressIndicator(new RandomStripeIndicator(RandomStripeIndicator.LEVEL_THIN));

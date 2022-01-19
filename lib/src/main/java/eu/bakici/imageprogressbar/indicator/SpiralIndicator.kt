@@ -17,14 +17,14 @@
 package eu.bakici.imageprogressbar.indicator
 
 import android.graphics.*
-import android.util.Log
 import androidx.annotation.FloatRange
 import eu.bakici.imageprogressbar.utils.IndicatorUtils
 import java.lang.StrictMath.cos
 import java.lang.StrictMath.sin
-import java.lang.String.format
 
-
+/**
+ * Indicator that draws the colored image as a spiral.
+ */
 class SpiralIndicator : CatchUpIndicator() {
 
     companion object {
@@ -59,7 +59,6 @@ class SpiralIndicator : CatchUpIndicator() {
     }
 
     private fun drawArchimedeanSpiral(canvas: Canvas, @FloatRange(from = 0.0, to = 1.0) progress: Float) {
-        Log.d("SpiralIndicator", format("%s %%, %s %%", progress, IndicatorUtils.integerizePercent(progress)))
         val angle = IndicatorUtils.getValueOfPercentD(MAX_DEGREE * PI8, progress)
         val paint = Paint()
         val x = (A * angle * cos(angle)).toFloat()

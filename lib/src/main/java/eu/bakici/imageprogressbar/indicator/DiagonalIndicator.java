@@ -67,6 +67,7 @@ public class DiagonalIndicator extends Indicator {
 //        paint.setAntiAlias(true);
         paint.setShader(shader);
         if (IndicatorUtils.integerizePercent(progress) >= 50) {
+            // TODO implement the logic
 //            d.set();
             // draw a parallelogram instead of a triangle
             // it should look like this:
@@ -93,7 +94,7 @@ public class DiagonalIndicator extends Indicator {
         path.close();
 
 
-        canvas.drawBitmap(this.preProgressBitmap, 0, 0, new Paint());
+        canvas.drawBitmap(state.getPreProgressBitmap(), 0, 0, new Paint());
         canvas.drawPath(path, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
         return output;

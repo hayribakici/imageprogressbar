@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016, 2021 hayribakici
+ * Copyright (C) 2016, 2022 hayribakici
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,75 +16,24 @@
 package eu.bakici.imageprogressbar.indicator
 
 import android.graphics.Bitmap
-import android.os.Parcel
-import android.os.Parcelable
-import androidx.annotation.CallSuper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 /**
  * Adapter class for Progress indication.
  */
-open class Indicator : Parcelable {
+open class Indicator {
 
     companion object {
-        @JvmField
-        val CREATOR: Parcelable.Creator<Indicator?> = object : Parcelable.Creator<Indicator?> {
-            override fun createFromParcel(source: Parcel): Indicator {
-                return Indicator(source)
-            }
-
-            override fun newArray(size: Int): Array<Indicator?> {
-                return arrayOfNulls(size)
-            }
-        }
         val TAG = Indicator::class.java.simpleName
     }
 
-
-    /**
-     * @return the current progression.
-     */
-    open var currentProgressPercent = 0f
-        protected set
-
-    /**
-     * The current displayed bitmap.
-     *
-     * @return the current bitmap.
-     */
-    /**
-     * The current bitmap the view is displaying.
-     */
-    var currentBitmap: Bitmap? = null
-        protected set
-
-    /**
-     * Standard constructor.
-     */
-    constructor() {}
-
-    /**
-     * The bitmap when onPreProgress is called
-     */
-    @JvmField
-    protected var preProgressBitmap: Bitmap? = null
-
-
-    protected constructor(`in`: Parcel) {
-        currentBitmap = `in`.readParcelable(Bitmap::class.java.classLoader)
-        currentProgressPercent = `in`.readFloat()
-        preProgressBitmap = `in`.readParcelable(Bitmap::class.java.classLoader)
-    }
-
     fun preProgressBitmap(originalBitmap: Bitmap): Flow<Bitmap?> = flow {
-        currentBitmap = getPreProgressBitmap(originalBitmap)
-        emit(currentBitmap)
+        emit(getPreProgressBitmap(originalBitmap))
     }
 
     open fun progressBitmap(state: ProgressState): Flow<Bitmap?> = flow {
-        currentBitmap = getBitmap(state)
-        emit(currentBitmap)
+        emit(getBitmap(state))
     }
 
 
@@ -95,9 +44,7 @@ open class Indicator : Parcelable {
      * @param progress       the values in percent. Goes from 0.0 to 1.0.
      * @return the manipulated bitmap that should be displayed based on the percentage of the progress bar.
      */
-    open fun getBitmap(state: ProgressState): Bitmap? {
-        return currentBitmap
-    }
+    open fun getBitmap(state: ProgressState): Bitmap? = state.currentBitmap
 
     /**
      * This method is optional. Called once at the beginning before the actual progress is called.
@@ -106,39 +53,6 @@ open class Indicator : Parcelable {
      * @param originalBitmap the original bitmap.
      * @return the manipulated bitmap that should be displayed, before the progress starts.
      */
-    open fun getPreProgressBitmap(originalBitmap: Bitmap): Bitmap? {
-        throw UnsupportedOperationException("onPreProgress is not implemented")
-    }
-
-    /**
-     * Should be called when the indication is done.
-     */
-    @CallSuper
-    fun cleanUp() {
-        currentBitmap = null
-    }
-
-    /**
-     * This method is optional.
-     * Called once at the beginning before the action progress is called. This method
-     * allows for instance to do some Bitmap manipulation before the progress starts.
-     *
-     * @param originalBitmap the original bitmap.
-     */
-    fun onPreProgress(originalBitmap: Bitmap) {
-        preProgressBitmap = getPreProgressBitmap(originalBitmap)
-        currentBitmap = preProgressBitmap
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeParcelable(currentBitmap, flags)
-        dest.writeFloat(currentProgressPercent)
-        dest.writeParcelable(preProgressBitmap, flags)
-    }
-
+    open fun getPreProgressBitmap(originalBitmap: Bitmap): Bitmap? = originalBitmap
 
 }

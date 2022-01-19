@@ -22,16 +22,18 @@ import eu.bakici.imageprogressbar.utils.IndicatorUtils.convertGrayscale
 import eu.bakici.imageprogressbar.utils.IndicatorUtils.getValueOfPercent
 
 
-class AlphaIndicator : Indicator() {
+/**
+ * Indicator that shows the image in black in white and slowly gets its color once
+ * the progress is running.
+ */
+class ColorizeIndicator : Indicator() {
     companion object {
         private const val MAX_ALPHA = 255
     }
 
     private val alphaPaint: Paint = Paint()
 
-    override fun getPreProgressBitmap(originalBitmap: Bitmap): Bitmap {
-        return convertGrayscale(originalBitmap)
-    }
+    override fun getPreProgressBitmap(originalBitmap: Bitmap): Bitmap = convertGrayscale(originalBitmap)
 
     override fun getBitmap(state: ProgressState): Bitmap {
         val originalBitmap = state.originalBitmap!!

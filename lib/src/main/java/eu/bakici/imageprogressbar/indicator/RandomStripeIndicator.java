@@ -18,7 +18,6 @@ package eu.bakici.imageprogressbar.indicator;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.util.Log;
 
 import androidx.annotation.IntDef;
@@ -95,30 +94,30 @@ public class RandomStripeIndicator extends CatchUpIndicator {
 //        }
         currProgressPercent = progressPercent;
 
-        addColorStripeToBitmap(originalBitmap, canvas, value - 1);
-//        preProgressBitmap.recycle();
-        preProgressBitmap = output;
-        callback.onProgressIndicationUpdated(output);
-        return preProgressBitmap;
+//        addColorStripeToBitmap(originalBitmap, canvas, value - 1);
+////        preProgressBitmap.recycle();
+//        preProgressBitmap = output;
+//        callback.onProgressIndicationUpdated(output);
+        return null;
     }
 
 
-    private void addColorStripeToBitmap(final Bitmap originalBitmap, final Canvas canvas, final int pos) {
-        if (pos >= stripes.size()) {
-            // insanity check
-            return;
-        }
-        for (int i = Math.max(0, pos - 2); i <= pos + 2; i++) {
-            final FlaggedRect randomStripe = stripes.get(pos);
-            final Paint paint = new Paint();
-            canvas.drawBitmap(preProgressBitmap, 0, 0, paint);
-            if (!randomStripe.isFlagged()) {
-                canvas.drawBitmap(originalBitmap, randomStripe.getRect(), randomStripe.getRect(), paint);
-                randomStripe.setFlagged(true);
-            }
-        }
-
-    }
+//    private void addColorStripeToBitmap(final Bitmap originalBitmap, final Canvas canvas, final int pos) {
+//        if (pos >= stripes.size()) {
+//            // insanity check
+//            return;
+//        }
+//        for (int i = Math.max(0, pos - 2); i <= pos + 2; i++) {
+//            final FlaggedRect randomStripe = stripes.get(pos);
+//            final Paint paint = new Paint();
+//            canvas.drawBitmap(preProgressBitmap, 0, 0, paint);
+//            if (!randomStripe.isFlagged()) {
+//                canvas.drawBitmap(originalBitmap, randomStripe.getRect(), randomStripe.getRect(), paint);
+//                randomStripe.setFlagged(true);
+//            }
+//        }
+//
+//    }
 
 
     /**
@@ -154,11 +153,11 @@ public class RandomStripeIndicator extends CatchUpIndicator {
         @Override
         public void run() {
             synchronized (RandomStripeIndicator.this) {
-                for (int i = 1; i <= diff; i++) {
-                    final int missingProgressPercent = curr + i;
-                    int percent = IndicatorUtils.getValueOfPercent(stripes.size(), missingProgressPercent);
-                    addColorStripeToBitmap(bitmap, canvas, percent - 1);
-                    preProgressBitmap = output;
+//                for (int i = 1; i <= diff; i++) {
+//                    final int missingProgressPercent = curr + i;
+//                    int percent = IndicatorUtils.getValueOfPercent(stripes.size(), missingProgressPercent);
+//                    addColorStripeToBitmap(bitmap, canvas, percent - 1);
+//                    preProgressBitmap = output;
 //                    uIHandler.post(new Runnable() {
 //                        @Override
 //                        public void run() {
@@ -166,41 +165,41 @@ public class RandomStripeIndicator extends CatchUpIndicator {
 //                        }
 //                    });
 
-                }
-            }
-        }
-    }
-
-
-    private class CatchUpStripesRunnable implements Runnable {
-
-        private final int prevValue;
-        private final Canvas canvas;
-        private final Bitmap bitmap;
-        private final Bitmap output;
-        private final int currValue;
-        private final OnProgressIndicationUpdatedListener listener;
-
-        CatchUpStripesRunnable(Bitmap source, Bitmap output, Canvas canvas, int currValue, int prevValue, OnProgressIndicationUpdatedListener listener) {
-            this.bitmap = source;
-            this.output = output;
-            this.canvas = canvas;
-            this.currValue = currValue;
-            this.prevValue = prevValue;
-            this.listener = listener;
-        }
-
-        @Override
-        public void run() {
-            synchronized (RandomStripeIndicator.this) {
-                for (int i = prevValue; i <= currValue; i++) {
-                    addColorStripeToBitmap(bitmap, canvas, i);
-
-                    preProgressBitmap = output;
-//                    uIHandler.post(() -> listener.onProgressIndicationUpdated(output));
-
-                }
             }
         }
     }
 }
+
+
+//    private class CatchUpStripesRunnable implements Runnable {
+//
+//        private final int prevValue;
+//        private final Canvas canvas;
+//        private final Bitmap bitmap;
+//        private final Bitmap output;
+//        private final int currValue;
+//        private final OnProgressIndicationUpdatedListener listener;
+//
+//        CatchUpStripesRunnable(Bitmap source, Bitmap output, Canvas canvas, int currValue, int prevValue, OnProgressIndicationUpdatedListener listener) {
+//            this.bitmap = source;
+//            this.output = output;
+//            this.canvas = canvas;
+//            this.currValue = currValue;
+//            this.prevValue = prevValue;
+//            this.listener = listener;
+//        }
+//
+//        @Override
+//        public void run() {
+//            synchronized (RandomStripeIndicator.this) {
+//                for (int i = prevValue; i <= currValue; i++) {
+//                    addColorStripeToBitmap(bitmap, canvas, i);
+//
+//                    preProgressBitmap = output;
+////                    uIHandler.post(() -> listener.onProgressIndicationUpdated(output));
+//
+//                }
+//            }
+//        }
+//    }
+//}
