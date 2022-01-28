@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 
@@ -44,14 +45,31 @@ import eu.bakici.imageprogressbar.indicator.SpiralIndicator;
 
 public class ProgressIndicatorDemoActivity extends Activity {
 
-    public static final String TAG = "ImageProgress";
     private static final String KEY_CHECKED = "checked";
     private static final String KEY_ITEM_ID = "item_id";
 
     private ProgressImageView progressImageView;
     private SeekBar seekBar;
     private RadioGroup radioImageLoader;
+    private Button startButton;
     private int optionId = -1;
+    private boolean state = false;
+    Runnable autoProgressRunnable = new Runnable() {
+        @Override
+        public void run() {
+            int progress = seekBar.getProgress();
+            if (progress == seekBar.getMax()) {
+                startButton.setText(R.string.start);
+                state = false;
+                return;
+            }
+
+            seekBar.setProgress(progress + 1);
+            if (state) {
+                seekBar.postDelayed(this, 300);
+            }
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,7 +91,17 @@ public class ProgressIndicatorDemoActivity extends Activity {
             public void onStopTrackingTouch(final SeekBar seekBar) {
             }
         });
-        radioImageLoader = findViewById(R.id.radio_image_loader);
+        startButton = findViewById(R.id.button);
+        startButton.setOnClickListener((view) -> {
+            state = !state;
+            if (state) {
+                ((Button) view).setText(R.string.stop);
+            } else {
+                ((Button) view).setText(R.string.start);
+            }
+            view.post(autoProgressRunnable);
+        });
+        radioImageLoader = findViewById(R.id.radio_group);
         radioImageLoader.setOnCheckedChangeListener((group, checkedId) -> {
             seekBar.setProgress(0);
             if (checkedId == R.id.radio_asset) {
@@ -95,6 +123,7 @@ public class ProgressIndicatorDemoActivity extends Activity {
         }
         radioImageLoader.check(checkId);
     }
+
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {

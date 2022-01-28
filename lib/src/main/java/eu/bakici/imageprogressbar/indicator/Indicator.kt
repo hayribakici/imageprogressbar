@@ -18,7 +18,6 @@ package eu.bakici.imageprogressbar.indicator
 import android.graphics.Bitmap
 import android.os.Parcelable
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import kotlinx.parcelize.Parcelize
 
@@ -42,10 +41,8 @@ open class Indicator : Parcelable {
 
     internal fun restore(state: ProgressState): Flow<Bitmap?> =
             flow {
-                preProgressBitmap(state.originalBitmap!!)
-
-                        .combine(progressBitmap(state)) { _, _ ->
-                        }
+                emit(getPreProgressBitmap(state.originalBitmap!!))
+                emit(getBitmap(state))
             }
 
     /**

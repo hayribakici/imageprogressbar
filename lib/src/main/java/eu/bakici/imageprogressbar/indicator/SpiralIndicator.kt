@@ -64,7 +64,7 @@ class SpiralIndicator : CatchUpIndicator() {
         val x = (A * angle * cos(angle)).toFloat()
         val y = (A * angle * sin(angle)).toFloat()
         paint.shader = shader
-        path.lineTo(centerX + x, centerY + y)
+        path.lineTo(centerX + minOf(x, canvas.width.toFloat()), centerY + minOf(y, canvas.height.toFloat()))
         canvas.drawPath(path, paint)
         paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_ATOP)
     }

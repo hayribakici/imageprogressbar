@@ -13,5 +13,6 @@
     <string name="action_line">Random Stripes</string>
     <string name="action_spiral">Spiral</string>
     <string name="action_diagonal">Diagonal</string>
-
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
 </resources>

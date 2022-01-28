@@ -16,7 +16,6 @@
 package eu.bakici.imageprogressbar.indicator
 
 import android.graphics.Bitmap
-import android.util.Log
 import eu.bakici.imageprogressbar.utils.IndicatorUtils.floatPercent
 import eu.bakici.imageprogressbar.utils.IndicatorUtils.integerizePercent
 import kotlinx.coroutines.flow.Flow
@@ -41,7 +40,6 @@ abstract class CatchUpIndicator : Indicator() {
             if (currProgress < p - 1) {
                 // large progressbar jump
                 val diff = p - currProgress
-                Log.d("Ketchup", "diff: $diff")
                 for (i in 1..diff) {
                     val missingProgressPercent = currProgress + i
                     val newState = ProgressState(state.preProgressBitmap, state.currentBitmap, state.originalBitmap, floatPercent(missingProgressPercent))
