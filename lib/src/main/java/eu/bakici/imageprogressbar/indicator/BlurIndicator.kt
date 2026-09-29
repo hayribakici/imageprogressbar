@@ -18,32 +18,35 @@ package eu.bakici.imageprogressbar.indicator
 
 import android.content.Context
 import android.graphics.Bitmap
+import androidx.annotation.FloatRange
 import eu.bakici.imageprogressbar.utils.IndicatorUtils.getValueOfPercent
 
 /**
  * Indicator that sharpens the image once the progress is running.
  */
-class BlurIndicator(private val context: Context) : Indicator() {
+class BlurIndicator(private val context: Context) : ImageIndicator() {
 
     companion object {
         private const val MAX_RADIUS = 25
     }
 
-    override fun getPreProgressBitmap(originalBitmap: Bitmap): Bitmap = Blur.fastblur(context, originalBitmap, MAX_RADIUS)
+    override fun prepare(original: Bitmap): Bitmap = Blur.fastblur(context, original, MAX_RADIUS)
 
-    @Synchronized
-    override fun getBitmap(state: ProgressState): Bitmap {
-        val originalBitmap = state.originalBitmap!!
-        if (state.isMaximum()) {
-            return originalBitmap
+    override fun render(
+        original: Bitmap,
+        prepared: Bitmap,
+        @FloatRange(from = 0.0, to = 1.0) progress: Float
+    ): Bitmap {
+        if (progress >= 1.0) {
+            return original
         }
-        val radius = MAX_RADIUS - getValueOfPercent(MAX_RADIUS, state.progress)
-        if (radius <= 0) {
+        val radius = MAX_RADIUS - getValueOfPercent(MAX_RADIUS, progress)
+        if (radius <= 0 || progress <= 0) {
             // insanity check
-            return originalBitmap
+            return original
         }
 
-        return Blur.fastblur(context, originalBitmap, radius)
+        return Blur.fastblur(context, original, radius)
     }
 
 

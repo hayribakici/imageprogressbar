@@ -51,7 +51,7 @@ A blur-progress Indicator
 The indicators are set with the following calls:
 
 ```java
-ProgressImageView progressImageView=(ProgressImageView)findViewById(R.id.image);
+ProgressImageView progressImageView = (ProgressImageView)findViewById(R.id.image);
         progressImageView.setProgressIndicator(new CircularIndicator());
 ```
 

@@ -63,13 +63,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/radio_group" />
 
-    <eu.bakici.imageprogressbar.ProgressImageView
+    <ImageView
         android:id="@+id/image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
+        android:importantForAccessibility="no"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/progress_bar"
+        android:src="@drawable/sidney"
         tools:src="@tools:sample/avatars" />
 
 

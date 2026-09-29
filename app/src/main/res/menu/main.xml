@@ -1,54 +1,65 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/action_indicator_blur"
             android:orderInCategory="100"
-            android:showAsAction="never"
-            android:title="@string/action_blur"/>
+            android:title="@string/action_blur"
+            app:showAsAction="never" />
 
         <item
             android:id="@+id/action_indicator_random_block"
             android:orderInCategory="100"
-            android:showAsAction="never"
-            android:title="@string/action_random_block"/>
+            android:title="@string/action_random_block"
+            app:showAsAction="never" />
 
         <item
             android:id="@+id/action_indicator_colorfill"
             android:orderInCategory="100"
-            android:showAsAction="never"
-            android:title="@string/action_color_fill"/>
+            android:title="@string/action_color_fill"
+            app:showAsAction="never" />
 
         <item
             android:id="@+id/action_indicator_pixelize"
             android:orderInCategory="100"
-            android:showAsAction="never"
-            android:title="@string/action_pixelize"/>
+            android:title="@string/action_pixelize"
+            app:showAsAction="never" />
 
         <item
             android:id="@+id/action_indicator_ciculator"
             android:orderInCategory="100"
-            android:showAsAction="never"
-            android:title="@string/action_circle" />
+            android:title="@string/action_circle"
+            app:showAsAction="never" />
 
         <item
             android:id="@+id/action_indicator_alpha"
             android:orderInCategory="100"
-            android:showAsAction="never"
-            android:title="@string/action_alpha" />
+            android:title="@string/action_alpha"
+            app:showAsAction="never" />
         <item
             android:id="@+id/action_indicator_stripe"
             android:orderInCategory="100"
-            android:showAsAction="never"
-            android:title="@string/action_line" />
+            android:title="@string/action_line"
+            app:showAsAction="never" />
         <item
             android:id="@+id/action_indicator_spiral"
             android:orderInCategory="100"
-            android:showAsAction="never"
-            android:title="@string/action_spiral" />
+            android:title="@string/action_spiral"
+            app:showAsAction="never" />
         <item
             android:id="@+id/action_indicator_diagonal"
             android:orderInCategory="100"
-            android:showAsAction="never"
-            android:title="@string/action_diagonal" />
+            android:title="@string/action_diagonal"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_indicator_snake"
+            android:orderInCategory="100"
+            android:title="@string/action_snake"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_indicator_blocked_spiral"
+            android:orderInCategory="100"
+            android:title="@string/action_blocked_spiral"
+            app:showAsAction="never" />
     </group>
 </menu>

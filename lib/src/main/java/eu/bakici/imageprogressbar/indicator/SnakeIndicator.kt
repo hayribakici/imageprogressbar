@@ -1,22 +1,22 @@
-/*
- * Copyright (C) 2022 hayribakici
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package eu.bakici.imageprogressbar.indicator
 
-/**
- * Indicator that fills the images like a snake in the snake game.
- */
-class SnakeIndicator : Indicator() { // TODO implement me
+/** Reveals blocks from left to right, alternating direction on each row. */
+class SnakeIndicator(
+    blockSize: Int = BLOCK_SIZE_MEDIUM
+) : BlockIndicator(blockSize) {
+
+    override fun orderBlocks(order: IntArray, columns: Int, rows: Int) {
+        var position = 0
+        for (row in 0 until rows) {
+            if (row % 2 == 0) {
+                for (column in 0 until columns) {
+                    order[position++] = row * columns + column
+                }
+            } else {
+                for (column in columns - 1 downTo 0) {
+                    order[position++] = row * columns + column
+                }
+            }
+        }
+    }
 }

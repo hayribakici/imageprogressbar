@@ -16,7 +16,11 @@
 
 package eu.bakici.imageprogressbar.utils
 
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.Paint
 import androidx.annotation.FloatRange
 import androidx.annotation.IntRange
 import kotlin.math.roundToInt
@@ -28,43 +32,48 @@ import kotlin.math.roundToInt
 object IndicatorUtils {
 
     /**
+     * Draws onto the canvas's attached bitmap and detaches it afterward, even if drawing throws.
+     * Attach the output before calling; do not nest calls or share the canvas between concurrent renders.
+     */
+    inline fun drawOnBitmap(canvas: Canvas, draw: Canvas.() -> Unit) {
+        try {
+            canvas.draw()
+        } finally {
+            canvas.setBitmap(null)
+        }
+    }
+
+    /**
      * Calculates the amount of `value` based on `percent`.
      *
      * @return the value between [0, value] that is calculated from `percent`.
      */
     @JvmStatic
-    fun getValueOfPercent(value: Int, percent: Int): Int {
-        return getValueOfPercentFloat(value, percent).roundToInt()
-    }
+    fun getValueOfPercent(value: Int, percent: Int): Int =
+        getValueOfPercentFloat(value, percent).roundToInt()
+
 
     @JvmStatic
-    fun getValueOfPercent(value: Int, percent: Float): Int {
-        return (value * percent).roundToInt()
-    }
+    fun getValueOfPercent(value: Int, percent: Float): Int = (value * percent).roundToInt()
 
-    fun getValueOfPercentD(value: Double, percent: Float): Double {
-        return value * percent
-    }
+    fun getValueOfPercentD(value: Double, percent: Float): Double = value * percent
 
     /**
      * Calculates the amount of `value` based on on `percent`.
      *
      * @return the value between [0, value] that is calculated from `percent`.
      */
-    fun getValueOfPercentFloat(value: Int, percent: Int): Float {
+    private fun getValueOfPercentFloat(value: Int, percent: Int): Float {
         val p100 = percent.toFloat() * 0.01f
         return value * p100
     }
 
     @JvmStatic
-    fun integerizePercent(@FloatRange(from = 0.0, to = 1.0) percent: Float): Int {
-        return (percent * 100).toInt()
-    }
+    fun integerizePercent(@FloatRange(from = 0.0, to = 1.0) percent: Float): Int =
+        (percent * 100).toInt()
 
     @JvmStatic
-    fun floatPercent(@IntRange(from = 0, to = 100) percent: Int): Float {
-        return percent.toFloat() / 100
-    }
+    fun floatPercent(@IntRange(from = 0, to = 100) percent: Int): Float = percent.toFloat() / 100
 
     /**
      * Converts a given `source` bitmap into grayscale.
@@ -74,9 +83,7 @@ object IndicatorUtils {
      */
     @JvmStatic
     fun convertGrayscale(source: Bitmap): Bitmap {
-        val width = source.width
-        val height = source.height
-        val output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val output = createBitmapLike(source)
         val canvas = Canvas(output)
         val paint = Paint()
         val matrix = ColorMatrix()
@@ -87,7 +94,14 @@ object IndicatorUtils {
     }
 
     fun createCanvasFromBitmap(source: Bitmap): Canvas {
-        val bitmap = Bitmap.createBitmap(source.width, source.height, Bitmap.Config.ARGB_8888)
+        val bitmap = createBitmapLike(source)
         return Canvas(bitmap)
     }
+
+    /** Creates a same-size bitmap with matching density so Canvas draws are not density-scaled. */
+    @JvmStatic
+    fun createBitmapLike(source: Bitmap): Bitmap =
+        Bitmap.createBitmap(source.width, source.height, Bitmap.Config.ARGB_8888).apply {
+            density = source.density
+        }
 }

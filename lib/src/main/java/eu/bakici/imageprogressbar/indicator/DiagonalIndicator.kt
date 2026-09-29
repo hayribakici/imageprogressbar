@@ -1,102 +1,52 @@
-package eu.bakici.imageprogressbar.indicator;
+package eu.bakici.imageprogressbar.indicator
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Point;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.Shader;
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Path
+import eu.bakici.imageprogressbar.utils.IndicatorUtils
+import eu.bakici.imageprogressbar.utils.IndicatorUtils.convertGrayscale
 
-import androidx.annotation.NonNull;
+/** Reveals the colored image from the top-left corner along a diagonal boundary.  */
+class DiagonalIndicator : ImageIndicator() {
+    private val canvas = Canvas()
+    private val path = Path()
+    private val paint = Paint()
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import eu.bakici.imageprogressbar.utils.IndicatorUtils;
-
-public class DiagonalIndicator extends Indicator {
-
-    private final Point a;
-    private final Point b;
-    private final Point c;
-    private final Point d;
-    private BitmapShader shader;
-
-    public DiagonalIndicator() {
-        this.a = new Point();
-        this.b = new Point();
-        this.c = new Point();
-        this.d = new Point();
+    override fun prepare(original: Bitmap): Bitmap {
+        return convertGrayscale(original)
     }
 
-    @Override
-    public Bitmap getPreProgressBitmap(@NonNull Bitmap originalBitmap) {
-        shader = new BitmapShader(originalBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-        return IndicatorUtils.convertGrayscale(originalBitmap);
-    }
+    override fun render(original: Bitmap, prepared: Bitmap, progress: Float): Bitmap {
+        if (progress <= 0f) return prepared
+        if (progress >= 1f) return original
 
-    @Nullable
-    @Override
-    public Bitmap getBitmap(@NotNull ProgressState state) {
-        final Bitmap originalBitmap = state.getOriginalBitmap();
-        final float progress = state.getProgress();
-        final int bitmapHeight = originalBitmap.getHeight();
-        final int bitmapWidth = originalBitmap.getWidth();
-        final int heightPercent = IndicatorUtils.getValueOfPercent(bitmapHeight, progress);
-        final int widthPercent = IndicatorUtils.getValueOfPercent(bitmapWidth, progress);
+        val threshold = progress * 2f
+        val width = original.width.toFloat()
+        val height = original.height.toFloat()
 
-
-        Rect bitmapBWRect;
-        Rect bitmapSourceRect;
-
-        bitmapSourceRect = new Rect(0, 0, widthPercent, bitmapHeight);
-        bitmapBWRect = new Rect(widthPercent, 0, bitmapWidth, bitmapHeight);
-
-
-        final Bitmap output = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), Bitmap.Config.ARGB_8888);
-
-        final Canvas canvas = new Canvas(output);
-        Paint paint = new Paint();
-//        paint.setStrokeWidth(4);
-//        paint.setColor(android.graphics.Color.RED);
-//        paint.setStyle(Paint.Style.FILL_AND_STROKE);
-//        paint.setAntiAlias(true);
-        paint.setShader(shader);
-        if (IndicatorUtils.integerizePercent(progress) >= 50) {
-            // TODO implement the logic
-//            d.set();
-            // draw a parallelogram instead of a triangle
-            // it should look like this:
-            // a--d---------+ a, b, c, d are points
-            // |   \        | after 50%, the d-point should move towards the right,
-            // |    \       | and a line should be drawn from a to d.
-            // |     \      |
-            // |      \     |
-            // c-------b----+
+        path.reset()
+        path.moveTo(0f, 0f)
+        if (threshold <= 1f) {
+            path.lineTo(width * threshold, 0f)
+            path.lineTo(0f, height * threshold)
+        } else {
+            path.lineTo(width, 0f)
+            path.lineTo(width, height * (threshold - 1f))
+            path.lineTo(width * (threshold - 1f), height)
+            path.lineTo(0f, height)
         }
-        a.set(0, bitmapHeight - heightPercent);
-        b.set(widthPercent, bitmapHeight);
-        c.set(0, bitmapHeight);
-//        Point a = new Point(0, 0);
-//        Point b = new Point(0, 100);
-//        Point c = new Point(87, 50);
+        path.close()
 
-        Path path = new Path();
-        path.setFillType(Path.FillType.EVEN_ODD);
-        path.moveTo(c.x, c.y);
-        path.lineTo(b.x, b.y);
-//        path.lineTo(c.x, c.y);
-        path.lineTo(a.x, a.y);
-        path.close();
-
-
-        canvas.drawBitmap(state.getPreProgressBitmap(), 0, 0, new Paint());
-        canvas.drawPath(path, paint);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
-        return output;
+        val output = IndicatorUtils.createBitmapLike(original)
+        canvas.setBitmap(output)
+        IndicatorUtils.drawOnBitmap(canvas) {
+            drawBitmap(prepared, 0f, 0f, paint)
+            save()
+            clipPath(path)
+            drawBitmap(original, 0f, 0f, paint)
+            restore()
+        }
+        return output
     }
 }

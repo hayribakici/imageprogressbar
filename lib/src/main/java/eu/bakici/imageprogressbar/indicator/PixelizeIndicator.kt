@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package eu.bakici.imageprogressbar.indicator
 
 import android.graphics.Bitmap
+import androidx.annotation.FloatRange
 
-class PixelizeIndicator : Indicator() {
+class PixelizeIndicator : ImageIndicator() {
 
     companion object {
         private const val TIME_BETWEEN_TASKS: Long = 400
@@ -27,13 +27,16 @@ class PixelizeIndicator : Indicator() {
 
     private var lastTime: Long = 0
 
-    override fun getPreProgressBitmap(originalBitmap: Bitmap): Bitmap {
-        return pixelizeImage(100 / PROGRESS_TO_PIXELIZATION_FACTOR, originalBitmap)
+    override fun prepare(original: Bitmap): Bitmap {
+        return pixelizeImage(100 / PROGRESS_TO_PIXELIZATION_FACTOR, original)
     }
 
-    override fun getBitmap(state: ProgressState): Bitmap {
-        val progress = state.progress
-        val originalBitmap = state.originalBitmap!!
+    override fun render(
+        original: Bitmap,
+        prepared: Bitmap,
+        @FloatRange(from = 0.0, to = 1.0) progress: Float
+    ): Bitmap {
+
         /*
          * Checks if enough time has elapsed since the last pixelization call was invoked.
          * This prevents too many pixelization processes from being invoked at the same time
@@ -42,18 +45,18 @@ class PixelizeIndicator : Indicator() {
         if (System.currentTimeMillis() - lastTime > TIME_BETWEEN_TASKS) {
             lastTime = System.currentTimeMillis()
             val newProgress = (1f - progress) * 100f
-            return pixelizeImage(newProgress / PROGRESS_TO_PIXELIZATION_FACTOR, originalBitmap)
+            return pixelizeImage(newProgress / PROGRESS_TO_PIXELIZATION_FACTOR, original)
         }
-        return state.currentBitmap!!
+        return prepared
     }
 
     /**
      * Selects either the custom pixelization algorithm that sets and gets bitmap
      * pixels manually or the one that uses built-in bitmap operations.
      */
-    fun pixelizeImage(pixelizationFactor: Float, bitmap: Bitmap): Bitmap {
-        return builtInPixelization(pixelizationFactor, bitmap)
-    }
+    fun pixelizeImage(pixelizationFactor: Float, bitmap: Bitmap): Bitmap =
+        builtInPixelization(pixelizationFactor, bitmap)
+
     // taken from google's ImagePixalization example.
     /**
      * This method of image pixelization utilizes the bitmap scaling operations built
@@ -61,7 +64,7 @@ class PixelizeIndicator : Indicator() {
      * original size (while setting the filter flag to false), the same effect can be
      * achieved with much better performance.
      */
-    fun builtInPixelization(pixelizationFactor: Float, bitmap: Bitmap): Bitmap {
+    private fun builtInPixelization(pixelizationFactor: Float, bitmap: Bitmap): Bitmap {
         val width = bitmap.width
         val height = bitmap.height
         var downScaleFactorWidth = (pixelizationFactor * width).toInt()
@@ -70,8 +73,10 @@ class PixelizeIndicator : Indicator() {
         downScaleFactorHeight = if (downScaleFactorHeight > 0) downScaleFactorHeight else 1
         val downScaledWidth = width / downScaleFactorWidth
         val downScaledHeight = height / downScaleFactorHeight
-        val pixelatedBitmap = Bitmap.createScaledBitmap(bitmap, downScaledWidth,
-                downScaledHeight, false)
+        val pixelatedBitmap = Bitmap.createScaledBitmap(
+            bitmap, downScaledWidth,
+            downScaledHeight, false
+        )
 
         /* Bitmap's createScaledBitmap method has a filter parameter that can be set to either
          * true or false in order to specify either bilinear filtering or point sampling
@@ -87,7 +92,8 @@ class PixelizeIndicator : Indicator() {
          * can be created corresponding to the downscaled bitmap such that when it is
          * upscaled to fit the ImageView, the upscaling operation is a lot faster since
          * it uses internal optimizations to fit the ImageView.
-         * */return Bitmap.createScaledBitmap(pixelatedBitmap, width, height, false)
+         */
+        return Bitmap.createScaledBitmap(pixelatedBitmap, width, height, false)
     }
 
 

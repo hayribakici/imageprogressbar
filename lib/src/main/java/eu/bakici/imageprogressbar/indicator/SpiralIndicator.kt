@@ -1,72 +1,73 @@
-/*
-* Copyright (C) 2021 hayribakici
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-
 package eu.bakici.imageprogressbar.indicator
 
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.BitmapShader
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.Shader
 import androidx.annotation.FloatRange
 import eu.bakici.imageprogressbar.utils.IndicatorUtils
-import java.lang.StrictMath.cos
-import java.lang.StrictMath.sin
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.hypot
+import kotlin.math.max
+import kotlin.math.sin
 
-/**
- * Indicator that draws the colored image as a spiral.
- */
-class SpiralIndicator : CatchUpIndicator() {
-
+/** Reveals the colored image along an expanding Archimedean spiral. */
+class SpiralIndicator : ImageIndicator() {
     companion object {
-        private const val MAX_DEGREE = 1440
-        private const val PI8 = Math.PI / 180
-
-        // Distance between spines
-        private const val A = 30f
+        private const val TURNS = 4f
+        private const val SAMPLES = 512
     }
 
-    private val path: Path = Path()
-    private val paint: Paint = Paint()
+    private val path = Path()
+    private val canvas = Canvas()
+    private val grayscalePaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val spiralPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var shader: BitmapShader? = null
     private var centerX = 0f
     private var centerY = 0f
+    private var maxRadius = 0f
 
-    override fun getPreProgressBitmap(originalBitmap: Bitmap): Bitmap {
-        shader = BitmapShader(originalBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
-        centerX = originalBitmap.width * 0.5f
-        centerY = originalBitmap.height * 0.5f
-        path.moveTo(centerX, centerY)
-        return IndicatorUtils.convertGrayscale(originalBitmap)
+    override fun prepare(original: Bitmap): Bitmap {
+        centerX = original.width * 0.5f
+        centerY = original.height * 0.5f
+        // Extend slightly beyond the farthest corner so the final turn reaches the image.
+        maxRadius = hypot(centerX, centerY) * 1.15f
+        shader = BitmapShader(original, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
+        spiralPaint.shader = shader
+        spiralPaint.style = Paint.Style.STROKE
+        spiralPaint.strokeWidth = max(6f, minOf(original.width, original.height) * 0.12f)
+        spiralPaint.strokeCap = Paint.Cap.ROUND
+        return IndicatorUtils.convertGrayscale(original)
     }
 
-    override fun getBitmap(state: ProgressState): Bitmap {
-        val originalBitmap = state.originalBitmap!!
-        val bitmap = Bitmap.createBitmap(originalBitmap.width, originalBitmap.height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        canvas.drawBitmap(state.preProgressBitmap!!, 0f, 0f, paint)
-        drawArchimedeanSpiral(canvas, state.progress)
-        return bitmap
-    }
+    override fun render(
+        original: Bitmap,
+        prepared: Bitmap,
+        @FloatRange(from = 0.0, to = 1.0) progress: Float
+    ): Bitmap {
+        if (progress <= 0f) return prepared
+        if (progress >= 1f) return original
 
-    private fun drawArchimedeanSpiral(canvas: Canvas, @FloatRange(from = 0.0, to = 1.0) progress: Float) {
-        val angle = IndicatorUtils.getValueOfPercentD(MAX_DEGREE * PI8, progress)
-        val paint = Paint()
-        val x = (A * angle * cos(angle)).toFloat()
-        val y = (A * angle * sin(angle)).toFloat()
-        paint.shader = shader
-        path.lineTo(centerX + minOf(x, canvas.width.toFloat()), centerY + minOf(y, canvas.height.toFloat()))
-        canvas.drawPath(path, paint)
-        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_ATOP)
-    }
+        path.reset()
+        val maxAngle = TURNS * 2f * PI.toFloat() * progress
+        for (sample in 0..SAMPLES) {
+            val fraction = sample.toFloat() / SAMPLES
+            val angle = maxAngle * fraction
+            val radius = maxRadius * fraction
+            val x = centerX + radius * cos(angle)
+            val y = centerY + radius * sin(angle)
+            if (sample == 0) path.moveTo(x, y) else path.lineTo(x, y)
+        }
 
+        val output = IndicatorUtils.createBitmapLike(original)
+        canvas.setBitmap(output)
+        IndicatorUtils.drawOnBitmap(canvas) {
+            drawBitmap(prepared, 0f, 0f, grayscalePaint)
+            drawPath(path, spiralPaint)
+        }
+        return output
+    }
 }
