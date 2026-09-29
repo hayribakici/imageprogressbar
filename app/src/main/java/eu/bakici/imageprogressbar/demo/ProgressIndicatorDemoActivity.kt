@@ -73,7 +73,7 @@ class ProgressIndicatorDemoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         progressImageView = findViewById(R.id.image)
-        imageProgress = ImageProgress.with(this).into(progressImageView);
+        imageProgress = ImageProgress.with(this).into(progressImageView)
 
         seekBar = findViewById(R.id.progress_bar)
         seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
@@ -200,7 +200,7 @@ class ProgressIndicatorDemoActivity : AppCompatActivity() {
             }
 
             R.id.action_indicator_snake -> {
-                imageProgress.indicator = SnakeIndicator();
+                imageProgress.indicator = SnakeIndicator()
                 return true
             }
 

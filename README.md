@@ -52,7 +52,9 @@ The indicators are set with the following calls:
 
 ```java
 ProgressImageView progressImageView = (ProgressImageView)findViewById(R.id.image);
-        progressImageView.setProgressIndicator(new CircularIndicator());
+progressImageView.
+
+setProgressIndicator(new CircularIndicator());
 ```
 
 and updated with
