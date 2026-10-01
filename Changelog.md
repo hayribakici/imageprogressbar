@@ -1,5 +1,6 @@
 # Changelog
 
+- 3.0 rewrite of the render pipe line, adds new indicators: `SpiralBlockIndicator`, `SnakeIndicator`
 - 2.0 rewrite of the indications processing. Adds new indicators: `SpiralIndicator`
   , `RandomStripesIndicator`, `DiagonalIndicator`
 - 1.2 adds counterclockwise turning in the `CircularIndicator`
